@@ -1,0 +1,52 @@
+<div class="modal-header bg-header" style="height: 40px; padding-top: 10px;">
+  <span class="modal-title h6">รายการใบเสนอราคา</span>
+  <button type="button" class="close" (click)=ActiveModal.dismiss() >&times;
+  </button>
+</div>
+<div class="modal-body">
+  <!-- Row -->
+  <div class="row">
+    <div class="col-10 topic" >
+      <label>ค้นหาใบเสนอราคา : </label>
+    </div>
+  </div>
+
+  <!-- Row -->
+  <div class="row">
+    <div class="col-10">
+      <input type="text" class="form-control" [(ngModel)]=KeyWord (keyup.enter)=FilterData() />
+    </div>
+    <div class="col-2"  style="padding-right: 3%; width: 100%;">
+      <!-- (click)="getQuotationList()" -->
+      <button class="btn btn-primary" (click)=FilterData()><i class="fa fa-search"></i>&nbsp;ค้นหา</button>
+    </div>
+  </div>
+  <br>
+  <div class="table-responsive table-custom-scrollbar p-0" style=" max-height: 30vh !important">
+    <table class="table table-sm table-bordered table-hover m-0 p-0">
+      <thead>
+        <tr style="height: 36px;">
+          <th class="text-center">เลขที่เอกสาร</th>
+          <th class="text-center">รหัสลูกค้า</th>
+          <th class="text-center">รหัส MaxCard</th>
+          <th class="text-center">ชื่อลูกค้า</th>
+          <th class="text-center">วันที่มีผล</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- class="{{SelectQuotation === item ? 'bg-dark':''}}"  (click)="SelectQuotation = item" -->
+        <tr *ngFor="let item of ArrFilterQuotation;let i = index"  role="button" (click)=ActiveModal.close(item) >
+          <td class="text-center">{{ item.DocNo }}</td>
+          <td >{{ item.CustCode }}</td>
+          <td class="text-center">{{ item.MaxCardId }}</td>
+          <td >{{ item.CustName }}</td>
+          <td class="text-center">{{ item.StartDate | date:'dd/MM/yyyy'}} ถึง {{ item.FinishDate | date:'dd/MM/yyyy'}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<!-- <div class="modal-footer border-0">
+  <button class="btn btn-primary px-3"  (click)=ActiveModal.close(SelectQuotation)>ตกลง</button>
+  <button type="button" class="btn btn-warning px-3" data-dismiss="modal" (click)=ActiveModal.dismiss()>ยกเลิก</button>
+</div> -->

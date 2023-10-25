@@ -1,0 +1,109 @@
+<div *ngIf="isUserAuthenticated()" class="card">
+    <div class="card-header bg-header-page">รายการรับโอนวัสดุสิ้นเปลือง</div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-12" style="text-align: right;">
+                <button class="btn btn-primary" routerLink="/SupplyTransferIn/New">
+                    <i class="fa fa-plus"></i>
+                    &nbsp;เพิ่มเอกสาร
+                </button>
+                <!-- &nbsp;
+                <button class="btn btn-primary" data-toggle="collapse" data-target="#criteria">
+                    <i class="fa fa-search"></i>
+                    &nbsp;ค้นหาข้อมูล
+                </button> -->
+            </div>
+        </div>
+        <!-- End Of Panel Button -->
+        <div class="row">
+            <div class="col-12">
+                <!-- style="padding-left: 1.5%; padding-right: 1.5%; padding-top: 0.5%;" -->
+                <div class="row border-bottom border-left border-right border-top m-0 pt-3 shadow">
+                    <!-- style="background-color: #f3ffe2; padding: 2%; border-radius: 5px 0px 0px 5px;" -->
+                    <div class="col-6 topic">
+                        <mat-form-field appearance="fill" style="width: 100% !important">
+                            <mat-label>ค้นหา</mat-label>
+                            <!-- (input)="findByValue(filterValue)" -->
+                            <input matInput type="text" [(ngModel)]="filterValue"
+                                (keyup.enter)="FindByValue(filterValue)" placeholder="คำค้นหา">
+                        </mat-form-field>
+                    </div>
+                    <!-- style="background-color: #f3ffe2; padding: 2%; border-radius: 5px 0px 0px 5px;" -->
+                    <div class="col-4 topic">
+                        <mat-form-field appearance="fill" style="width: 100% !important">
+                            <mat-label>วันที่</mat-label>
+                            <mat-date-range-input [rangePicker]="picker" [formGroup]="dateRange">
+                                <input matStartDate formControlName="start" placeholder="จากวันที่">
+                                <input matEndDate formControlName="end" placeholder="ถึงวันที่">
+                            </mat-date-range-input>
+                            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                            <mat-date-range-picker #picker></mat-date-range-picker>
+                        </mat-form-field>
+                    </div>
+                    <!-- style="background-color: #f3ffe2; padding: 2%; border-radius: 0px 5px 5px 0px; padding-top: 6%;" -->
+                    <div class="col-2">
+                        <button class="btn btn-primary h-75 w-100" (click)="FindByValue(filterValue)">
+                            <i class="fa fa-search"></i>
+                            &nbsp;ค้นหา
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End Of Search Panel -->
+        <div *ngIf="dataSource">
+            <table mat-table [dataSource]="dataSource" matSort
+                class="mat-elevation-z8 table table-sm table-bordered table-hover mb-0 mt-3">
+                <ng-container matColumnDef="no">
+                    <th class="text-center text-nowrap" mat-header-cell *matHeaderCellDef>
+                        ลำดับ
+                    </th>
+                    <td class="text-center p-2" mat-cell *matCellDef="let element; let i = index">
+                        {{no + (i + 1)}}
+                    </td>
+                </ng-container>
+                <ng-container matColumnDef="docno">
+                    <th class="text-center text-nowrap" mat-header-cell *matHeaderCellDef>
+                        เลขที่เอกสาร
+                    </th>
+                    <td class="text-center p-2" mat-cell *matCellDef="let element">
+                        {{element.docno}}
+                    </td>
+                </ng-container>
+                <ng-container matColumnDef="docdate">
+                    <th class="text-center text-nowrap" mat-header-cell *matHeaderCellDef>
+                        วันที่เอกสาร
+                    </th>
+                    <td class="text-center p-2" mat-cell *matCellDef="let element">
+                        {{element.docdate | date:'dd/MM/yyyy'}}
+                    </td>
+                </ng-container>
+                <ng-container matColumnDef="requestfrom">
+                    <th class="text-center text-nowrap" mat-header-cell *matHeaderCellDef>
+                        สาขาที่ร้องขอปรับปรุง
+                    </th>
+                    <td class="text-left p-2" mat-cell *matCellDef="let element">
+                        {{element.brncodefrom}} : {{element.brnnamefrom}}
+                    </td>
+                </ng-container>
+                <ng-container matColumnDef="docstatus">
+                    <th class="text-center text-nowrap" mat-header-cell *matHeaderCellDef>
+                        สถานะเอกสาร
+                    </th>
+                    <td class="text-center p-2" mat-cell *matCellDef="let element">
+                        <!-- {{ SvDefault.GetThaiDocStatus( element.docstatus)}} -->
+                        <span [ngClass]="element.docstatus === 'ยกเลิก'? 'text-danger':''">{{element.docstatus}}</span>
+                    </td>
+                </ng-container>
+                <tbody>
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns" class="text-center align-middle"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns" role="button"
+                        (click)="navigateToProfile(row.guid)"></tr>
+                </tbody>
+            </table>
+            <mat-paginator [length]="length" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions"
+                (page)="pageEvent = $event; OnPaginateChange($event)" showFirstLastButtons>
+            </mat-paginator>
+        </div>
+    </div>
+</div>

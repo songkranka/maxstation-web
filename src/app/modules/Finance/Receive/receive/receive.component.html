@@ -1,0 +1,832 @@
+<div *ngIf="isUserAuthenticated()">
+  <div class="card pr-7">
+    <div class="card-header bg-header-page ">เอกสารรับชำระเงิน
+      <div class="ml-auto">
+        <div [ngClass]=this.getBackgroundRibbon()><label class="ribbon-1-text">{{status}}</label></div>
+      </div>
+    </div>
+    <div class="card-body">
+
+      <div class="form-horizontal">
+
+      </div>
+      <!--/form-horizontal-->
+
+      <!-- Row -->
+      <div class="row">
+        <!-- ========== Col01 ========== -->
+        <div class="col-12 col-sm-12 col-md-6">
+          <!-- Row -->
+          <div class="row form-group" [formGroup]="myGroup">
+            <div class="col-4 topic text-right">เลขที่เอกสาร :</div>
+            <div class="col-6 data">{{document.DocNo}}</div>
+          </div>
+
+          <!-- Row -->
+          <div class="row form-group" [formGroup]="myGroup">
+            <div class="col-4 topic text-right" style="text-align: right;">รหัสลูกค้า : </div>
+            <div class="col-6 data ">
+              <div class="input-group">
+                <input class="form-control data" [disabled]="true" style="height: 36px;" value="{{document.CustCode}}">
+                <app-CustomerModal #modalCustomer (OnSelectCustomer)="customer = $event;addCustomer()">
+                </app-CustomerModal>
+                <!-- data-toggle="modal" data-target="#modal-getCustomer" (click)="getCustomerList()" -->
+                <button class="btn btn-primary" (click)="modalCustomer.ShowModal()"
+                  style="border-bottom-left-radius: 0px; border-top-left-radius: 0px; width: 40px; height: 36px;">
+                  <i class="fa fa-search"></i>
+                </button>
+
+                <div class="modal fade" role="dialog" id="modal-getCustomer" aria-labelledby="modal-test"
+                  aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content" style="width: 200% !important; margin-left: -45%; margin-top: 20%;">
+                      <div class="modal-header bg-header" style="height: 40px; padding-top: 10px;">
+                        <span class="modal-title h6">ข้อมูลลูกค้า</span>
+                        <button type="button" class="close" data-dismiss="modal">&times;
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <!-- Row -->
+                        <div class="row">
+                          <div class="col-10 topic">
+                            <label>ค้นหาข้อมูลลูกค้า : </label>
+                          </div>
+                        </div>
+
+                        <!-- Row -->
+                        <div class="row">
+                          <div class="col-10" [formGroup]="myGroup">
+                            <input type="text" class="form-control" formControlName="searchCustomer"
+                              placeholder="กรุณาใส่คำที่ต้องการค้นหา" />
+                          </div>
+                          <div class="col-2" style="padding-right: 3%; width: 100%;">
+                            <button class="btn btn-primary" (click)="getCustomerList()">
+                              <i class="fa fa-search" style="font-size: 15px;"></i>&nbsp;ค้นหา
+                            </button>
+                          </div>
+                        </div>
+                        <br>
+
+                        <!-- Row -->
+                        <div class="row">
+                          <div class="col-12" style="padding-left: 3%; padding-right: 3%;">
+                            <form [formGroup]="myGroup">
+                              <div class="row">
+                                <div class="table-responsive" style=" max-height: 30vh !important">
+                                  <table class="table table-sm table-bordered table-hover">
+                                    <thead>
+                                      <tr style="height: 36px;">
+                                        <th style="text-align: center; width: 10%;">รหัสลูกค้า</th>
+                                        <th style="text-align: left; width: 20%;">ชื่อ</th>
+                                        <th style="text-align: left; width: 50%;">ที่อยู่</th>
+                                        <th style="text-align: center; width: 20%;">เบอร์โทรศัพท์</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                      <tr *ngFor="let item of customerList;let i = index" class="trStyle">
+                                        <td (click)="selectedCustomer(i)" style="text-align: center;">{{ item.CustCode
+                                          }}</td>
+                                        <td (click)="selectedCustomer(i)" style="text-align: left;">
+                                          <label class="hidden-box" title="{{ item.CustName }}">
+                                            <label class="hidden-text" style="font-weight: 400 !important;">{{
+                                              item.CustName }}</label>
+                                          </label>
+                                        </td>
+                                        <td (click)="selectedCustomer(i)" style="text-align: left;">{{ item.Address }}
+                                        </td>
+                                        <td (click)="selectedCustomer(i)" style="text-align: center;">{{ item.Phone }}
+                                        </td>
+                                      </tr>
+                                    </tbody>
+                                  </table>
+                                </div>
+                              </div>
+                            </form>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="modal-footer">
+                        <button class="btn btn-primary" (click)="addCustomer()" data-dismiss="modal" style="width: 8%;">
+                          ตกลง
+                        </button>
+                        <button type="button" class="btn btn-primary" data-dismiss="modal" style="width: 8%;">
+                          ยกเลิก
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Row -->
+          <div class="row form-group">
+            <div class="col-4 topic" style="text-align: right;" [hidden]="document.CustCode==''">ชื่อลูกค้า :</div>
+            <div class="col-8 data" style="text-align: left;">
+              <span *ngIf="!ShowCustomeInput()">{{document.CustPrefix}} {{document.CustName}}</span>
+              <!-- [(ngModel)]="document.CurRate" [(ngModel)]="document.CustName"-->
+              <input *ngIf="ShowCustomeInput()" class="form-control form-control-sm" [(ngModel)]="document.CustName"
+                [ngModelOptions]="{standalone: true}">
+            </div>
+          </div>
+
+          <!-- Row -->
+          <!--  -->
+          <div class="row form-group">
+            <div class="col-4 topic" style="text-align: right;" [hidden]="document.CustCode==''">ที่อยู่ลูกค้า :</div>
+            <div class="col-8 data" style="text-align: left;">
+              <span *ngIf="!ShowCustomeInput()">{{document.CustAddr1}}</span>
+              <input *ngIf="ShowCustomeInput()" class="form-control form-control-sm" [(ngModel)]="document.CustAddr1">
+            </div>
+          </div>
+          <div class="row form-group">
+            <div class="col-8 data offset-4">
+              <span *ngIf="!ShowCustomeInput()">{{document.CustAddr2}}</span>
+              <input *ngIf="ShowCustomeInput()" class="form-control form-control-sm" [(ngModel)]="document.CustAddr2">
+            </div>
+          </div>
+        </div>
+
+        <!-- ========== Col02 ========== -->
+        <div class="col-6">
+          <!-- Row -->
+          <div class="row form-group" [formGroup]="myGroup" style="margin-bottom: 7%;">
+            <div class="col-5 topic" style="text-align: right;">วันที่เอกสาร : </div>
+            <div class="col-6 data" style="text-align: left;">{{document.DocDate | date:'dd/MM/yyyy'}}</div>
+          </div>
+
+          <!-- Row -->
+          <div class="row form-group" [formGroup]="myGroup" style="margin-bottom: 7%;">
+            <div class="col-5 topic" style="text-align: right;">ผู้ทำรายการ : </div>
+            <div class="col-6 data" style="text-align: left;">{{document.CreatedBy}}</div>
+          </div>
+
+          <!-- Row -->
+          <div class="row form-group" [formGroup]="myGroup">
+            <div class="col-5 topic" style="text-align: right;">ประเภทการรับ : </div>
+            <div class="col-6 data" style="text-align: left;">
+              <div>
+                <ng-select formControlName="receiveType" [items]="receiveTypeSelect2" bindLabel="VALUE" bindValue="KEY"
+                  (change)="changeReceiveType()"></ng-select>
+              </div>
+            </div>
+          </div>
+          <!-- Row -->
+          <div class="row form-group">
+            <div class="col-5 topic" style="text-align: right;">เลขที่ใบเสร็จรับเงินชั่วคราว :</div>
+            <div class="col-6 data" style="text-align: left;">
+              <div>
+                <input class="form-control form-control-sm" [(ngModel)]="document.BillNo" />
+                <!-- <ng-select formControlName="receiveType" [items]="receiveTypeSelect2" bindLabel="VALUE" bindValue="KEY" (change)="changeReceiveType()"></ng-select> -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Row -->
+          <!-- <div class="row form-group">
+            <div class="col-5 topic" style="text-align: right;">สกุลเงิน : </div>
+            <div class="col-6 data" style="text-align: left; display: inline-flex;">
+              <div [formGroup]="myGroup" style="width: 50%;">
+                <ng-select formControlName="currency" [items]="currencySelect2" bindLabel="KEY" bindValue="VALUE" placeholder="เลือกสกุลเงิน" (change)="changeCurrency()" class="data" disabled></ng-select>
+              </div>
+              <div style="width: 5%;"></div>
+              <div style="width: 45%;">
+                <input type="text" class="form-control data" [(ngModel)]="document.CurRate"  style="text-align: right; height: 36px;" disabled/>
+              </div>
+            </div>
+          </div> -->
+        </div>
+      </div>
+
+      <br><br>
+      <!-- Row -->
+      <div class="row">
+        <div class="col-6">
+          <!-- Row -->
+          <div class="row form-group" [formGroup]="myGroup">
+            <div class="col-4 topic" style="text-align: right;">ประเภทตราสาร : </div>
+            <div class="col-6 data" style="text-align: left;">
+              <div>
+                <ng-select formControlName="payType" [items]="payTypeSelect2" bindLabel="VALUE" bindValue="KEY"
+                  (change)="changePayType()"></ng-select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-6">
+          <!-- Row -->
+          <div class="row form-group" [formGroup]="myGroup" [hidden]=chequeDate>
+            <div class="col-5 topic" style="text-align: right;">ลงวันที่ : </div>
+            <div class="col-6 data" style="text-align: left;">
+              <div>
+                <input type="text" class="form-control" formControlName="payDate" placeholder="dd/mm/yyyy" ngbDatepicker
+                  #doc_date="ngbDatepicker" (click)="doc_date.toggle()" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row -->
+      <div class="row">
+        <!-- ========== Col01 ========== -->
+        <div class="col-6">
+          <!-- Row -->
+          <div class="row form-group" [formGroup]="myGroup" [hidden]="bankNo">
+            <div class="col-4 topic" style="text-align: right;">ธนาคาร : </div>
+            <div class="col-6 data" style="text-align: left;">
+              <div class="input-group">
+                <input class="form-control data" [disabled]="true" style="height: 36px;" value="{{document.BankNo}}">
+                <button class="btn btn-primary" data-toggle="modal" data-target="#modal-getBank" (click)="getBankList()"
+                  style="border-bottom-left-radius: 0px; border-top-left-radius: 0px; width: 40px; height: 36px;">
+                  <i class="fa fa-search"></i>
+                </button>
+
+                <div class="modal fade" role="dialog" id="modal-getBank" aria-labelledby="modal-test"
+                  aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content" style="width: 200% !important; margin-left: -45%; margin-top: 20%;">
+                      <div class="modal-header bg-header" style="height: 40px; padding-top: 10px;">
+                        <span class="modal-title h6">ข้อมูลธนาคาร</span>
+                        <button type="button" class="close" data-dismiss="modal">&times;
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <!-- Row -->
+                        <div class="row">
+                          <div class="col-10 topic">
+                            <label>ค้นหาข้อมูลธนาคาร : </label>
+                          </div>
+                        </div>
+
+                        <!-- Row -->
+                        <div class="row">
+                          <div class="col-10" [formGroup]="myGroup">
+                            <input type="text" class="form-control" formControlName="searchBank"
+                              placeholder="กรุณาใส่คำที่ต้องการค้นหา" />
+                          </div>
+                          <div class="col-2" style="padding-right: 3%; width: 100%;">
+                            <button class="btn btn-primary" (click)="getBankList()">
+                              <i class="fa fa-search" style="font-size: 15px;"></i>&nbsp;ค้นหา
+                            </button>
+                          </div>
+                        </div>
+                        <br>
+
+                        <!-- Row -->
+                        <div class="row">
+                          <div class="col-12" style="padding-left: 3%; padding-right: 3%;">
+                            <form [formGroup]="myGroup">
+                              <div class="row">
+                                <div class="table-responsive" style=" max-height: 30vh !important">
+                                  <table class="table table-sm table-bordered table-hover">
+                                    <thead>
+                                      <tr style="height: 36px;">
+                                        <th style="text-align: center; width: 20%;">รหัสธนาคาร</th>
+                                        <th style="text-align: left; width: 50%;">ชื่อ</th>
+                                        <th style="text-align: center; width: 30%;">เลขที่บัญชี</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                      <tr *ngFor="let item of bankList;let i = index" class="trBankStyle">
+                                        <td (click)="selectedBank(i)" style="text-align: center;">{{ item.BankCode }}
+                                        </td>
+                                        <td (click)="selectedBank(i)" style="text-align: left;">{{ item.BankName }}</td>
+                                        <td (click)="selectedBank(i)" style="text-align: center;">{{ item.AccountNo }}
+                                        </td>
+                                      </tr>
+                                    </tbody>
+                                  </table>
+                                </div>
+                              </div>
+                            </form>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="modal-footer">
+                        <button class="btn btn-primary" (click)="addBank()" data-dismiss="modal" style="width: 8%;">
+                          ตกลง
+                        </button>
+                        <button type="button" class="btn btn-primary" data-dismiss="modal" style="width: 8%;">
+                          ยกเลิก
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Row -->
+          <div class="row form-group" [formGroup]="myGroup" [hidden]="bankName">
+            <div class="col-4 topic" style="text-align: right;">ชื่อธนาคาร :</div>
+            <div class="col-6 data" style="text-align: left;">{{document.BankName}}</div>
+          </div>
+
+          <!-- Row -->
+          <div class="row form-group" [formGroup]="myGroup" [hidden]="accNo">
+            <div class="col-4 topic" style="text-align: right;">เลขที่บัญชี :</div>
+            <div class="col-6 data" style="text-align: left;">{{document.AccountNo}}</div>
+          </div>
+
+          <!-- Row -->
+          <div class="row form-group" [hidden]="payNo">
+            <div class="col-4 topic" style="text-align: right;">หมายเลขตราสาร :</div>
+            <div class="col-6 data" style="text-align: left;">
+              <input type="text" class="form-control" [(ngModel)]="document.PayNo" />
+            </div>
+          </div>
+        </div>
+
+        <!-- ========== Col02 ========== -->
+        <div class="col-6">
+        </div>
+      </div>
+
+      <!-- Row -->
+      <div class="row" style="margin-bottom: 0.2%;">
+        <div class="col-12">
+          <div class="card-body" style="padding-right: 0px;margin-bottom: -30px;padding-bottom: 0px;">
+            <div class="btn btn-primary" style="float: right !important; height: 36px;" (click)="addRow()">&nbsp;+
+              รายการ</div> &nbsp;&nbsp;
+          </div>
+        </div>
+      </div>
+
+      <!-- Row -->
+      <div class="row">
+        <div class="col-12">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th class="text-center text-nowrap">รหัสรายการ</th>
+                  <th class="text-center text-nowrap">ชื่อรายการ</th>
+                  <th class="text-center text-nowrap">เลขที่บัญชี</th>
+                  <th class="text-center text-nowrap">หมายเหตุ</th>
+                  <th class="text-center text-nowrap">จำนวนเงิน</th>
+                  <th class="text-center text-nowrap">ลบ</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of lines; let i=index">
+                  <td class="text-center text-nowrap pr-0 align-middle">
+                    <div class="input-group input-group-sm w-100 mr-0">
+                      <!-- style="height: 36px; width: 100px; text-align: center; " -->
+                      <input disabled class="form-control" value="{{item.PdId}}">
+                      <div class="input-group-append">
+                        <!-- style="border-bottom-left-radius: 0px; border-top-left-radius: 0px; text-align: center; width: 40px; height: 36px; margin-top: -7px;" -->
+                        <button class="btn btn-primary " data-toggle="modal" data-target="#modal-getProduct"
+                          (click)="setRowFocus(i)">
+                          <i class="fa fa-search"></i>
+                        </button>
+                      </div>
+                    </div>
+                    <div class="modal fade" role="dialog" id="modal-getProduct" aria-labelledby="modal-test"
+                      aria-hidden="true">
+                      <div class="modal-dialog">
+                        <div class="modal-content" style="width: 200% !important; margin-left: -45%; margin-top: 20%;">
+                          <div class="modal-header bg-header" style="height: 40px; padding-top: 10px;">
+                            <span class="modal-title h6">ข้อมูลรายการ</span>
+                            <button type="button" class="close" data-dismiss="modal">&times;
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            <!-- Row -->
+                            <div class="row">
+                              <div class="col-10 topic">
+                                <label>ค้นหาข้อมูลรายการ : </label>
+                              </div>
+                            </div>
+
+                            <!-- Row -->
+                            <div class="row">
+                              <div class="col-10" [formGroup]="myGroup">
+                                <input type="text" class="form-control" formControlName="searchProduct"
+                                  placeholder="กรุณาใส่คำที่ต้องการค้นหา" />
+                              </div>
+                              <div class="col-2" style="padding-right: 3%; width: 100%;">
+                                <button class="btn btn-primary" (click)="getProductList()">
+                                  <i class="fa fa-search" style="font-size: 15px;"></i>&nbsp;ค้นหา
+                                </button>
+                              </div>
+                            </div>
+                            <br>
+
+                            <!-- Row -->
+                            <div class="row">
+                              <div class="col-12" style="padding-left: 3%; padding-right: 3%;">
+                                <form [formGroup]="myGroup">
+                                  <div class="row">
+                                    <div class="table-responsive" style=" max-height: 30vh !important">
+                                      <table class="table table-sm table-bordered table-hover">
+                                        <thead>
+                                          <tr style="height: 36px;">
+                                            <th style="text-align: center; width: 20%;">รหัสรายการ</th>
+                                            <th style="text-align: left; width: 50%;">ชื่อรายการ</th>
+                                            <th style="text-align: left; width: 30%;">เลขที่บัญชี</th>
+                                          </tr>
+                                        </thead>
+                                        <tbody>
+                                          <tr *ngFor="let item of productList; let i = index" class="trPdStyle">
+                                            <td (click)="selectedProduct(i)" style="text-align: center;">{{ item.PdId }}
+                                            </td>
+                                            <td (click)="selectedProduct(i)" style="text-align: left;">
+                                              <label class="hidden-box" title="{{ item.BankName }}">
+                                                <label class="hidden-text" style="font-weight: 400 !important;">{{
+                                                  item.PdName }}</label>
+                                              </label>
+                                            </td>
+                                            <td (click)="selectedProduct(i)" style="text-align: left;">{{ item.AcctCode
+                                              }}</td>
+                                          </tr>
+                                        </tbody>
+                                      </table>
+                                    </div>
+                                  </div>
+                                </form>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button class="btn btn-primary" (click)="addProduct()" data-dismiss="modal"
+                              style="width: 8%;">
+                              ตกลง
+                            </button>
+                            <button type="button" class="btn btn-primary" data-dismiss="modal" style="width: 8%;">
+                              ยกเลิก
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="text-left align-middle">{{ item.PdName }} </td>
+                  <td class="text-center align-middle">{{ item.AccountNo }} </td>
+                  <!--  style="padding: 2px !important;" -->
+                  <td class="text-left align-middle">
+                    <!-- style="height: 36px; font-size: 15px;" -->
+                    <input type="text" class="form-control form-control-sm w-100" [(ngModel)]="item.Remark" />
+                  </td>
+                  <!-- style="padding: 2px !important;" -->
+                  <td class="text-right align-middle">
+                    <app-InputNumberFormat [(InputNumber)]=item.ItemAmt (OnChange)=calculateRow(i)>
+                    </app-InputNumberFormat>
+                    <!-- <input type="number" class="form-control" [(ngModel)]="item.ItemAmt" (blur)="calculateRow(i)" style="height: 36px; text-align: right; font-size: 15px;"/> -->
+                  </td>
+                  <td class="text-center btn-outline-danger align-middle" role="button" (click)="deleteRow(i)"><i
+                      class="fas fa-trash-alt"></i></td>
+                </tr>
+                <tr>
+                  <td [hidden]="lines.length > 0" colspan="6" style="text-align: center; border: 0px;">
+                    ------------------------------ กรุณาเพิ่มรายการสินค้า ------------------------------
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <br>
+      <div class="row">
+        <div class="col-6">
+          <div class="row form-group" [formGroup]="myGroup">
+            <div class="col-12">
+              <label class="topic">หมายเหตุ : </label>
+              <textarea class="form-control" formControlName="remarks" placeholder="" rows="5"></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="row form-group">
+            <div class="col-7">
+              <label class="topic" style="float: right !important;">จำนวนเงินชำระ : </label>
+            </div>
+            <div class="col-5" style="text-align: right;">{{document.SubAmt | number: '1.2-2'}}</div>
+          </div>
+
+          <!-- Row -->
+          <div class="row form-group">
+            <div class="col-7">
+              <label class="topic" style="float: right !important;">ค่าธรรมเนียม : </label>
+            </div>
+            <div class="col-5" style="text-align: right;">
+              <div>
+                <app-InputNumberFormat [(InputNumber)]=document.FeeAmt (OnChange)=validateFee()></app-InputNumberFormat>
+                <!-- <input type="number" class="form-control" [(ngModel)]="document.FeeAmt" style="text-align: right;" (blur)="validateFee()"/> -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Row -->
+          <div class="row form-group">
+            <div class="col-7">
+              <label class="topic" style="float: right !important;">ส่วนลดจ่าย : </label>
+            </div>
+            <div class="col-5" style="text-align: right;">
+              <div>
+                <app-InputNumberFormat [(InputNumber)]=document.DiscAmt (OnChange)=validateDisc()>
+                </app-InputNumberFormat>
+                <!-- <input type="number" class="form-control" [(ngModel)]="document.DiscAmt" style="text-align: right;" (blur)="validateDisc()"/> -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Row -->
+          <div class="row form-group">
+            <div class="col-7">
+              <label class="topic" style="float: right !important;">ภาษีหัก ณ ที่จ่าย : </label>
+            </div>
+            <div class="col-5" style="text-align: right;">
+              <div>
+                <app-InputNumberFormat [(InputNumber)]="document.WhtAmt" (OnChange)="validateWht()">
+                </app-InputNumberFormat>
+                <!-- <input type="number" class="form-control" [(ngModel)]="document.WhtAmt" style="text-align: right;" (blur)="validateWht()"/> -->
+              </div>
+            </div>
+          </div>
+
+          <div *ngFor="let item of vatGroupList | keyvalue">
+            <!-- Row -->
+            <div class="row form-group">
+              <div class="col-7">
+                <label class="topic" style="float: right !important;">ภาษีมูลค่าเพิ่ม อัตรา {{item.value.VatRate}}%
+                  :</label>
+              </div>
+              <!-- {{item.value.VatAmt | number: '1.2-2'}} -->
+              <div class="col-5" style="text-align: right;">{{document.VatAmt | number: '1.2-2'}}</div>
+            </div>
+          </div>
+
+          <!-- Row -->
+          <div class="row form-group">
+            <div class="col-7">
+              <label class="topic" style="float: right !important;">ภาษีมูลค่าเพิ่ม : </label>
+            </div>
+            <div class="col-5" style="text-align: right;">{{document.VatAmt | number: '1.2-2'}}</div>
+          </div>
+
+          <!-- Row -->
+          <div class="row form-group">
+            <div class="col-7">
+              <label class="topic" style="float: right !important;">ยอดเงินชำระรวม : </label>
+            </div>
+            <div class="col-5" style="text-align: right;">{{document.NetAmt | number: '1.2-2'}}</div>
+          </div>
+        </div>
+      </div>
+      <!-- Row -->
+
+
+      <!-- Row -->
+
+
+    </div>
+  </div>
+
+  <div class="card" style="margin-right: 6.5%;" [hidden]="!showTXComponent">
+    <div class="card-header bg-header-page "
+      style="font-size: 16px !important; height: 40px;  padding-top: 10px; font-weight: 600;">{{headerCardTX}}
+    </div>
+    <div class="card-body">
+      <!-- Row -->
+      <div class="row">
+        <!-- ========== Col01 ========== -->
+        <div class="col-12 col-md-6">
+          <!-- Row -->
+          <div class="row form-group" [formGroup]="myGroup">
+            <div class="col-4 topic" style="text-align: right;">แสดงตาม : </div>
+            <div class="col-8 data" style="text-align: left;">
+              <div>
+                <ng-select class="w-100" formControlName="docType" [items]="docTypeSelect2" bindLabel="KEY"
+                  bindValue="VALUE"></ng-select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Row -->
+          <div class="row form-group" [formGroup]="myGroup">
+            <div class="col-4 topic" style="text-align: right;">สาขา : </div>
+            <div class="col-8 data" style="text-align: left;">
+              <div>
+                <ng-select formControlName="branchTX" [items]="branchSelect2" bindLabel="KEY" bindValue="VALUE"
+                  placeholder="เลือกสาขา"></ng-select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Row -->
+          <div class="row form-group" [formGroup]="myGroup">
+            <div class="col-4 topic" style="text-align: right;"></div>
+            <div class="col-6 data" style="text-align: left;">
+              <div>
+                <div class="btn btn-primary" style="float: right !important; height: 36px;"
+                  (click)="getTaxInvoiceList()">&nbsp;โหลดข้อมูล</div> &nbsp;&nbsp;
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ========== Col02 ========== -->
+        <div class="col-12 col-md-6">
+          <!-- Row -->
+          <div class="row form-group" [formGroup]="myGroup">
+            <div class="col-4 topic" style="text-align: right;">วันที่เอกสาร: </div>
+            <div class="col-8 data" style="text-align: left;">
+              <!-- <div class="input-group">
+                <input  class="form-control data" [readonly]="true" value="{{StartDateShow.day}}/{{StartDateShow.month}}/{{StartDateShow.year}} ถึง {{FinishDateShow.day}}/{{FinishDateShow.month}}/{{FinishDateShow.year}}" style="font-size: 15px; height: 36px;">
+                <input #dpStartDate class="form-control" placeholder="yyyy-mm-dd" type="hidden" name="dpStartDate" [value]="formatter.format(StartDate)" (input)="StartDate = validateInput(StartDate, dpStartDate.value)" style="font-size: 15px;">
+                <input name="datepicker" type="hidden" class="form-control" ngbDatepicker #datepicker="ngbDatepicker"  (dateSelect)="onDateSelection($event)" [displayMonths]="2" [dayTemplate]="t" outsideDays="hidden" [startDate]="StartDate!" z-index="9999" style="font-size: 13px;">
+
+                <ng-template #t let-date let-focused="focused">
+                  <span class="custom-day" [class.focused]="focused" [class.range]="isRange(date)" [class.faded]="isHovered(date) || isInside(date)" (mouseenter)="hoveredDate = date" (mouseleave)="hoveredDate = null">
+                        {{ date.day }}
+                  </span>
+                </ng-template>
+                <div class="input-group-append">
+                  <button class="btn btn-primary calendar" (click)="datepicker.toggle()" type="button" style="height: 36px;">
+                    <i class="far fa-calendar-alt"></i>
+                  </button>
+                </div>
+              </div> -->
+
+              <mat-form-field appearance="fill" style="width: 100% !important">
+                <!-- <mat-label>วันที่</mat-label> -->
+                <mat-date-range-input [rangePicker]="picker" [formGroup]="dateRange">
+                  <input matStartDate formControlName="payDateStart" placeholder="จากวันที่">
+                  <input matEndDate formControlName="payDateEnd" placeholder="ถึงวันที่" (dateInput)="changeEvent()">
+                </mat-date-range-input>
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-date-range-picker #picker></mat-date-range-picker>
+              </mat-form-field>
+
+            </div>
+          </div>
+
+          <!-- Row -->
+          <div class="row form-group" [formGroup]="myGroup">
+            <div class="col-4 topic" style="text-align: right;">ค้นหา :</div>
+            <div class="col-8 data" style="text-align: left;">
+              <input type="text" class="form-control" formControlName="searchTX" />
+            </div>
+          </div>
+
+
+
+        </div>
+      </div>
+
+      <!-- Row -->
+      <div class="row" style="margin-bottom: 0.2%;">
+        <div class="col-12">
+          <div class="card-body" style="padding-right: 0px;margin-bottom: -30px;padding-bottom: 0px;">
+            <div class="btn btn-primary" style="float: right !important; height: 36px;" (click)="calculateFIFO()">
+              ตัดหนี้แบบ FIFO</div> &nbsp;&nbsp;
+          </div>
+        </div>
+      </div>
+
+      <!-- Row -->
+      <div class="row">
+        <div class="col-12">
+          <div style="width:100%; overflow-x: scroll;">
+            <table class="table table-hover no-padding">
+              <thead>
+                <tr>
+                  <th class="text-center align-top text-nowrap">เลือก</th>
+                  <th class="text-center align-top">
+                    <div>สาขาที่ออก</div>
+                    <div>ใบวางบิล</div>
+                  </th>
+                  <th class="text-center align-top">ใบวางบิล</th>
+                  <th class="text-center align-top">
+                    <div>สาขาที่ออก</div>
+                    <div>ใบกำกับภาษี</div>
+                  </th>
+                  <th class="text-center align-top">ใบกำกับภาษี</th>
+                  <th class="text-center align-top">ประเภท</th>
+                  <th class="text-center align-top">วันที่</th>
+                  <th class="text-center align-top">จำนวนเงิน</th>
+                  <th class="text-center align-top" [hidden]="hiddenColumn">ค้างจ่าย</th>
+                  <th class="text-center align-top">ตัดชำระ</th>
+                  <th class="text-center align-top">ยอดคงเหลือ</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of receivePayList; let i=index">
+                  <td style="padding: 2px !important; vertical-align: middle;">
+                    <input type="checkbox" class="form-control form-control-sm" [(ngModel)]="item.Selected"
+                      style="font-size: 3px;" />
+                  </td>
+                  <td class="text-center">{{ item.BillBrnCode }} </td>
+                  <td class="text-center">{{ item.BillNo }} </td>
+                  <td class="text-center">{{ item.TxBrnCode }} </td>
+                  <td class="text-center">{{ item.TxNo }} </td>
+                  <td class="text-center">{{ item.ItemType }} </td>
+                  <td class="text-center">{{ item.TxDate | date:'dd/MM/yyyy'}} </td>
+                  <td class="text-right">{{ item.TxAmt | number: '1.0-2'}} </td>
+                  <td class="text-right" [hidden]="hiddenColumn">{{ item.TxBalance | number: '1.0-2'}} </td>
+                  <td class="text-right" style="padding: 2px !important;">
+                    <input type="number" class="form-control" [(ngModel)]="item.PayAmt" (blur)="calculateRowTX(i)"
+                      style="height: 36px; text-align: right; font-size: 15px;" />
+                  </td>
+                  <td class="text-right">{{ item.RemainAmt | number: '1.0-2'}} </td>
+                </tr>
+                <tr>
+                  <td [hidden]="receivePayList.length > 0" colspan="11" class="text-center">
+                    ------------------------------ กรุณาโหลดข้อมูล ------------------------------
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-right: 6.5%;" *ngIf="ArrFinReceivePay.length > 0">
+    <div class="card-header  bg-header-page">รายการตัดชำระหนี้</div>
+    <div class="card-body">
+      <table class="table table-sm table-hover table-bordered">
+        <thead>
+          <tr>
+            <th class="text-center align-middle">สาขาที่ออกใบวางบิล</th>
+            <th class="text-center align-middle">ใบวางบิล</th>
+            <th class="text-center align-middle">สาขาที่ออกใบกำกับภาษี</th>
+            <th class="text-center align-middle">ประเภท</th>
+            <th class="text-center align-middle">ใบกำกับภาษี</th>
+            <th class="text-center align-middle">วันที่ใบกำกับ</th>
+            <th class="text-center align-middle">จำนวนเงิน</th>
+            <th class="text-center align-middle" [hidden]="hiddenColumn">ค้างชำระ</th>
+            <th class="text-center align-middle">ตัดชำระหนี้</th>
+            <th class="text-center align-middle">ยอดคงเหลือ</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of ArrFinReceivePay">
+            <!-- สาขาที่ออกใบวางบิล -->
+            <td class="align-middle">{{ item.BillBrnCode }}</td>
+            <!-- ใบวางบิล -->
+            <td class="align-middle">{{ item.BillNo }}</td>
+            <!-- สาขาที่ออกใบกำกับภาษี -->
+            <td class="align-middle">{{ item.TxBrnCode }}</td>
+            <!-- ประเภท -->
+            <td class="align-middle">{{ item.ItemType }}</td>
+            <!-- ใบกำกับภาษี -->
+            <td class="align-middle">{{ item.TxNo }}</td>
+            <!-- วันที่ใบกำกับ -->
+            <td class="text-center align-middle">{{ item.TxDate | date:'dd/MM/yyyy'}}</td>
+            <!-- จำนวนเงิน -->
+            <td class="text-right align-middle">{{ item.TxAmt | number: '1.2-2'}}</td>
+            <!-- ค้างชะระ -->
+            <td class="text-right align-middle" [hidden]="hiddenColumn">{{ item.TxBalance | number: '1.2-2'}}</td>
+            <!-- ตัดชำระหนี้ -->
+            <td class="text-right align-middle">{{item.PayAmt | number: '1.2-2'}}</td>
+            <!-- ยอดคงเหลือ -->
+            <td class="text-right align-middle">{{ item.RemainAmt | number: '1.2-2'}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+
+  <div class="right-bar" style="padding-top: 4%;">
+    <button class="btn circle-button circle-buttonSave" (click)="saveDocument()" [hidden]="btnSave" data-tooltip="Save"
+      data-tooltip-location="left">
+      <i class="far fa-save"></i>
+    </button>
+    <button class="btn circle-button circle-buttonApprove" (click)="approveDocument()" [hidden]="btnApprove"
+      data-tooltip="Approve" data-tooltip-location="left">
+      <i class="fas fa-thumbs-up"></i>
+    </button>
+    <button class="btn circle-button circle-buttonReject" (click)="rejectDocument()" [hidden]="btnReject"
+      data-tooltip="Reject" data-tooltip-location="left">
+      <i class="fas fa-thumbs-down"></i>
+    </button>
+    <!-- <button class="btn circle-button circle-buttonComplete" (click)="completeDocument()" [hidden]="btnComplete" data-tooltip="Complete" data-tooltip-location="left">
+      <i class="fas fa-check"></i>
+    </button> -->
+    <button class="btn circle-button circle-buttonPrint" (click)="printDocument()" [hidden]="btnPrint"
+      data-tooltip="Print" data-tooltip-location="left">
+      <i class="fas fa-print"></i>
+    </button>
+    <button class="btn circle-button circle-buttonCancel" (click)="cancelDocument()" [hidden]="btnCancel"
+      data-tooltip="Cancel" data-tooltip-location="left">
+      <i class="fas fa-times"></i>
+    </button>
+    <button class="btn circle-button circle-buttonClear" (click)="clearDocument()" [hidden]="btnClear"
+      data-tooltip="Clear" data-tooltip-location="left">
+      <i class="fas fa-eraser"></i>
+    </button>
+    <button class="btn circle-button circle-buttonBack" routerLink="/ReceiveList" [hidden]="btnBack" data-tooltip="Back"
+      data-tooltip-location="left">
+      <i class="fas fa-undo"></i>
+    </button>
+  </div>
+</div>

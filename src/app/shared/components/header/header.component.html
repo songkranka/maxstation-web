@@ -1,0 +1,57 @@
+<!-- Navbar -->
+<nav class="main-header navbar navbar-expand navbar-white navbar-light" style="background-color: #01872e !important; height: 50px; font-size: 15px;">
+  <!-- Left navbar links -->
+  <ul class="navbar-nav" >
+    <li class="nav-item">
+      <a class="nav-link" data-widget="pushmenu" href="#" role="button" style="color: white; padding-top: 12px;">
+        <i class="fas fa-bars"></i>
+      </a>
+    </li>
+    <li class="nav-item d-none d-sm-inline-block">
+      <div class="nav-link" style="color: white;">
+        &nbsp;&nbsp;<i class="fas fa-calendar-alt">&nbsp; : {{sharedService.systemDate | date:'dd/MM/yyyy'}}</i>
+      </div>
+    </li>
+  </ul>
+
+  <!-- Right navbar links -->
+  <ul class="navbar-nav ml-auto">
+    <li class="nav-item dropdown" *ngIf="SvDefault.IsArray(ArrNoti)">
+      <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false" style="color: white; padding-top: 12px;">
+        <i class="fas fa-bell"></i>
+        <span class="badge badge-danger badge-pill" style="left: -5px;top: -10px;position: relative;">{{ArrNoti.length}}</span>
+      </a>
+      <div class="dropdown-menu">
+        <a *ngFor="let item of ArrNoti;let i=index" role="button"  
+          class="dropdown-item" (click)="CloseNoti(ArrNoti[i])" 
+          style="width: 300px;"
+        >
+        <label class=" hidden-box" [title]="ArrNoti[i].Remark" role="button">
+          <label class="hidden-text font-weight-normal" role="button" [innerHTML]=Sanitizer.bypassSecurityTrustHtml(ArrNoti[i].Remark) ></label>
+        </label>
+        </a>
+      </div>
+    </li>
+    <li class="nav-item d-none d-sm-inline-block">
+      <div class="nav-link" style="color: white; padding-top: 12px;">
+        <i class="fas fa-gas-pump"> : </i>
+      </div>
+    </li>
+    <li class="nav-item d-none d-sm-inline-block">
+      <div class="nav-link" style="color: white;" [formGroup]="myGroup">
+        <ng-select formControlName="branch" [items]="branchSelect2" bindLabel="KEY" bindValue="VALUE" placeholder="กรุณาเลือกสาขา" (change)="changeBranch()" style="margin-top: -6px; width: 200px;" [clearable]="false"></ng-select>
+      </div>
+    </li>
+    <li class="nav-item d-none d-sm-inline-block">
+      <div class="nav-link" style="color: white;">
+        {{user}}
+      </div>
+    </li>
+    <li class="nav-item d-none d-sm-inline-block">
+      <div class="nav-link" style="color: white; cursor: pointer;">
+        <i class="fas fa-duotone fa-key" (click)="logOut()"></i>
+      </div>
+    </li>
+  </ul>
+</nav>
+<!-- /.navbar -->

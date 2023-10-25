@@ -1,0 +1,206 @@
+<!-- *ngIf="isUserAuthenticated()" -->
+<div class="card rounded-0 shadow-none" style="margin-right: 6.5%;">
+  <div class="card-header bg-header-page rounded-0 shadow-none"
+    style="font-size: 16px !important; height: 40px;  padding-top: 10px; font-weight: 600;">
+    ข้อมูลลูกค้า
+    <div class="ml-auto">
+      <div class="{{SvDefault.GetBackgroundRibbon(Customer.CustStatus)}}">
+        <label class="ribbon-1-text">{{HiddenButton?.status}}</label>
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="row pt-3">
+      <div class="col-2 text-right">รหัสลูกค้า : </div>
+      <div class="col-4">
+        <input class="form-control form-control-sm rounded-0 w-100" [(ngModel)]="Customer.CustCode"
+          [disabled]="Customer.CustStatus !== 'New'" />
+      </div>
+      <div class="col-2 text-right">SAP CODE : </div>
+      <div class="col-3">
+        <input class="form-control form-control-sm rounded-0 w-100" [(ngModel)]="Customer.MapCustCode" />
+      </div>
+    </div>
+    <div class="row pt-3">
+      <div class="col-2 text-right">คำนำหน้า : </div>
+      <div class="col-2">
+        <input class="form-control form-control-sm w-100 rounded-0" [(ngModel)]="Customer.CustPrefix" />
+      </div>
+      <div class="col-2 text-right">ชื่อลูกค้า :</div>
+      <div class="col-6">
+        <input class="form-control form-control-sm w-100 rounded-0" [(ngModel)]="Customer.CustName" />
+      </div>
+    </div>
+    <div class="row pt-3">
+      <div class="col-2 text-right">ที่อยู่ : </div>
+      <div class="col-10">
+        <input class="form-control form-control-sm w-100 rounded-0" [(ngModel)]="Customer.Address" />
+      </div>
+    </div>
+    <div class="row pt-3">
+      <div class="col-2 text-right">จังหวัด : </div>
+      <div class="col-4">
+        <input class="form-control form-control-sm w-100 rounded-0" [(ngModel)]="Customer.ProvName" />
+      </div>
+      <div class="col-2 text-right">อำเภอ : </div>
+      <div class="col-4">
+        <input class="form-control form-control-sm w-100 rounded-0" [(ngModel)]="Customer.District" />
+      </div>
+    </div>
+    <div class="row pt-3">
+      <div class="col-2 text-right">เบอร์โทรศัทพ์ : </div>
+      <div class="col-4">
+        <input class="form-control form-control-sm w-100 rounded-0" [(ngModel)]="Customer.Phone" />
+      </div>
+      <div class="col-2 text-right">Fax : </div>
+      <div class="col-4">
+        <input class="form-control form-control-sm w-100 rounded-0" [(ngModel)]="Customer.Fax" />
+      </div>
+    </div>
+    <div class="row pt-3">
+      <div class="col-2 text-right">เลขประจำตัวผู้เสียภาษี : </div>
+      <div class="col-4">
+        <input class="form-control form-control-sm w-100 rounded-0" [(ngModel)]="Customer.CitizenId" />
+      </div>
+      <div class="col-2 text-right">ชื่อผู้ติดต่อ : </div>
+      <div class="col-4">
+        <input class="form-control form-control-sm w-100 rounded-0" [(ngModel)]="Customer.ContactName" />
+      </div>
+    </div>
+
+    <div class="row pt-3">
+      <div class="col-2 text-right">ประเภทใบกำกับภาษี : </div>
+      <div class="col-4 text-left pl-3">
+        <label role="button">
+          <input class="pr-2" type="radio" name="TaxType" [(ngModel)]="Customer.BillType" value="Y" />
+          รวมบิล
+        </label>
+        <label class="pr-2" class="pl-3" role="button">
+          <input type="radio" name="TaxType" [(ngModel)]="Customer.BillType" value="N" />
+          ไม่รวมบิล
+        </label>
+      </div>
+      <div class="col-2 text-right">วงเงิน(Limit) : </div>
+      <div class="col-4">
+        <app-InputNumberFormat [(InputNumber)]="Customer.CreditLimit" InputClass="rounded-0"></app-InputNumberFormat>
+      </div>
+    </div>
+    <div class="row pt-3">
+      <div class="col-2 text-right">เงื่อนไขการวางบิล : </div>
+      <div class="col-4">
+        <input class="form-control form-control-sm w-100 rounded-0" [(ngModel)]="Customer.DueType" />
+      </div>
+      <div class="col-2 text-right">วัน(Credit) : </div>
+      <div class="col-4">
+        <app-InputNumberFormat [(InputNumber)]="Customer.CreditTerm" InputClass="rounded-0"></app-InputNumberFormat>
+      </div>
+    </div>
+    <div class="row pt-3">
+      <div class="col-2 text-right">ลูกค้าบริษัท : </div>
+      <div class="col-4">
+        <input class="form-control form-control-sm w-100 rounded-0" [(ngModel)]="Customer.CompCode" />
+      </div>
+      <div class="col-2 text-right">ลูกค้าสาขา : </div>
+      <div class="col-4">
+        <input class="form-control form-control-sm w-100 rounded-0" [(ngModel)]="Customer.BrnCode" />
+      </div>
+    </div>
+    <div class="row pt-3">
+      <div class="col-2 text-right">รหัสบันทึกบัญชี :</div>
+      <div class="col-4">
+        <input class="form-control form-control-sm w-100 rounded-0" [(ngModel)]="Customer.AccountId" />
+      </div>
+
+    </div>
+    <div class="row  my-3">
+      <div class="col-6">
+        <div class="input-group input-group-sm rounded-0">
+          <input class="form-control rounded-0" [(ngModel)]="SearchLicensePlate" (keyup.enter)="FilterCar()"
+            placeholder="ค้นหาทะเบียนรถ" />
+          <div class="input-group-append">
+            <button class="btn btn-sm btn-primary rounded-0" (click)="FilterCar()">
+              <i class="fa fa-search"></i>
+            </button>
+          </div>
+
+        </div>
+      </div>
+      <div class="col-3">
+        <input #UploadLicensePlate type="file" style="display: none;" id="UploadLicensePlate"
+          (change)="LoadFile($event)" />
+        <label class="btn btn-default btn-sm w-100 rounded-0 shadow-none" style="text-transform: none;"
+          for="UploadLicensePlate">
+          <i class="fa fa-file-import pr-3"></i> นำเข้าทะเบียนรถ
+        </label>
+      </div>
+      <!-- <div class="col-3">
+        <button
+          class="btn btn-default btn-sm w-100 rounded-0 shadow-none"
+          style="text-transform: none;"
+        >
+          <i class="fa fa-file-export pr-3"></i> Export Excel
+        </button>
+      </div> -->
+      <div class="col-3">
+        <button class="btn btn-primary btn-sm w-100 rounded-0 shadow-none" (click)="AddCar()">
+          <i class="fa fa-plus pr-3"></i> เพิ่มรายการ
+        </button>
+      </div>
+
+      <!-- <div class="col-6 text-right">
+        <button class="btn btn-primary btn-sm rounded-0 shadow-none" (click)="AddCar()">
+          <i class="fa fa-plus pr-3"></i> เพิ่มรายการ
+        </button>
+      </div> -->
+    </div>
+    <div class="table-custom-scrollbar">
+      <table class="table table-hover table-sm">
+        <thead>
+          <tr>
+            <th class="align-middle text-center">ลำดับ</th>
+            <th class="align-middle text-center">ทะเบียนรถ</th>
+            <th class="align-middle text-center" style="width:50px ;">ลบ</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of ArrCarFilter;let i=index">
+            <td>{{i+1}}</td>
+            <td>
+              <input class="form-control form-control-sm rounded-0" [(ngModel)]="item.LicensePlate" />
+            </td>
+            <td class="btn-outline-danger align-middle text-center" role="button" (click)="RemoveCar(item)">
+              <i class="fa fa-trash"></i>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<div class="right-bar mt-2">
+  <!-- [disabled]="PositionRole" -->
+  <button class="btn circle-button circle-buttonSave" (click)="SaveData()" [hidden]="HiddenButton.btnSave"
+    data-tooltip="Save" data-tooltip-location="left">
+    <i class="far fa-save"></i>
+  </button>
+  <button class="btn circle-button circle-buttonPrint" (click)="ShowModalReport()" [hidden]="HiddenButton.btnPrint"
+    data-tooltip="Print" data-tooltip-location="left">
+    <i class="fas fa-print"></i>
+  </button>
+  <button class="btn circle-button circle-buttonPrint" data-tooltip="Excel" data-tooltip-location="left"
+    (click)="exportExcel()" *ngIf="isExcel === 'Y'">
+    <i class="fas fa-file-excel"></i>
+  </button>
+  <button class="btn circle-button circle-buttonCancel" (click)="UpdateStatus('Cancel')"
+    [hidden]="HiddenButton.btnCancel" data-tooltip="Cancel" data-tooltip-location="left">
+    <i class="fas fa-times"></i>
+  </button>
+  <button class="btn circle-button circle-buttonClear" (click)="NewData()" [hidden]="HiddenButton.btnClear"
+    data-tooltip="Clear" data-tooltip-location="left">
+    <i class="fas fa-eraser"></i>
+  </button>
+  <button class="btn circle-button circle-buttonBack" routerLink="/CustomerList" [hidden]="HiddenButton.btnBack"
+    data-tooltip="Back" data-tooltip-location="left">
+    <i class="fas fa-undo"></i>
+  </button>
+</div>

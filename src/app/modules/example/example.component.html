@@ -1,0 +1,1156 @@
+<!--
+<div class="row form-group">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-header-page">Stepper</div>
+            <div class="card-body">
+
+            </div>
+        </div>
+    </div>
+
+</div>
+ -->
+ 
+ <div class="card">
+    <div class="card-header">Test Blob Log</div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-4">
+                <button class="btn btn-primary" (click)="SendBlobLog()">click</button>
+            </div>           
+        </div>
+    </div>
+</div>
+ <div class="card">
+     <div class="card-header">Test Lang</div>
+     <div class="card-body">
+         <div class="row">
+             <div class="col-4">
+                 <select class="form-control form-control-sm" [(ngModel)]="LangSelect" (change)="OnLangChange($event.target.value)">
+                    <option value="Thai">Thai</option>
+                    <option value="English">English</option>
+                    <option value="Lao">Lao</option>
+                    <option value="Myanmar">Myanmar</option>
+                 </select>
+             </div>
+             <div class="col-4">
+                 <app-LabelLang>สวัสดี</app-LabelLang>
+             </div>
+             <div class="col-4">
+                 <app-LabelLang>ไปเที่ยว</app-LabelLang>
+             </div>
+         </div>
+     </div>
+ </div>
+<div class="row">
+    <div class="col-6">
+        <div class="card">
+            <div class="card-header">Test Select Date</div>
+            <div class="card-body">
+                <div class="btn-group w-100">
+                    <button class="btn btn-sm btn-primary" (click)="TestSelectDateClick()">Test Select Date</button>
+                    <button class="btn btn-sm btn-secondary" (click)="TestSelectDate2Click()">Test Select Date From File</button>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header">Test Daily Stock</div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label for="">CompCode</label>
+                            <input type="text" class="form-control form-control-sm" [(ngModel)]="AddStockParam.CompCode">
+                        </div>
+                        <div class="form-group">
+                            <label for="">BrnCode</label>
+                            <input type="text" class="form-control form-control-sm" [(ngModel)]="AddStockParam.BrnCode">
+                        </div>
+                        <div class="form-group">
+                            <label for="">LocCode</label>
+                            <input type="text" class="form-control form-control-sm" [(ngModel)]="AddStockParam.LocCode">
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label for="">CreatedBy</label>
+                            <input type="text" class="form-control form-control-sm" [(ngModel)]="AddStockParam.CreatedBy">
+                        </div>
+                        <div class="form-group">
+                            <label for="">SysDate</label>
+                            <input type="date" class="form-control form-control-sm" [(ngModel)]="AddStockParam.SysDate">
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-sm w-100 btn-primary" (click)="AddStockParamClick()">Test Add Daily Stock</button>
+
+
+            </div>
+        </div>
+    </div>
+    <div class="col-6">
+        <div class="card">
+            <div class="card-header">Test Monthly Stock</div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label for="">CompCode</label>
+                            <input type="text" class="form-control form-control-sm" [(ngModel)]="AddStockMonthlyParam.CompCode">
+                        </div>
+                        <div class="form-group">
+                            <label for="">BrnCode</label>
+                            <input type="text" class="form-control form-control-sm" [(ngModel)]="AddStockMonthlyParam.BrnCode">
+                        </div>
+                        <div class="form-group">
+                            <label for="">LocCode</label>
+                            <input type="text" class="form-control form-control-sm" [(ngModel)]="AddStockMonthlyParam.LocCode">
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label for="">CreatedBy</label>
+                            <input type="text" class="form-control form-control-sm" [(ngModel)]="AddStockMonthlyParam.CreatedBy">
+                        </div>
+                        <div class="form-group">
+                            <label for="">Year</label>
+                            <input type="number" class="form-control form-control-sm" [(ngModel)]="AddStockMonthlyParam.Year">
+                        </div>
+                        <div class="form-group">
+                            <label for="">Month</label>
+                            <input type="number" class="form-control form-control-sm" [(ngModel)]="AddStockMonthlyParam.Month">
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-sm w-100 btn-primary" (click)="AddStockMonthlyClick()">Test Add Monthly Stock</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="pt-holding-content">
+    <div class="pt-holding-content-cover">
+        <div class="card mb-0">
+            <div class="card-body p-1">
+                <div class="text-center p-0 d-block font-weight-bold">
+                    ปรับราคาครั้งล่าสุด
+                </div>
+                <small class="text-center p-0 d-block">20/10/2020</small>
+            </div>
+        </div>
+
+        <ul>
+            <li>
+                <div class="oil-price-cover">
+                    <img src="./../../../assets/images/oil-price/t-b-7.png" />
+                    <div class="oil-price-title">
+                        <div class="name">Diesel B7</div>
+                        <div class="old-price">20.00</div>
+                        <div class="price">
+                            20.19
+                            <span class="update up">(+19)</span>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="oil-price-cover">
+                    <img src="./../../../assets/images/oil-price/t-diesel.png" />
+                    <div class="oil-price-title">
+                        <div class="name">Diesel</div>
+                        <div class="old-price">20.19</div>
+                        <div class="price">
+                            20.00
+                            <span class="update down">(-19)</span>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="oil-price-cover">
+                    <img src="./../../../assets/images/oil-price/t-b-20.png" />
+                    <div class="oil-price-title">
+                        <div class="name">Diesel B20</div>
+                        <div class="old-price">20.00</div>
+                        <div class="price">
+                            20.19
+                            <span class="update up">(+19)</span>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="oil-price-cover">
+                    <img src="./../../../assets/images/oil-price/t-n-95.png" />
+                    <div class="oil-price-title">
+                        <div class="name">Gasohol 95</div>
+                        <div class="old-price">20.19</div>
+                        <div class="price">
+                            20.00
+                            <span class="update down">(-19)</span>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="oil-price-cover">
+                    <img src="./../../../assets/images/oil-price/t-n-91.png" />
+                    <div class="oil-price-title">
+                        <div class="name">Gasohol 91</div>
+                        <div class="old-price">20.00</div>
+                        <div class="price">
+                            20.19
+                            <span class="update up">(+19)</span>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div class="pt-freespace-content">
+    <!--Stepper-->
+    <div class="row form-group">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-header-page">Stepper</div>
+                <div class="card-body">
+                    <dynamic-stepper id="step-1">
+                        <dynamic-stepper-content dynamic-step [stepID]="'step-1'" [stepIndex]="1" stepName="มิเตอร์" stepDetail="มิเตอร์">
+                            <form [formGroup]="firstFormGroup">
+                                Step 1
+                                <div class="d-flex justify-content-center">
+                                    <button class="btn btn-primary" (click)="alertWithSuccess_Stepper('step-1')">
+                                    <i class="fa fa-save"></i>&nbsp;SaveCokeeee
+                                </button>
+                                </div>
+
+                            </form>
+                        </dynamic-stepper-content>
+                        <dynamic-stepper-content dynamic-step [stepID]="'step-1'" [stepIndex]="2" stepName="วัดถัง" stepDetail="วัดถัง">
+                            <form [formGroup]="secondFormGroup">
+                                Step 2
+                                <div class="d-flex justify-content-center">
+                                    <button class="btn btn-primary" (click)="alertWithSuccess_Stepper()">
+                                    <i class="fa fa-save"></i>&nbsp;Save
+                                </button>
+                                </div>
+                            </form>
+                        </dynamic-stepper-content>
+                    </dynamic-stepper>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="row form-group">
+        <div class="card w-100">
+            <div class="card-header">Test</div>
+            <div class="card-body">
+                <app-DateTimePicker CurrentId="dat1"></app-DateTimePicker>
+            </div>
+        </div>
+    </div>
+    <!---- ### Modal ### ----->
+    <div class="row form-group">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-header-page">Modal</div>
+                <div class="card-body">
+                    <div class="btn btn-outline-success" data-toggle="modal" data-target="#modal-test">click</div> &nbsp;&nbsp;
+                    <a class="text-dark h6" data-toggle="modal" data-target="#modal-test">click</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="modal-test" role="dialog" aria-labelledby="modal-test" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-header">
+                    <span class="modal-title h6">
+                    TEST
+                </span>
+                    <button type="button" class="close" data-dismiss="modal">
+                    &times;
+                </button>
+                </div>
+                <div class="modal-body">
+                    <b class="text-center"> TEST </b>
+                </div>
+                <div class="modal-footer">
+                    <a class="text-dark h6" data-toggle="modal" data-target="#modal-test">close-by-text</a> &nbsp;&nbsp;
+                    <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">
+                    Close
+                </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--Tab-->
+    <div class="row form-group">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-header-page">Tab</div>
+                <div class="card-body">
+
+                    <div class="row">
+                        <ul class="nav nav-tabs" id="myTab" role="tablist">
+                            <li *ngFor="let item of TabEntity; let i=index" class="nav-item">
+                                <a class="nav-link" [ngClass]="[i === 0 ? 'active' : '']" data-toggle="tab" href="#{{item.tab_name}}" aria-selected="true" style="vertical-align: middle;">
+                                    <span> {{item.tab_name}}</span> &nbsp;&nbsp;
+                                    <a class="text-dark h6" (click)="delTab(item.tab_no)">
+                                    &times;
+                                </a>
+
+                                </a>
+                            </li>
+                            <li (click)="addTab()" class="nav-item">
+                                <!-- <p>Add new Tab</p> -->
+                                <i class="fas fa-plus nav-link "></i>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <br>
+                    <div class="tab-content" id="TabContent">
+                        <div *ngFor="let item of TabEntity; let i=index" class="tab-pane" [ngClass]="[i === 0 ? 'face show active' : '']" id="{{item.tab_name}}">
+                            <div>
+                                {{item.tab_name}}
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--Table-->
+    <div class="row form-group">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-header-page">Table</div>
+                <div class="card-body">
+
+                    <div class="row form-group">
+                        <label class="h5">Table run Rows , Colunms</label>
+                        <table class="table table-sm table-hover">
+                            <thead>
+                                <tr>
+                                    <th rowspan="2">น้ำมัน</th>
+                                    <th colspan="8">หัวจ่าย</th>
+                                </tr>
+                                <tr>
+                                    <th *ngFor="let item of oilEntity; let i=index">{{item.position}}</th>
+                                    <!--loop colunms-->
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let item of oilEntity; let i=index">
+                                    <!--loop rows-->
+                                    <td>{{item.name}}</td>
+                                    <td class="text-center" *ngFor="let item of oilEntity; let i=index"> 0.00 </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="ml-auto d-flex">
+                            <div class="d-flex justify-content-end align-self-end">
+                                <div class="align-self-end">
+                                    <label class="text-dark" style="font-size: 16px" for="pagesize-input">แสดง</label
+                                >
+                                &nbsp;
+                            </div>
+                            <input
+                                type="text"
+                                style="width: 50px"
+                                class="form-control-sm"
+                                formControlname="pagesize-input"
+                                value="20"
+                            />
+                            &nbsp;
+                            <div class="align-self-end">
+                                <label
+                                class="text-dark"
+                                style="font-size: 16px"
+                                for="pagesize-input"
+                                >/{{this.TotalRow}}</label
+                                >
+                                &nbsp;
+                            </div>
+                            </div>
+
+                            <div class="pagination text-dark">
+                            <a>&lt;</a>
+                            <a class="active">1</a>
+                            <a>2</a>
+                            <a>3</a>
+                            <a>&gt;</a>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row form-group">
+                        <label class="h5">
+                            Table Dynamic Rows
+                            <button class="btn btn-sm btn-success" (click)="addRow()" >
+                                Add Row
+                            </button>
+                        </label>
+                                </div>
+
+                                <form [formGroup]="myFormGroup">
+                                    <div class="row" formArrayName="table_forms">
+                                        <table class="table-sm table-hover table-border-outline">
+                                            <thead>
+                                                <tr>
+                                                    <th><input type="checkbox" (click)="checkAll()"> check all </th>
+                                                    <th style="width: 250px;">dropdown</th>
+                                                    <th>text box</th>
+                                                    <th>button</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr *ngFor="let c of counter(countRow); let i = index" [formGroupName]="i">
+                                                    <td class="text-center">
+                                                        <input type="checkbox" formControlName="checkbox">
+                                                    </td>
+                                                    <td>
+                                                        <ng-select [items]="dataType_PS" bindLabel="KEY" bindValue="VALUE" placeholder="เลือกข้อมูล" formControlName="dropdown">
+                                                        </ng-select>
+                                                    </td>
+                                                    <td>
+                                                        <input type="number" formControlName="textbox" class="form-control-sm form-control text-right">
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <button class="btn btn-outline-danger btn-sm " (click)="delRow()">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </form>
+
+                                <hr>
+                                <form [formGroup]="HiddenFormGroup">
+                                    <div class="row form-group">
+
+                                        <label class="h5">Table Hidden Colunms and Infinite Scroll</label>
+                                        <div class="pt-toolbar">
+                                            <div class="dropdown pt-toolbar-item">
+                                                <a class="dropdown-toggle text-decoration-none text-dark" href="javascript:void(0)" data-toggle="dropdown">
+                                                    <i class="far fa-square"></i>
+                                                </a>
+                                                <ul class="dropdown-menu checkbox-menu allow-focus" aria-labelledby="btn-filter">
+                                                    <li *ngFor="let item of displayedColumnsAll; let i = index" style="padding-left: 15px !important">
+                                                        <mat-checkbox color="primary" formControlName="{{ item }}">
+                                                            <ng-container *ngIf="item == 'no'">
+                                                                หัวจ่าย
+                                                            </ng-container>
+
+                                                            <ng-container *ngIf="item == 'name'">
+                                                                น้ำมัน
+                                                            </ng-container>
+                                                            <ng-container *ngIf="item == 'meter'">
+                                                                มิเตอร์
+                                                            </ng-container>
+                                                            <ng-container *ngIf="item == 'station'">
+                                                                หัวจ่าย
+                                                            </ng-container>
+                                                            <ng-container *ngIf="item == 'old_price'">
+                                                                ราคาเดิม
+                                                            </ng-container>
+                                                            <ng-container *ngIf="item == 'new_price'">
+                                                                ราคาล่าสุด
+                                                            </ng-container>
+                                                        </mat-checkbox>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <label>Display Colunms</label>
+                                        </div>
+
+                                        <div (scroll)="onScroll($event)" class="table-responsive table-custom-scrollbar" style=" max-height: 30vh !important">
+                                            <table class="table table-sm table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                        <th>ลำดับ</th>
+                                                        <th [ngStyle]="{
+                                                display:
+                                                this.HiddenFormGroup.controls['no'].value == true
+                                                    ? ''
+                                                    : 'none'
+                                            }">
+                                                            หัวจ่าย
+                                                        </th>
+                                                        <th [ngStyle]="{
+                                                display:
+                                                this.HiddenFormGroup.controls['name'].value ==
+                                                true
+                                                    ? ''
+                                                    : 'none'
+                                            }">
+                                                            น้ำมัน
+                                                        </th>
+                                                        <th [ngStyle]="{
+                                                display:
+                                                this.HiddenFormGroup.controls['meter'].value ==
+                                                true
+                                                    ? ''
+                                                    : 'none'
+                                            }">
+                                                            มิเตอร์ เริ่ม กะ
+                                                        </th>
+                                                        <th [ngStyle]="{
+                                                display:
+                                                this.HiddenFormGroup.controls['station'].value ==
+                                                true
+                                                    ? ''
+                                                    : 'none'
+                                            }">
+                                                            หัวจ่าย
+                                                        </th>
+                                                        <th [ngStyle]="{
+                                                display:
+                                                this.HiddenFormGroup.controls['old_price']
+                                                    .value == true
+                                                    ? ''
+                                                    : 'none'
+                                            }">
+                                                            ราคาเดิม
+                                                        </th>
+                                                        <th [ngStyle]="{
+                                                display:
+                                                this.HiddenFormGroup.controls['new_price']
+                                                    .value == true
+                                                    ? ''
+                                                    : 'none'
+                                            }">
+                                                            ราคาล่าสุด
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr *ngFor="let item of pageSizeEntity;let i = index">
+                                                        <td>{{i+1}}</td>
+                                                        <td class="text-center" [ngStyle]="{
+                                                display:
+                                                this.HiddenFormGroup.controls['no'].value == true
+                                                    ? ''
+                                                    : 'none'
+                                            }">
+                                                            {{ item.position }}
+                                                        </td>
+                                                        <td [ngStyle]="{
+                                                display:
+                                                this.HiddenFormGroup.controls['name'].value ==
+                                                true
+                                                    ? ''
+                                                    : 'none'
+                                            }">
+                                                            {{ item.name }}
+                                                        </td>
+                                                        <td class="text-right" [ngStyle]="{
+                                                display:
+                                                this.HiddenFormGroup.controls['meter'].value ==
+                                                true
+                                                    ? ''
+                                                    : 'none'
+                                            }">
+                                                            {{ item.meter | currency: "":"":"1.2-2" }}
+                                                        </td>
+                                                        <td class="text-center" [ngStyle]="{
+                                                display:
+                                                this.HiddenFormGroup.controls['station'].value ==
+                                                true
+                                                    ? ''
+                                                    : 'none'
+                                            }">
+                                                            {{ item.station }}
+                                                        </td>
+                                                        <td class="text-right" [ngStyle]="{
+                                                display:
+                                                this.HiddenFormGroup.controls['old_price'].value == true
+                                                    ? ''
+                                                    : 'none'
+                                            }">
+                                                            {{ item.old_price | currency: "":"":"1.2-2" }}
+                                                        </td>
+                                                        <td class="text-right" [ngStyle]="{
+                                                display:
+                                                this.HiddenFormGroup.controls['new_price'].value == true
+                                                    ? ''
+                                                    : 'none'
+                                            }">
+                                                            {{ item.new_price | currency: "":"":"1.2-2" }}
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <br>
+                                        <div class="ml-auto d-flex">
+                                            <div class="d-flex justify-content-end align-self-end">
+                                                <div class="align-self-end">
+                                                    <label class="text-dark" style="font-size: 12px">ToTal Rows = {{this.TotalRowPageSize}}</label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </form>
+
+                                <hr>
+                                <label class="h5">Table Custom</label>
+                                <dynamic-table [config]="config" [columns]="columns" [dataTable]="dataTable">
+                                    <div id="custom-content-1" custom-content>
+                                        <button class="btn btn-default">OK</button>
+                                    </div>
+                                    <div id="custom-content-2" custom-content>2</div>
+                                    <div id="custom-content-3" custom-content>3</div>
+                                    <div id="custom-content-4" custom-content>4</div>
+                                </dynamic-table>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!--Select2-->
+                <div class="row form-group">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header bg-header-page">Select 2</div>
+                            <div class="card-body">
+                                <form [formGroup]="SelectFormGroup">
+                                    <div class="form-group row">
+                                        <div class="col-sm-12 col-md-2 col-lg-2">
+                                            <label>nomal</label>
+                                            <select class="form-control" formControlName="nomal">
+                                    <option value="" selected>เลือกข้อมูล</option>
+                                    <option *ngFor="let item of data" value="{item.VALUE}">{{item.KEY}}</option>
+                                </select>
+                                        </div>
+                                        <div class="col-sm-12 col-md-2 col-lg-2">
+                                            <label>search</label>
+                                            <ng-select [items]="data" bindLabel="KEY" bindValue="VALUE" placeholder="เลือกข้อมูล" formControlName="search">
+                                            </ng-select>
+                                        </div>
+                                        <div class="col-sm-12 col-md-2 col-lg-2">
+                                            <label>multi</label>
+                                            <ng-select [items]="data" bindLabel="KEY" bindValue="VALUE" [multiple]="true" placeholder="เลือกข้อมูล" formControlName="multi">
+                                            </ng-select>
+                                        </div>
+                                        <div class="col-sm-12 col-md-2 col-lg-2">
+                                            <label>group</label>
+                                            <ng-select [items]="data" bindLabel="KEY" bindValue="VALUE" groupBy="GROUP" placeholder="เลือกข้อมูล" formControlName="group">
+                                            </ng-select>
+                                        </div>
+                                        <div class="col-sm-12 col-md-2 col-lg-2">
+                                            <label>select button</label>
+                                            <div class="dropdown show">
+                                                <button class="btn btn-light dropdown-toggle" id="language" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    {{ language }}
+                                    </button>
+                                                <div class="dropdown-menu" aria-labelledby="language">
+                                                    <button (click)="changeLanguage('TH')" class="dropdown-item btn-sm">
+                                        <img
+                                        width="20"
+                                        height="15"
+                                        src="./../../../../assets/images//flag//Thailand.png"
+                                        />&nbsp;ไทย
+                                    </button>
+                                                    <button (click)="changeLanguage('ENG')" class="dropdown-item btn-sm">
+                                        <img
+                                        width="20"
+                                        height="15"
+                                        src="./../../../../assets/images//flag/United-Kingdom.png"
+                                        />&nbsp;ENG
+                                    </button>
+                                                    <button (click)="changeLanguage('JP')" class="dropdown-item btn-sm">
+                                        <img
+                                        width="20"
+                                        height="15"
+                                        src="./../../../../assets/images//flag//Japan.png"
+                                        />&nbsp;JP
+                                    </button>
+                                                    <button (click)="changeLanguage('CHINA')" class="dropdown-item btn-sm">
+                                        <img
+                                        width="20"
+                                        height="15"
+                                        src="./../../../../assets/images//flag/China.png"
+                                        />&nbsp;CHINA
+                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row col-12">
+                                        <button class="btn btn-danger" (click)="ClearSelect()">clear</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!--Button-->
+                <div class="row form-group">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header bg-header-page">Button</div>
+                            <div class="card-body">
+                                <button type="button" class="btn btn-primary">Primary</button> &nbsp;
+                                <button type="button" class="btn btn-secondary">Secondary</button> &nbsp;
+                                <button type="button" class="btn btn-success">Success</button> &nbsp;
+                                <button type="button" class="btn btn-danger">Danger</button> &nbsp;
+                                <button type="button" class="btn btn-warning">Warning</button> &nbsp;
+                                <button type="button" class="btn btn-info">Info</button> &nbsp;
+                                <button type="button" class="btn btn-light">Light</button> &nbsp;
+                                <button type="button" class="btn btn-dark">Dark</button> &nbsp;
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!--TextArea-->
+                <div class="row form-group">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header bg-header-page">Text Area</div>
+                            <div class="card-body">
+                                <textarea class="form-control" placeholder="Text Area" rows="5"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!--TextBox-->
+                <div class="row form-group">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header bg-header-page">Text Input</div>
+                            <div class="card-body">
+                                <form>
+                                    <div class="row form-group">
+                                        <div class="col-3">
+                                            <input type="text" class="form-control form-control-sm" placeholder="form-control-sm">
+                                        </div>
+                                        <div class="col-3">
+                                            <input type="text" class="form-control " placeholder="form-control">
+                                        </div>
+                                        <div class="col-3">
+                                            <input type="text" class="form-control form-control-lg" placeholder="form-control-lg">
+                                        </div>
+                                    </div>
+                                    <div class="row form-group">
+                                        <div class="col-3">
+                                            <input type="text" class="form-control" placeholder="input text">
+                                        </div>
+                                        <div class="col-3">
+                                            <input type="number" class="form-control " placeholder="input number">
+                                        </div>
+                                        <div class="col-3">
+                                            <button type="reset" class="btn btn-danger"> clear</button>
+                                        </div>
+                                    </div>
+                                </form>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!--Date Input-->
+                <div class="row form-group">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header bg-header-page">Date Input</div>
+                            <div class="card-body">
+                                <div class="row col-12"><label class="h5">Date Only</label></div>
+                                <div class="row form-group">
+
+                                    <div class="col-3">
+                                        <label>Input date</label>
+                                        <input type="date" class="form-control">
+                                    </div>
+                                    <div class="col-3">
+                                        <label>Date picker (format : dd/mm/yyyy)</label>
+                                        <input type="text" class="form-control" placeholder="dd/mm/yyyy" ngbDatepicker #doc_date="ngbDatepicker" (click)="doc_date.toggle()" />
+                                    </div>
+                                </div>
+
+                                <div class="row col-12"><label class="h5">Date Range</label></div>
+                                <div class="row form-group">
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <input #dpFromDate class="form-control" placeholder="yyyy-mm-dd" name="dpFromDate" [value]="formatter.format(fromDate)" (input)="fromDate = validateInput(fromDate, dpFromDate.value)">
+                                                <div class="input-group-append">
+                                                    <button class="btn btn-outline-secondary" (click)="datepicker.toggle()" type="button"> <i class="fa fa-calendar"></i> </button>
+                                                </div>
+                                            </div>
+                                            <div class="form-group hidden">
+                                                <div class="input-group">
+                                                    <input name="datepicker" ngbDatepicker #datepicker="ngbDatepicker" [autoClose]="'outside'" (dateSelect)="onDateSelection($event)" [displayMonths]="2" [dayTemplate]="t" outsideDays="hidden" [startDate]="fromDate!" tabindex="-1" style="visibility: hidden; height: 3px;">
+                                                    <ng-template #t let-date let-focused="focused">
+                                                        <span class="custom-day" [class.focused]="focused" [class.range]="isRange(date)" [class.faded]="isHovered(date) || isInside(date)" (mouseenter)="hoveredDate = date" (mouseleave)="hoveredDate = null">
+                                                {{ date.day }}
+                                            </span>
+                                                    </ng-template>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <input #dpToDate class="form-control" placeholder="yyyy-mm-dd" name="dpToDate" [value]="formatter.format(toDate)" (input)="toDate = validateInput(toDate, dpToDate.value)">
+                                                <div class="input-group-append">
+                                                    <button class="btn btn-outline-secondary" (click)="datepicker.toggle()" type="button"> <i class="fa fa-calendar"></i> </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--end Date Range-->
+                                <pre>From date model: {{ fromDate | json }}</pre>
+                                <pre>To date model: {{ toDate | json }}</pre>
+                                <hr>
+
+                                <div class="row col-12"><label class="h5">DateTime</label></div>
+                                <div class="row form-group">
+                                    <div class="col-6">
+                                        <label>
+                                <input
+                                    placeholder="Date Time"
+                                    dateFormat = "dd/mm/yyyy"
+                                    class="form-control form-control-sm">
+                            </label>
+                                    </div>
+                                </div>
+
+                                <div class="row col-12"><label class="h5">Time Only</label></div>
+                                <div class="row form-group">
+                                    <div class="col-3">
+                                        <label>Time</label>
+                                        <input type="time" class="form-control">
+                                    </div>
+
+                                    <div class="col-3">
+                                        <label>Time Picker</label>
+                                        <ngb-timepicker [(ngModel)]="time1"></ngb-timepicker>
+                                        <hr>
+                                        <pre>Selected time: {{time1 | json}}</pre>
+                                    </div>
+
+                                    <div class="col-3">
+                                        <label>Time Picker</label>
+                                        <ngb-timepicker [(ngModel)]="time" [meridian]="meridian"></ngb-timepicker>
+                                        <button class="btn btn-sm btn-outline-{{meridian ? 'success' : 'danger'}}" (click)="toggleMeridian()">
+                                Meridian - {{meridian ? "ON" : "OFF"}}
+                            </button>
+                                        <hr>
+                                        <pre>Selected time: {{time | json}}</pre>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!--ToolTip-->
+                <div class="row form-group">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header bg-header-page">ToolTip</div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-3">
+                                        <label for="input-from-time-selected">
+                                <span
+                                data-tooltip="Test ToolTip......."
+                                >
+                                <i class="fas fa-info-circle"></i>
+                                </span>
+                                Top ToolTip
+                            </label>
+                                    </div>
+                                    <div class="col-3">
+                                        <label for="input-from-time-selected">
+                                <span
+                                data-tooltip="Test ToolTip......."
+                                data-tooltip-location="bottom"
+                                >
+                                <i class="fas fa-info-circle"></i>
+                                </span>
+                                Bottom ToolTip
+                            </label>
+                                    </div>
+                                    <div class="col-3">
+                                        <label for="input-from-time-selected">
+                                <span
+                                data-tooltip="Test ToolTip......."
+                                data-tooltip-location="left"
+                                >
+                                <i class="fas fa-info-circle"></i>
+                                </span>
+                                Left ToolTip
+                            </label>
+                                    </div>
+                                    <div class="col-3">
+                                        <label for="input-from-time-selected">
+                                <span
+                                data-tooltip="Test ToolTip......."
+                                data-tooltip-location="right"
+                                >
+                                <i class="fas fa-info-circle"></i>
+                                </span>
+                                Right ToolTip
+                            </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!--dynamic create card-->
+                <div class="row form-group">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header bg-header-page">Dynamic Cards</div>
+                            <div class="card-body">
+                                <div class="row form-group">
+                                    <button class="btn btn-success" (click)="addCard()">Add Card</button> &nbsp;
+                                    <button class="btn btn-danger" (click)="delCard()">Del Card</button>
+                                </div>
+                                <div class="row form-group">
+                                    <div class="col-sm-6 col-md-3 col-lg-3" *ngFor="let item of counter(cardOrder); let i=index">
+                                        <div class="card">
+                                            <div class="card-header bg-header">Card {{i+1}}</div>
+                                            <div class="card-body">
+                                                Card {{i+1}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!--Text Show-->
+                <div class="row form-group">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header bg-header-page">Text Show</div>
+                            <div class="card-body">
+                                <div class="table-custom-scrollbar">
+                                    <!--add Scrollbar in Table-->
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>No.</th>
+                                                <th>Date</th>
+                                                <th>Number</th>
+                                                <th class="text-left">Long message</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngFor="let item of counter(10); let i=index">
+                                                <td class="text-center">{{i+1}}</td>
+                                                <td class="text-center">{{ dateShow| date:'dd/MM/yyyy'}} </td>
+                                                <td class="text-center">{{ numberShow | currency:"":"":"1.2-2"}} </td>
+                                                <td>
+                                                    <label class="hidden-box" title="
+                                            {{TextShow}}
+                                        ">
+                                            <label class="hidden-text">
+                                                {{TextShow}}
+                                            </label>
+                                                    </label>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!--Table Fix Col-->
+                <div class="row form-group">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header bg-header-page">Table Fix Col</div>
+                            <div class="card-body">
+                                <div class="table-custom-scrollbar">
+                                    <!--add Scrollbar in Table-->
+                                    <div class="wrapper">
+                                        <table class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th class="sticky-col-th first-col">ถัง</th>
+                                                    <th class="sticky-col-th second-col">ชื่อสินค้า</th>
+                                                    <th>Last Name</th>
+                                                    <th>Employer</th>
+                                                    <th>Employer</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td class="sticky-col-td first-col">1</td>
+                                                    <td class="sticky-col-td second-col">Mark</td>
+                                                    <td>Ham</td>
+                                                    <td>Micro</td>
+                                                    <td>Micro</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="sticky-col-td first-col">2</td>
+                                                    <td class="sticky-col-td second-col">Jacob</td>
+                                                    <td>Smith</td>
+                                                    <td>Adob Adob Adob AdobAdob Adob Adob Adob Adob</td>
+                                                    <td>Adob Adob Adob AdobAdob Adob Adob Adob Adob</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="sticky-col-td first-col">3</td>
+                                                    <td class="sticky-col-td second-col">Larry</td>
+                                                    <td>Wen</td>
+                                                    <td>Goog Goog Goog GoogGoog Goog Goog Goog Goog Goog</td>
+                                                    <td>Goog Goog Goog GoogGoog Goog Goog Goog Goog Goog</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!--Radio & CheckBox-->
+                <div class="row form-group">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header bg-header-page">Radio & CheckBox</div>
+                            <div class="card-body">
+                                <div class="row form-group h5">Radio</div>
+                                <div class="row form-group">
+                                    <div class="col-2 text-center">
+                                        <label>Radio whitout class</label> <br>
+                                        <input type="radio">
+                                    </div>
+                                    <div class="col-2 text-center">
+                                        <label>Radio whit class 'form-control-sm'</label>
+                                        <input type="radio" class="form-control form-control-sm">
+                                    </div>
+                                    <div class="col-2 text-center">
+                                        <label>Radio whit class 'form-control'</label>
+                                        <input type="radio" class="form-control">
+                                    </div>
+                                    <div class="col-2 text-center">
+                                        <label>Radio whit class 'form-control-lg'</label>
+                                        <input type="radio" class="form-control form-control-lg">
+                                    </div>
+                                </div>
+                                <div class="row form-group h5">CheckBox</div>
+                                <div class="row form-group">
+                                    <div class="col-2 text-center">
+                                        <label>whitout class</label> <br>
+                                        <input type="checkbox">
+                                    </div>
+                                    <div class="col-2 text-center">
+                                        <label>class 'form-control-sm'</label>
+                                        <input type="checkbox" class="form-control form-control-sm">
+                                    </div>
+                                    <div class="col-2 text-center">
+                                        <label>class 'form-control'</label>
+                                        <input type="checkbox" class="form-control">
+                                    </div>
+                                    <div class="col-2 text-center">
+                                        <label>class 'form-control-lg'</label>
+                                        <input type="checkbox" class="form-control form-control-lg">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!--Alert-->
+                <div class="row form-group">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header bg-header-page">Alert (Sweet Alert)</div>
+                            <div class="card-body">
+
+                                <button type="button" class="btn btn-success" (click)="alertWithSuccess()">Success</button> &nbsp;
+                                <button type="button" class="btn btn-danger" (click)="alertWithError()">Error</button> &nbsp;
+                                <button type="button" class="btn btn-warning" (click)="alertWithConfirm()">Warning</button> &nbsp;
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!--Event-->
+                <div class="row form-group">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header bg-header-page">Call Function (Events)</div>
+                            <div class="card-body">
+                                <div class="row form-group">
+                                    <div class="col-sm-12 col-md-6 col-lg-3">
+                                        <label class="h5">Click</label><br>
+                                        <button class="btn btn-dark btn-block" (click)="alertWithMagess('Event Click','info')">click</button>
+                                    </div>
+                                    <div class="col-sm-12 col-md-6 col-lg-3">
+                                        <label class="h5">Blur</label><br>
+                                        <input type="text" class="form-control" (blur)="alertWithMagess('Event Blur','info')">
+                                    </div>
+                                    <div class="col-sm-12 col-md-6 col-lg-3">
+                                        <label class="h5">Change</label><br>
+                                        <input type="text" class="form-control" (change)="alertWithMagess('Event Change','info')">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!--Loadding-->
+                <div class="row form-group">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header bg-header-page">Loadding</div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-sm-12 col-md-6 col-lg-3">
+                                        <button class="btn btn-dark btn-block" (click)="alertLoaddingSpinner()">Loadding Spinner</button>
+                                    </div>
+                                    <div class="col-sm-12 col-md-6 col-lg-3">
+                                        <button class="btn btn-dark btn-block" (click)="alertLoaddingBar1()">Loadding Bar1</button>
+                                    </div>
+                                    <div class="col-sm-12 col-md-6 col-lg-3">
+                                        <button class="btn btn-dark btn-block" (click)="alertLoaddingBar2()">Loadding Bar2</button>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>

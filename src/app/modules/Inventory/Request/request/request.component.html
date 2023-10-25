@@ -1,0 +1,256 @@
+<div *ngIf="isUserAuthenticated()">
+  <div class="card pr-7">
+    <div class="card-header bg-header-page ">{{headerCard}}
+      <div class="ml-auto">
+        <div [ngClass]=this.getBackgroundRibbon()><label class="ribbon-1-text">{{status}}</label></div>
+      </div>
+    </div>
+    <div class="card-body">
+
+
+      <div class="form-horizontal">
+        <!-- Row -->
+        <div class="row">
+          <!-- ========== Col01 ========== -->
+          <div class="col-12 col-sm-12 col-md-6">
+            <!-- Row -->
+            <div class="row form-group" [formGroup]="myGroup">
+              <div class="col-4 topic text-right">เลขที่เอกสาร :</div>
+              <div class="col-6">{{document.DocNo}}</div>
+            </div>
+
+            <!-- Row -->
+            <div class="row form-group" [formGroup]="myGroup">
+              <div class="col-4 topic  text-right">รับโอนสินค้าจากสาขา : </div>
+              <div class="col-6">
+                <div>
+                  <ng-select formControlName="branchFrom" [items]="branchSelect2" bindLabel="KEY" bindValue="VALUE"
+                    placeholder="เลือกสาขา" (change)="changeBranch()"></ng-select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ========== Col02 ========== -->
+          <div class="col-12 col-sm-12 col-md-6">
+            <!-- Row -->
+            <div class="row form-group" [formGroup]="myGroup">
+              <div class="col-4 topic  text-right">วันที่เอกสาร : </div>
+              <div class="col-6">{{document.DocDate | date:'dd/MM/yyyy'}}</div>
+            </div>
+
+            <!-- Row -->
+            <div class="row form-group" [formGroup]="myGroup">
+              <div class="col-4 topic  text-right">กลุ่มสินค้า : </div>
+              <div class="col-6">
+                <div>
+                  <ng-select formControlName="docType" [items]="docTypeSelect2" bindLabel="KEY" bindValue="VALUE"
+                    placeholder="เลือกกลุ่มสินค้า" (change)="changeDocType()"></ng-select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-12 text-right">
+            <div class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modal-getProduct"
+              (click)="getProductList()"><i class="fa fa-plus"></i>&nbsp; สินค้า</div>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- Row -->
+      <div class="row">
+        <div class="col-12">
+          <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+              <thead>
+                <tr>
+                  <th class="text-center text-nowrap col-2">รหัสสินค้า</th>
+                  <th class="text-center text-nowrap">ชื่อสินค้า</th>
+                  <th class="text-center text-nowrap">หน่วยนับ</th>
+                  <th class="text-center text-nowrap col-2">ปริมาณที่ต้องการ</th>
+                  <th class="text-center text-nowrap col-1">ลบ</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of lines; let i=index">
+                  <td class="text-center">{{ item.PdId }}</td>
+                  <td>
+                    <div class="hidden-box" title="{{ item.PdName }}">
+                      <div class="hidden-text">{{ item.PdName }}</div>
+                    </div>
+                  </td>
+                  <td class="text-center">{{ item.UnitName }} </td>
+                  <td class="text-center no-padding">
+                    <input type="number" class="form-control text-right text-sm" [(ngModel)]="item.ItemQty" />
+                  </td>
+                  <td class="text-center btn-outline-danger align-middle" role="button" (click)="deleteRow(i)"><i
+                      class="fas fa-trash-alt "></i></td>
+                </tr>
+                <tr>
+                  <td [hidden]="lines.length > 0" colspan="5" class="text-center">
+                    ------------------------------ กรุณาเพิ่มรายการสินค้า ------------------------------
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row -->
+      <div class="row form-group" [formGroup]="myGroup">
+        <div class="col-12">
+          <label class="topic">หมายเหตุ : </label>
+          <textarea class="form-control" formControlName="remarks" placeholder="" rows="5"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="right-bar" style="padding-top: 4%;">
+    <button class="btn circle-button circle-buttonSave" (click)="saveDocument()" [hidden]="btnSave"
+      data-tooltip="บันทึก" data-tooltip-location="left">
+      <i class="far fa-save"></i>
+    </button>
+    <button class="btn circle-button circle-buttonApprove" (click)="approveDocument()" [hidden]="btnApprove"
+      data-tooltip="อนุมัติ" data-tooltip-location="left">
+      <i class="fas fa-thumbs-up"></i>
+    </button>
+    <button class="btn circle-button circle-buttonReject" (click)="rejectDocument()" [hidden]="btnReject"
+      data-tooltip="แก้ไข" data-tooltip-location="left">
+      <i class="fas fa-edit"></i>
+    </button>
+    <button class="btn circle-button circle-buttonComplete" (click)="completeDocument()" [hidden]="btnComplete"
+      data-tooltip="ส่งข้อมูล" data-tooltip-location="left">
+      <i class="fas fa-paper-plane"></i>
+    </button>
+    <button class="btn circle-button circle-buttonPrint" (click)="printDocument()" [hidden]="btnPrint"
+      data-tooltip="พิมพ์" data-tooltip-location="left">
+      <i class="fas fa-print"></i>
+    </button>
+    <button class="btn circle-button circle-buttonCancel" (click)="cancelDocument()" [hidden]="btnCancel"
+      data-tooltip="ยกเลิก" data-tooltip-location="left">
+      <i class="fas fa-times"></i>
+    </button>
+    <button class="btn circle-button circle-buttonClear" (click)="clearDocument()" [hidden]="btnClear"
+      data-tooltip="ล้างข้อมูล" data-tooltip-location="left">
+      <i class="fas fa-eraser"></i>
+    </button>
+    <button class="btn circle-button circle-buttonBack" routerLink="/RequestList" [hidden]="btnBack"
+      data-tooltip="ย้อนกลับ" data-tooltip-location="left">
+      <i class="fas fa-undo"></i>
+    </button>
+  </div>
+
+
+  <!---- Modal Container ---->
+  <div class="modal fade" id={{btnGetProduct}} role="dialog" aria-labelledby="modal-test" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="modal-header bg-header">
+          <span class="modal-title h6">เพิ่มสินค้า</span>
+          <button type="button" class="close" data-dismiss="modal">&times;
+          </button>
+        </div>
+        <div class="modal-body">
+
+          <!-- Row -->
+          <div class="row">
+            <div class="col-10 topic">
+              <label>ค้นหาสินค้า : </label>
+            </div>
+          </div>
+
+          <!-- Row -->
+          <div class="row">
+            <div class="col-10" [formGroup]="myGroup">
+              <input type="text" class="form-control" formControlName="searchProduct" />
+            </div>
+            <div class="col-2">
+              <button class="btn btn-primary" (click)="getProductList()"><i
+                  class="fa fa-search"></i>&nbsp;Search</button>
+            </div>
+          </div>
+          <br>
+
+          <!-- Row -->
+          <div class="row mb-1">
+            <div class="col-6 topic text-center">รายการสินค้า</div>
+            <div class="col-6 topic text-center">รายการสินค้าที่เลือก</div>
+          </div>
+
+          <!-- Row -->
+          <div class="row">
+            <div class="col-6 col-sm-6 col-md-6">
+              <form [formGroup]="myGroup">
+                <div class="row form-group  pr-2">
+                  <div class="table-responsive table-custom-scrollbar">
+                    <table class="table table-sm table-bordered">
+                      <thead>
+                        <tr>
+                          <th class="text-center text-nowrap col-2">รหัสสินค้า</th>
+                          <th class="text-center text-nowrap">ชื่อสินค้า</th>
+                          <th class="text-center text-nowrap col-2">หน่วย</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let item of productList;let i = index">
+                          <td (click)="selectedProductList(i)" class="text-center">{{ item.PdId }}</td>
+                          <td (click)="selectedProductList(i)" class="text-left">
+                            <div class="hidden-box" title="{{ item.PdName }}">
+                              <div class="hidden-text">{{ item.PdName }}</div>
+                            </div>
+                          </td>
+                          <td (click)="selectedProductList(i)" class="text-center">{{ item.UnitName }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </form>
+            </div>
+            <div class="col-6 col-sm-6 col-md-6">
+              <form [formGroup]="myGroup">
+                <div class="row form-group">
+                  <div class="table-responsive table-custom-scrollbar">
+                    <table class="table table-sm table-bordered">
+                      <thead>
+                        <tr>
+                          <th class="text-center text-nowrap col-2">รหัสสินค้า</th>
+                          <th class="text-center text-nowrap">ชื่อสินค้า</th>
+                          <th class="text-center text-nowrap col-2">หน่วย</th>
+                          <th class="text-center text-nowrap col-1">ลบ</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let item of productSelectedList;let i = index">
+                          <td class="text-center">{{ item.PdId }}</td>
+                          <td class="text-left">
+                            <div class="hidden-box" title="{{ item.PdName }}">
+                              <div class="hidden-text">{{ item.PdName }}</div>
+                            </div>
+                          </td>
+                          <td class="text-center">{{ item.UnitName }}</td>
+                          <td class="text-center btn-outline-danger align-middle" role="button"
+                            (click)="deleteSelected(i)"><i class="fas fa-trash-alt "></i></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-primary btn-sm" (click)="addItemtoLine()" data-dismiss="modal">ตกลง</button>
+          <button type="button" class="btn  btn-sm btn-warning" data-dismiss="modal">ยกเลิก</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,85 @@
+html,
+body {
+    font-size: 14px !important;
+    background: #f4f9f7;
+  }
+
+  .pr-6 {
+    margin-right: 5%;
+  }
+
+  .pr-7 {
+    margin-right: 6%;
+  }
+
+
+.container-fluid{
+  padding-left: 10px;
+  padding-right: 0px;
+
+}
+
+.modal-backdrop{
+  z-index: -1 !important;
+}
+// .modal{
+//   //z-index: 1000;
+// }
+// .content-header{
+//   padding:5px;
+// }
+
+  button.btn-search{
+    border-bottom-left-radius: 0px;
+    border-top-left-radius: 0px;
+    width: 40px;
+    height: 35px;
+  }
+
+  input.check-small{
+    font-size: 3px;
+  }
+
+.table td.no-padding{
+  padding: 2px !important;
+}
+
+
+.table td , .table th{
+  font-size: 14px!important;
+}
+
+.text-secure{
+  -webkit-text-security: disc;
+  font-family: text-security-disc;
+}
+
+@font-face {
+  font-family: text-security-disc;
+  src: url('/assets/font/text-security-disc.woff');
+}
+
+.texthidden {
+  font-family: text-security-disc;
+  -webkit-text-security: disc;
+}
+
+.texthidden::placeholder {
+  font-family: 'Kanit', sans-serif;
+}
+
+.modal {
+  z-index: 999 !important;
+}
+
+.main-header{
+  z-index: 900 !important;
+}
+
+.main-sidebar{
+  z-index: 900 !important;
+}
+
+#sidebar-overlay {
+  z-index: 800 !important;
+ }

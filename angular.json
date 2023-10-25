@@ -1,0 +1,190 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "newProjectRoot": "projects",
+  "projects": {
+    "pt-maxstation-without-material": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
+      "root": "",
+      "sourceRoot": "src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/pt-maxstation-without-material",
+            "index": "src/index.html",
+            "main": "src/main.ts",
+            "polyfills": "src/polyfills.ts",
+            "tsConfig": "tsconfig.app.json",
+            "aot": true,
+            "assets": ["src/favicon.ico", "src/assets"],
+            "styles": [
+              "src/assets/scss/tempusdominus-bootstrap-4.css",
+              "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
+              "./node_modules/bootstrap/dist/css/bootstrap.css",
+              "./node_modules/@fortawesome/fontawesome-free/css/all.css",
+              "./node_modules/sweetalert2/src/sweetalert2.scss",
+              "./node_modules/animate.css/animate.css",
+              "./node_modules/css-tooltip/src/css-tooltip.scss",
+              "src/assets/scss/theme-customer.scss",
+              "src/assets/scss/app-style.scss",
+              "src/assets/scss/app-stepper.scss",
+              "src/assets/scss/app-table.scss",
+              "src/assets/scss/app-font.scss",
+              "src/assets/scss/app-wizard.scss",
+              "src/assets/scss/custom.scss",
+              "src/assets/custom-ptg.scss",
+            ],
+            "scripts": [
+              "./src/assets/js/jquery.min.js",
+              /* "./node_modules/jquery/dist/jquery.js", */
+              "./node_modules/popper.js/dist/umd/popper.min.js",
+              "./node_modules/bootstrap/dist/js/bootstrap.js",
+              "./src/assets/js/wave.js",
+              "./src/assets/js/app-wizard.js",
+              "./src/assets/js/app-script.js",
+              "./src/assets/js/app-dynamic-stepper.js",
+              "./src/assets/js/custom.js",
+              "./src/assets/js/adminlte.js",
+              "./src/assets/js/custom-ptg.js",
+              "./src/assets/js/moment.js",
+              "./src/assets/js/tempusdominus-bootstrap-4.js"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ],
+              
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "10mb",
+                  "maximumError": "10mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "10kb"
+                }
+              ]
+            },
+            "dev": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.dev.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "10kb"
+                }
+              ]
+            }
+
+
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "pt-maxstation-without-material:build"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "pt-maxstation-without-material:build:production"
+            },
+            "dev": {
+              "browserTarget": "pt-maxstation-without-material:build:dev"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "pt-maxstation-without-material:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "src/test.ts",
+            "polyfills": "src/polyfills.ts",
+            "tsConfig": "tsconfig.spec.json",
+            "karmaConfig": "karma.conf.js",
+            "assets": ["src/favicon.ico", "src/assets"],
+            "styles": [
+              "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
+              "src/styles.scss"
+            ],
+            "scripts": []
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "tsconfig.app.json",
+              "tsconfig.spec.json",
+              "e2e/tsconfig.json"
+            ],
+            "exclude": ["**/node_modules/**"]
+          }
+        },
+        "e2e": {
+          "builder": "@angular-devkit/build-angular:protractor",
+          "options": {
+            "protractorConfig": "e2e/protractor.conf.js",
+            "devServerTarget": "pt-maxstation-without-material:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "pt-maxstation-without-material:serve:production"
+            },
+            "dev": {
+              "devServerTarget": "pt-maxstation-without-material:serve:dev"
+            }
+          }
+        }
+      }
+    }
+  },
+  "defaultProject": "pt-maxstation-without-material",
+  "cli": {
+    "analytics": "7b8cdf95-98f1-429f-aa51-b5563194d304"
+  }
+}

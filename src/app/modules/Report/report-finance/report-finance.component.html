@@ -1,0 +1,70 @@
+<div *ngIf="isUserAuthenticated()">
+    <div class="card pr-7">
+        <div class="card-header bg-header-page "
+            style="font-size: 16px !important; height: 40px;  padding-top: 10px; font-weight: 600;">
+            {{headerCard}}
+        </div>
+
+    <div class="card-body">
+        <div class="form-horizontal">
+            <div class="row">
+                <div class="col-12 col-sm-12 col-md-6 col-lg-6">
+                    <div class="row form-group" [formGroup]="myGroup">
+                        <div class="col-4 text-right topic">รายงาน :</div>
+                        <div class="col-8 data">
+                            <div class="input-group">
+                                <input class="form-control data" formControlName="reportGroup" type="text"
+                                    [disabled]="true">
+                                <button class="btn btn-primary btn-search" (click)="ShowModalReportGroup()">
+                                    <i class="fa fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                <div class="row">
+                    <div class="col-12 col-sm-12 col-md-6 col-lg-6">
+                        <div class="row form-group" *ngIf="parameterDaily !== undefined && parameterDaily !== null">
+                            <div class="col-4 text-right topic"></div>
+                            <div class="col-6 data">
+                                <mat-form-field appearance="fill" style="width: 100% !important">
+                                    <mat-label>ระหว่างวันที่</mat-label>
+                                    <mat-date-range-input [rangePicker]="picker" [formGroup]="dateRange">
+                                        <input matStartDate formControlName="start" placeholder="จากวันที่">
+                                        <input matEndDate formControlName="end" placeholder="ถึงวันที่">
+                                    </mat-date-range-input>
+                                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                                    <mat-date-range-picker #picker></mat-date-range-picker>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <div class="row form-group" *ngIf="parameterMonthly !== undefined && parameterMonthly !== null">
+                            <div class="col-4 text-right topic">ระหว่างเดือน : </div>
+                            <div class="col-6 data">
+                                <mat-form-field appearance="fill" style="width: 100% !important">
+                                    <input matInput [matDatepicker]="dp" [formControl]="date"
+                                        datePickerFormat="MM/YYYY">
+                                    <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
+                                    <mat-datepicker #dp startView="multi-year"
+                                        (monthSelected)="setMonthAndYear($event, dp)" panelClass="example-month-picker">
+                                    </mat-datepicker>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="right-bar mt-2">
+        <button class="btn circle-button circle-buttonPrint" data-tooltip="Print" data-tooltip-location="left"
+            (click)="exportPDF()" *ngIf="isPdf === 'Y'">
+            <i class="fas fa-print"></i>
+        </button>
+        <button class="btn circle-button circle-buttonPrint" data-tooltip="Excel" data-tooltip-location="left"
+            (click)="exportExcel()" *ngIf="isExcel === 'Y'">
+            <i class="fas fa-file-excel"></i>
+        </button>
+    </div>
+</div>

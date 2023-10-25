@@ -1,0 +1,287 @@
+<div *ngIf="isUserAuthenticated()">
+  <div class="card rounded-0 shadow-none" style="margin-right: 6.5%;">
+    <div class="card-header bg-header-page rounded-0"
+      style="font-size: 16px !important; height: 40px;  padding-top: 10px; font-weight: 600;">
+      บันทึกค่าใช้จ่าย
+      <div class="ml-auto">
+        <div [ngClass]=this.getBackgroundRibbon()><label class="ribbon-1-text">{{status}}</label></div>
+      </div>
+    </div>
+    <div class="card-body rounded-0">
+      <div class="row">
+        <div class="col-6">
+          <div class="row form-group">
+            <div class="col-4 text-right topic">เลขที่เอกสาร :</div>
+            <div class="col-8">{{ExpenseHeader.DocNo}}</div>
+          </div>
+          <div class="row form-group">
+            <div class="col-4 text-right topic">เวลาทำงานของสถานี :</div>
+            <label role="button" class="px-3">
+              <input role="button" type="radio" class="px-3" name="CtrlWorkTyp" value="D"
+                [(ngModel)]="ExpenseHeader.WorkType" (change)="ClearCtrlWorkType()"> 24 ชม.
+            </label>
+
+
+          </div>
+          <div class="row form-group">
+            <div class="col-4 text-right topic"></div>
+            <label role="button" class="px-3">
+              <input role="button" type="radio" class="px-3" name="CtrlWorkTyp" value="T"
+                [(ngModel)]="ExpenseHeader.WorkType">
+              อื่นๆ
+            </label>
+            <div class="col-4 col-sm-4 col-md-3 text-left data">
+              ตั้งแต่:<input #workStart type="time" class="form-control" [disabled]="ExpenseHeader.WorkType !== 'T'"
+                [(ngModel)]="ExpenseHeader.WorkStart">
+            </div>
+            <div class="col-4 col-sm-4 col-md-3 text-left data">
+              ถึง:<input #workFinish type="time" class="form-control" [disabled]="ExpenseHeader.WorkType !== 'T'"
+                [(ngModel)]="ExpenseHeader.WorkFinish">
+            </div>
+
+          </div>
+
+          <div class="row form-group">
+            <div class="col-4 text-right topic">หมายเหตุ : </div>
+            <div class="col-8">
+              <input class="form-control form-control-sm w-400 rounded-0 remask-box" rows="4"
+                [(ngModel)]=ExpenseHeader.Remark>
+            </div>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="row form-group">
+            <div class="col-4 text-right topic">วันที่เอกสาร : </div>
+            <div class="col-5 date-layout">
+              <div class="input-group input-group-sm rounded-0">
+                <input class="form-control form-control-sm rounded-0" placeholder="dd-mm-yyyy" [(ngModel)]=ExpenseDate
+                  name="dp" ngbDatepicker #d="ngbDatepicker" (ngModelChange)="DtpCredit_Change()"
+                  [disabled]="ExpenseHeader.DocStatus !== 'New'" [minDate]="minDate" [maxDate]="maxDate">
+                <div class="input-group-append">
+                  <button class="btn btn-primary calendar rounded-0" (click)="d.toggle()" type="button">
+                    <i class="fa fa-calendar"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row form-group">
+            <div class="col-3 text-right topic"></div>
+            <div class="col-9">
+              <h5 style="color: red;">
+                <i>หมายเหตุ : วันที่เอกสารเป็นวันที่เกิดค่าใช้จ่ายจริง</i>
+              </h5>
+            </div>
+          </div>
+          <div class="row form-group">
+            <div class="col-4 text-right topic">ผู้ทำรายการ :</div>
+            <div class="col-8">{{ExpenseHeader.CreatedBy}}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-11 text-right">
+          <div class="btn btn-primary btn-sm btn rounded-0 shadow-none" (click)="openExpanded()">
+            <i class="fa fa-list-alt mx-2"></i>เปิด Tab
+          </div>
+          <div class="btn btn-primary btn-sm btn rounded-0 shadow-none close-tab-layout" (click)="closeExpanded()">
+            <i class="fa fa-minus-square mx-2"></i>ปิด Tab
+          </div>
+        </div>
+
+      </div>
+
+      <div class="row">
+        <div class="col-12 expense-table-layout">
+          <mat-accordion *ngFor="let item of expenseTable;let i = index">
+            <mat-expansion-panel [(expanded)]=item.IsExpanded class="expense-tab-layout">
+              <mat-expansion-panel-header class="expense-panel-table expansion-expense"
+                style="background-color: #277E40;">
+                <mat-panel-title class="expense-panel-title">
+                  {{item.Header}}
+                </mat-panel-title>
+              </mat-expansion-panel-header>
+              <div class="layout-table">
+                <table class="expense-table">
+                  <tr class="expense-header-table">
+                    <td class="expense-column-title">ค่ากลาง</td>
+                    <td class="expense-column-qty">Qty</td>
+                    <td class="expense-column-unit">Unit</td>
+                    <td class="expense-column-data">Data</td>
+                    <td *ngIf="item.Id!='0600' && item.Id !=0700" class="expense-column-number">จำนวน</td>
+                    <td *ngIf="item.Id=='0600' || item.Id ==0700" class="expense-column-number">เลขมิเตอร์</td>
+                  </tr>
+                  <tr *ngFor="let dataTable of item.Body; let i=index" class="expense-row">
+                    <td>{{dataTable.Title}}
+                      <span *ngIf="isAddList && dataTable.IsDelete"
+                        (click)="deleteListTable(item.Id, dataTable.IndexListId)" class="delete-icon"
+                        [innerHtml]="htmlStr"></span>
+                    </td>
+                    <td class="expense-row-center">
+                      <!-- <div *ngIf="dataTable.DisabledQty === 'Y'">
+                        <input [ngModel]="dataTable.Qty" type="text"
+                          class="input-text-expense-table" disabled>
+                      </div>
+                      <div *ngIf="dataTable.DisabledQty === 'N'">
+                        <input [ngModel]="dataTable.Qty" type="text"
+                          class="input-text-expense-table"
+                          (ngModelChange)="onChangeInput($event, item.Id, dataTable.IndexListId, 'Qty')">
+                      </div> -->
+                      <app-InputNumberFormat [(InputNumber)]="dataTable.Qty"
+                        (InputNumberChange)="onChangeInput($event, item.Id, dataTable.IndexListId, 'Qty')"
+                        [Disabled]="dataTable.DisabledQty === 'Y'">
+                      </app-InputNumberFormat>
+                    </td>
+                    <td>{{dataTable.Unit}}</td>
+                    <td>{{dataTable.Data}}</td>
+                    <td>
+                      <!-- <input type="number" [ngModel]="dataTable.Number"
+                        (ngModelChange)="onChangeInput($event, item.Id, dataTable.IndexListId, 'Number')"
+                        class="input-text-expense-table"> -->
+                      <app-InputNumberFormat [(InputNumber)]="dataTable.Number"
+                        (InputNumberChange)="onChangeInput($event, item.Id, dataTable.IndexListId, 'Number')">
+                      </app-InputNumberFormat>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </mat-expansion-panel>
+          </mat-accordion>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-12" style="width: 80%;padding-top: 30px;padding-right: 10%; padding-left: 10%;">
+          <div class="btn btn-primary btn-sm  float-right btn rounded-0 shadow-none" (click)="addEssList()">
+            <i class="fa fa-plus mx-2"></i>รายละเอียดงานซ่อม(ESS)
+          </div>
+          <table class="expense-table">
+            <tr class="ess-header-table">
+              <td>
+                เลขรายการซ่อม(ESS)
+              </td>
+              <td>
+                รายละเอียดงานซ่อม(ESS)
+              </td>
+              <td>
+                ลบ
+              </td>
+            </tr>
+            <tr *ngFor="let essData of essTable; let i=index">
+              <td class="ess-row-input-table">
+                <input type="text" [ngModel]="essData.EssNumber" (ngModelChange)="onChangeEssInputId($event, i)"
+                  class="input-text-ess-table">
+              </td>
+              <td class="ess-row-input-table">
+                <input type="text" [ngModel]="essData.EssDetail" (ngModelChange)="onChangeEssInputDetail($event, i)"
+                  class="input-text-ess-table">
+              </td>
+              <td class="icon-delete-layout" style="text-align: -webkit-center;">
+                <div class="delete-icon  text-danger " (click)="deleteEssList(essTable.indexOf(essData))"
+                  [innerHtml]="essData.Delete"></div>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <!--/row-->
+      <div class="table-responsive table-custom-scrollbar mt-3" style=" max-height: 30vh !important">
+      </div>
+    </div>
+    <!--/"card-body-->
+    <div class="card-footer border-0">
+      <div class="row">
+        <div class="col-2 text-right"></div>
+        <div class="col-6">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="right-bar" style="padding-top: 4%;">
+    <button class="btn circle-button circle-buttonSave" [hidden]="btnSave" (click)="saveDocument()" data-tooltip="Save"
+      data-tooltip-location="left">
+      <i class="far fa-save"></i>
+    </button>
+    <!-- <button class="btn circle-button circle-buttonPrint" (click)="exportPDF()" [hidden]="btnPrint"
+      data-tooltip="PDF" data-tooltip-location="left">
+      <i class="fas fa-print"></i>
+    </button> -->
+    <button class="btn circle-button circle-buttonCancel" (click)="UpdateStatus('Cancel')"
+      [hidden]="btnCancel" data-tooltip="Cancel" data-tooltip-location="left">
+      <i class="fas fa-times"></i>
+    </button>
+    <button class="btn circle-button circle-buttonClear" [hidden]="btnClear" (click)="clearDocument()"
+      data-tooltip="Clear" data-tooltip-location="left">
+      <i class="fas fa-eraser"></i>
+    </button>
+    <button class="btn circle-button circle-buttonBack" [routerLink]="['/ExpenseList']" [hidden]="btnBack"
+      data-tooltip="Back" data-tooltip-location="left">
+      <i class="fas fa-undo"></i>
+    </button>
+  </div>
+</div>
+
+<!---- Modal Container ---->
+<div class="modal fade" id="modal-addCategory" role="dialog" aria-labelledby="modal-test" aria-hidden="true">
+  <div class="modal-dialog modal-l">
+    <div class="modal-content">
+      <div class="modal-header bg-header">
+        <span class="modal-title h6">หมวดค่าใช้จ่าย</span>
+        <button type="button" class="close" data-dismiss="modal">&times;
+        </button>
+      </div>
+      <div class="modal-body">
+
+        <!-- Row -->
+        <div class="row">
+          <div class="col-10 topic">
+            <label>ชื่อหมวด : </label>
+            <input type="text" id="newCategory" name="newCategory" [(ngModel)]="newCategory">
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn btn-primary btn-sm" (click)="addCategory()" data-dismiss="modal">ตกลง</button>
+          <button type="button" class="btn  btn-sm btn-warning" data-dismiss="modal">ยกเลิก</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!---- Modal Container ---->
+<div class="modal fade" id="modal-addListTable" role="dialog" aria-labelledby="modal-test" aria-hidden="true">
+  <div class="modal-dialog modal-l">
+    <div class="modal-content">
+      <div class="modal-header bg-header">
+        <span class="modal-title h6">รายการค่าใช้จ่าย</span>
+        <button type="button" class="close" data-dismiss="modal">&times;
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-2">
+            <label>ชื่อรายการ : </label>
+          </div>
+          <div class="col-8">
+            <mat-form-field appearance="fill">
+              <mat-label>รายการเงินสดย่อย</mat-label>
+              <mat-select style="width:250px;" [(value)]="newTitle">
+                <mat-option value="ค่าใช้จ่ายเบ็ดเตล็ดอื่นๆ">ค่าใช้จ่ายเบ็ดเตล็ดอื่นๆ</mat-option>
+                <mat-option value="ค่าซ่อมแซม-รถยนต์">ค่าซ่อมแซม-รถยนต์</mat-option>
+                <mat-option value="ค่าเบี้ยเลี้ยง-พนักงานรายเดือน">ค่าเบี้ยเลี้ยง-พนักงานรายเดือน</mat-option>
+                <mat-option value="ของกำนัลหรือเงินกำนัล">ของกำนัลหรือเงินกำนัล</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <div class="modal-footer">
+            <button class="btn btn-primary btn-sm" (click)="addListTable()" data-dismiss="modal">ตกลง</button>
+            <button type="button" class="btn  btn-sm btn-warning" data-dismiss="modal">ยกเลิก</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

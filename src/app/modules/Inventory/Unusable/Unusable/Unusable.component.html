@@ -1,0 +1,126 @@
+<div *ngIf="isUserAuthenticated()">
+  <div class="card" style="margin-right: 6.5%;">
+    <div class="card-header bg-header-page "
+      style="font-size: 16px !important; height: 40px;  padding-top: 10px; font-weight: 600;">
+      บันทึกใบโอนสถานะสินค้า
+      <div class="ml-auto">
+        <div [ngClass]="SvDefault.GetBackgroundRibbon(Header?.DocStatus)">
+          <label class="ribbon-1-text">{{HiddenButton?.status}}</label>
+        </div>
+      </div>
+    </div>
+    <!-- End Of Card Header -->
+    <div class="card-body">
+      <div class="row">
+        <div class="col-6">
+          <div class="row my-2">
+            <div class="col-4 text-right px-0">เลขที่เอกสาร : </div>
+            <div class="col-8">{{Header.DocNo}}</div>
+          </div>
+          <!-- End Of DocNo -->
+          <div class="row my-2">
+            <div class="col-4 text-right px-0">เหตุผลการโอนสถานะ : </div>
+            <div class="col-8">
+              <ng-select [(ngModel)]="Header.ReasonId">
+                <ng-option *ngFor="let item of ArrReason;let i=index" [value]="ArrReason[i].ReasonId">
+                  {{ArrReason[i].ReasonId}} : {{ArrReason[i].ReasonDesc}}
+                </ng-option>
+              </ng-select>
+            </div>
+          </div>
+          <!-- End Of Reason -->
+        </div>
+        <!-- End Of Left Panel -->
+        <div class="col-6 pl-0 ml-0">
+          <div class="row my-2">
+            <div class="col-4 text-right">วันที่เอกสาร : </div>
+            <div class="col-8">{{Header.DocDate | date:'dd/MM/yyyy'}}</div>
+          </div>
+          <!-- End Of DocDate -->
+          <div class="row my-2">
+            <div class="col-12 text-right">
+              <button class="btn btn-sm btn-primary floar-right" (click)="ShowModalProduct()">
+                <i class="fa fa-plus"></i>
+                เพิ่มสินค้า
+              </button>
+            </div>
+          </div>
+          <!-- End Of DocDate -->
+        </div>
+        <!-- End Of Right Panel -->
+      </div>
+      <!-- End Of Top Row -->
+      <table class="table table-bordered table-hover m-0">
+        <thead>
+          <tr>
+            <th class="align-middle text-center">รหัส</th>
+            <th class="align-middle text-center">ชื่อรายการ</th>
+            <th class="align-middle text-center">หน่วย</th>
+            <th class="align-middle text-center">จำนวน</th>
+            <th class="align-middle text-center">ลบ</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of ArrDetail;let i=index;">
+            <td class="align-middle">{{ArrDetail[i].PdId}}</td>
+            <td class="align-middle">{{ArrDetail[i].PdName}}</td>
+            <td class="align-middle">{{ArrDetail[i].UnitName}}</td>
+            <td class="align-middle">
+              <app-InputNumberFormat Min=0 [(InputNumber)]="ArrDetail[i].ItemQty"></app-InputNumberFormat>
+            </td>
+            <td class="align-middle text-center btn-outline-danger" role="button" (click)="ArrDetail.splice(i,1)">
+              <i class="fa fa-trash"></i>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="row mt-3">
+        <div class="col-3 text-right">
+          <span>หมายเหตุ :</span>
+        </div>
+        <div class="col-9">
+          <textarea class="form-control form-control-sm w-100" [(ngModel)]="Header.Remark"></textarea>
+        </div>
+      </div>
+      <!-- End Of Remark -->
+    </div>
+    <!-- End Of Card Body -->
+  </div>
+  <!-- End Of Card -->
+  <div class="right-bar mt-2">
+    <!-- (click)="saveDocument()" [hidden]="btnSave" -->
+    <button class="btn circle-button circle-buttonSave" (click)="SaveData()" [hidden]="HiddenButton.btnSave"
+      data-tooltip="Save" data-tooltip-location="left">
+      <i class="far fa-save"></i>
+    </button>
+    <!-- (click)="approveDocument()" [hidden]="btnApprove" -->
+    <button class="btn circle-button circle-buttonApprove" (click)="UpdateStatus('Ready')"
+      [hidden]="HiddenButton.btnApprove" data-tooltip="Approve" data-tooltip-location="left">
+      <i class="fas fa-thumbs-up"></i>
+    </button>
+    <button class="btn circle-button circle-buttonReject" (click)="UpdateStatus('Active')"
+      [hidden]="HiddenButton.btnReject" data-tooltip="Reject" data-tooltip-location="left">
+      <i class="fas fa-thumbs-down"></i>
+    </button>
+    <!-- <button class="btn circle-button circle-buttonComplete" (click)="UpdateStatus('Ready')" [hidden]="HiddenButton.btnComplete" data-tooltip="Complete" data-tooltip-location="left">
+    <i class="fas fa-check"></i>
+  </button> -->
+    <!--(click)="printDocument()"  -->
+    <button class="btn circle-button circle-buttonPrint" [hidden]="HiddenButton.btnPrint" data-tooltip="Print"
+      data-tooltip-location="left">
+      <i class="fas fa-print"></i>
+    </button>
+    <button class="btn circle-button circle-buttonCancel" (click)="UpdateStatus('Cancel')"
+      [hidden]="HiddenButton.btnCancel" data-tooltip="Cancel" data-tooltip-location="left">
+      <i class="fas fa-times"></i>
+    </button>
+    <button class="btn circle-button circle-buttonClear" (click)="NewData()" [hidden]="HiddenButton.btnClear"
+      data-tooltip="Clear" data-tooltip-location="left">
+      <i class="fas fa-eraser"></i>
+    </button>
+    <button class="btn circle-button circle-buttonBack" routerLink="/UnusableList" [hidden]="HiddenButton.btnBack"
+      data-tooltip="Back" data-tooltip-location="left">
+      <i class="fas fa-undo"></i>
+    </button>
+  </div>
+</div>

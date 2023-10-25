@@ -1,0 +1,38 @@
+<div class="modal-header bg-header" style="height: 40px; padding-top: 10px;">
+  <span class="modal-title h6">รายการใบสั่งซื้อ</span>
+  <button type="button" class="close" (click)=ActiveModal.dismiss()>&times;
+  </button>
+</div>
+<div class="modal-body">
+  <div class="table-responsive">
+    <table class="table table-sm table-hover m-0">
+      <thead>
+        <tr>
+          <th class="text-center align-middle">#</th>
+          <th class="text-center align-middle">เลขที่ใบสั่งซื้อ</th>
+          <th class="text-center align-middle">วันที่ใบสั่งซื้อ</th>
+          <th class="text-center align-middle">ประเภท</th>
+          <th class="text-center align-middle">รหัสผู้จำหน่าย</th>
+          <th class="text-center align-middle">ชื่อผู้จำหน่าย</th>
+        </tr>
+      </thead>
+      <tbody *ngIf="HaveHeader()">
+        <tr *ngFor="let po of ArrPoHeader;let i = index" role="button" (click)="ActiveModal.close(po)">
+          <td class="text-center pl-2">{{i+1}}</td>
+          <td class="text-center p-2">{{ArrPoHeader[i].PoNumber}}</td>
+          <td class="text-center p-2">{{ArrPoHeader[i].DocDate | date:'dd/MM/yyyy'}}</td>
+          <td class="text-left p-2">{{ArrPoHeader[i].DocType}}</td>
+          <td class="text-left p-2">{{ArrPoHeader[i].Vendor}}</td>
+          <td class="text-left p-2">{{ArrPoHeader[i].SupplierName}}</td>
+        </tr>
+      </tbody>
+      <tfoot *ngIf="!HaveHeader()">
+        <tr>
+          <td colspan="6" class="bg-light text-center">
+            ไม่พบรายการใบสั่งซื้อ
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+</div>

@@ -1,0 +1,15 @@
+<div class="input-group input-group-sm">
+  <input  class="form-control form-control-sm" [readonly]="true" value="{{StartDateShow.day}}/{{StartDateShow.month}}/{{StartDateShow.year}} ถึง {{FinishDateShow.day}}/{{FinishDateShow.month}}/{{FinishDateShow.year}}" style="font-size: 13px; height: 36px;">
+  <input #dpStartDate class="form-control" placeholder="yyyy-mm-dd" type="hidden" name="dpStartDate" [value]="formatter.format(StartDate)" (input)="StartDate = validateInput(StartDate, dpStartDate.value)" style="font-size: 13px;">
+  <input name="datepicker" type="hidden" class="form-control" ngbDatepicker #datepicker="ngbDatepicker"  [autoClose]="'outside'" (dateSelect)="onDateSelection($event)" [displayMonths]="2" [dayTemplate]="t" outsideDays="hidden" [startDate]="StartDate!" tabindex="-1" style="font-size: 13px;">
+  <ng-template #t let-date let-focused="focused">
+    <span class="custom-day" [class.focused]="focused" [class.range]="isRange(date)" [class.faded]="isHovered(date) || isInside(date)" (mouseenter)="hoveredDate = date" (mouseleave)="hoveredDate = null">
+          {{ date.day }}
+    </span>
+  </ng-template>
+  <div class="input-group-append">
+    <button class="btn btn-primary btn-sm calendar" (click)="datepicker.toggle()" type="button">
+      <i class="far fa-calendar-alt"></i>
+    </button>
+  </div>
+</div>

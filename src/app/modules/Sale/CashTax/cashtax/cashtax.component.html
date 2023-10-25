@@ -1,0 +1,527 @@
+<div *ngIf="isUserAuthenticated()" class="card" style="margin-right: 6.5%;">
+  <div class="card-header bg-header-page ">บันทึกใบกำกับภาษีเต็มรูป
+    <div class="ml-auto">
+      <!-- [ngClass]=this.getBackgroundRibbon() -->
+      <div [ngClass]="SvDefault.GetBackgroundRibbon(document.DocStatus)"><label class="ribbon-1-text">
+        <!-- {{status}} -->
+        {{status}}
+      </label>
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+
+    <div class="form-horizontal">
+      <!-- Row -->
+      <div class="row">
+        <!-- ========== Col01 ========== -->
+        <div class="col-12 col-sm-12 col-md-6 col-lg-6">
+          <!-- Row -->
+          <div class="row form-group" [formGroup]="myGroup">
+            <div class="col-4 text-right topic">เลขที่เอกสาร :</div>
+            <div class="col-6 data">{{document.DocNo}}</div>
+          </div>
+          <!-- Row -->
+          <div class="row form-group" [formGroup]="myGroup">
+            <div class="col-4 text-right topic">เลขผู้เสียภาษี :</div>
+            <div class="col-6 data">
+
+              <!-- <div *ngIf="citizenid.errors && isValidFormSubmitted != null && !isValidFormSubmitted" [ngClass] = "'error'"> 
+                        <div *ngIf="citizenid.errors.required"> 
+                          เลขผู้เสียภาษี required. 
+                        </div>			  
+                        <div *ngIf="citizenid.errors.minlength"> 
+                          เลขผู้เสียภาษี must be at least 3 characters long.
+                        </div>	
+                        <div *ngIf="citizenid.errors.maxlength"> 
+                          เลขผู้เสียภาษี can be max 8 characters long.
+                        </div>	
+                      </div> -->
+
+              <div class="input-group">
+                <input class="form-control data" formControlName="citizenid" type="text"
+                  [(ngModel)]="document.CitizenId" (keyup.enter)="GetTaxProfile()" numbersOnly maxlength="13">
+                <button class="btn btn-primary btn-search" (click)="GetTaxProfile()">
+                  <i class="fa fa-keyboard"></i>
+                </button>
+              </div>
+
+
+            </div>
+          </div>
+          <!-- Row -->
+          <div class="row form-group">
+            <div class="col-4 text-right topic">รหัสลูกค้า :</div>
+            <div class="col-6 data">
+              <input class="form-control" [(ngModel)]="document.CustCode" type="text" (keyup.enter)="GetCustomer()">
+            </div>
+          </div>
+          <div class="row form-group" [formGroup]="myGroup">
+            <div class="col-4 text-right topic">ชื่อลูกค้า :</div>
+            <div class="col-6 data">
+              <input class="form-control" formControlName="custname" type="text">
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ========== Col02 ========== -->
+        <div class="col-12 col-sm-12 col-md-6 col-lg-6">
+          <!-- Row -->
+          <div class="row form-group" [formGroup]="myGroup">
+            <div class="col-4 text-right topic">วันที่เอกสาร : </div>
+            <div class="col-6 data">
+              <!-- {{document.DocDate | date:'dd/MM/yyyy'}} -->
+              <!-- <mat-form-field appearance="fill">
+                    <mat-label>Doc no</mat-label>
+                    <input matInput [matDatepicker]="picker" [(ngModel)]="dateModel.DocDateNow">
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                  </mat-form-field> -->
+              <mat-form-field appearance="fill">
+                <mat-label>Doc date</mat-label>
+                <input matInput [matDatepicker]="picker" formControlName="date" [disabled]="!(document.DocStatus === 'New' && CashTaxForCancel == null)"  (dateChange)="dateAddEvent()">
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+              </mat-form-field>
+            </div>
+          </div>
+          <!-- Row -->
+          <div class="row form-group" [formGroup]="myGroup">
+            <div class="col-4 text-right topic">ผู้ทำรายการ : </div>
+            <div class="col-6 data">{{document.CreatedBy}}</div>
+          </div>
+          <!-- Row -->
+          <div class="row form-group" [formGroup]="myGroup">
+            <div class="col-4 text-right topic">อ้างอิงขายสดเลขที่ : </div>
+            <div class="col-6 data">
+              <div class="input-group">
+                <input class="form-control data" [disabled]="true" style="height: 36px;"
+                  value="{{this.document.RefNo}}">
+                <button class="btn btn-primary" [disabled]="!(document.DocStatus === 'New' && CashTaxForCancel == null)"
+                  data-toggle="modal" data-target="#modal-getCash" (click)="getCashSaleValidate()"
+                  style="border-bottom-left-radius: 0px; border-top-left-radius: 0px; width: 40px; height: 36px;">
+                  <i class="fa fa-search"></i>
+                </button>
+
+                <div class="modal fade" role="dialog" id={{btnGetCashSale}} aria-labelledby="modal-test"
+                  aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content" style="width: 200% !important; margin-left: -45%; margin-top: 20%;">
+                      <div class="modal-header bg-header" style="height: 40px; padding-top: 10px;">
+                        <span class="modal-title h6">รายการขายสด</span>
+                        <button type="button" class="close" data-dismiss="modal">&times;
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <!-- Row -->
+                        <div class="row">
+                          <div class="col-10 topic">
+                            <label>ค้นหาข้อมูลการขายสด : </label>
+                          </div>
+                        </div>
+
+                        <!-- Row -->
+                        <div class="row">
+                          <div class="col-10" [formGroup]="myGroup">
+                            <input type="text" class="form-control" formControlName="searchCash"
+                              placeholder="กรุณาใส่คำที่ต้องการค้นหา" />
+                          </div>
+                          <div class="col-2" style="padding-right: 3%; width: 100%;">
+                            <button class="btn btn-primary" (click)="getCashList()">
+                              <i class="fa fa-search" style="font-size: 15px;"></i>&nbsp;ค้นหา
+                            </button>
+                          </div>
+                        </div>
+                        <br>
+
+                        <!-- Row -->
+                        <div class="row">
+                          <div class="col-12" style="padding-left: 3%; padding-right: 3%;">
+                            <form [formGroup]="myGroup">
+                              <div class="row">
+                                <div class="table-responsive" style=" max-height: 30vh !important">
+                                  <table class="table table-sm table-bordered table-hover">
+                                    <thead>
+                                      <tr style="height: 36px;">
+                                        <th style="text-align: center; width: 50%;">DocNo</th>
+                                        <th style="text-align: left; width: 50%;">RefNO</th>
+
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                      <tr *ngFor="let item of cashSaleList;let i = index" class="trCashSaleStyle">
+                                        <td (click)="selectedCash(i)" style="text-align: center;">{{ item.DocNo }}</td>
+                                        <td (click)="selectedCash(i)">{{ item.RefNo }}</td>
+                                      </tr>
+                                    </tbody>
+                                  </table>
+                                  <mat-paginator [length]="length" [pageSize]="pageSize"
+                                    [pageSizeOptions]="pageSizeOptions"
+                                    (page)="pageEvent = $event; onPaginateChange($event)" showFirstLastButtons>
+                                  </mat-paginator>
+                                </div>
+                              </div>
+                            </form>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="modal-footer">
+                        <button class="btn btn-primary" (click)="addCashSale()" data-dismiss="modal" style="width: 8%;">
+                          ตกลง
+                        </button>
+                        <button type="button" class="btn btn-primary" data-dismiss="modal" style="width: 8%;">
+                          ยกเลิก
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Row -->
+      <div class="row">
+        <div class="col-12 col-sm-12 col-md-12 col-lg-12">
+          <!-- Row -->
+          <div class="row form-group" [formGroup]="myGroup">
+            <div class="col-2 text-right topic">ที่อยู่ลูกค้า :</div>
+            <div class="col-6 data">
+              <input class="form-control" formControlName="custaddr1" type="text">
+            </div>
+          </div>
+          <!-- Row -->
+          <div class="row form-group" [formGroup]="myGroup">
+            <div class="col-2 text-right topic"></div>
+            <div class="col-6 data">
+              <input class="form-control" formControlName="custaddr2" type="text">
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <!--/form-horizontal-->
+
+    <div class="row" style="margin-bottom: 0.2%;">
+      <div class="col-12">
+        <div class="card-body" style="padding-right: 0px;margin-bottom: -30px;padding-bottom: 0px;">
+          <div class="btn btn-primary" data-toggle="modal" data-target="#modal-getProduct"
+            style="float: right !important; height: 36px;" (click)="getProductList()"
+            [hidden]="document.RefNo != '' &&  document.RefNo!= null"><i class="fa fa-product"></i>&nbsp;+ สินค้า</div>
+          &nbsp;&nbsp;
+          <div class="modal fade" id="modal-getProduct" role="dialog" aria-labelledby="modal-test" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content" style="width: 200% !important; margin-left: -45%; margin-top: 20%;">
+                <div class="modal-header bg-header" style="height: 40px; padding-top: 10px;">
+                  <span class="modal-title h6">เพิ่มสินค้า</span>
+                  <button type="button" class="close" data-dismiss="modal">&times;
+                  </button>
+                </div>
+                <div class="modal-body">
+
+                  <!-- Row -->
+                  <div class="row">
+                    <div class="col-10 topic">
+                      <label>ค้นหาสินค้า : </label>
+                    </div>
+                  </div>
+
+                  <!-- Row -->
+                  <div class="row">
+                    <div class="col-10" [formGroup]="myGroup">
+                      <input type="text" class="form-control" formControlName="searchProduct"
+                        placeholder="กรุณาใส่คำที่ต้องการค้นหา" />
+                    </div>
+                    <div class="col-2" style="padding-right: 3%; width: 100%;">
+                      <button class="btn btn-primary" (click)="getProductList()" style="font-size: 15px;">
+                        <i class="fa fa-search"></i>&nbsp;ค้นหา
+                      </button>
+                    </div>
+                  </div>
+                  <br>
+
+                  <!-- Row -->
+                  <div class="row">
+                    <div class="col-6 topic">รายการสินค้า</div>
+                    <div class="col-6 topic">รายการสินค้าที่เลือก</div>
+                  </div>
+
+                  <!-- Row -->
+                  <div class="row">
+                    <div class="col-6" style="padding-left: 3%; padding-right: 3%;">
+                      <form [formGroup]="myGroup">
+                        <div class="row form-group">
+                          <div class="table-responsive table-custom-scrollbar"
+                            style=" max-height: 30vh !important; font-size: 15px;">
+                            <table class="table table-sm table-bordered table-hover">
+                              <thead>
+                                <tr>
+                                  <th style="padding: 0.5rem !important; text-align: center;">รหัสสินค้า</th>
+                                  <th style="padding: 0.5rem !important; text-align: left;">ชื่อสินค้า</th>
+                                  <th style="padding: 0.5rem !important; text-align: center;">หน่วย</th>
+                                  <th style="padding: 0.5rem !important; text-align: right;">ราคา</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr *ngFor="let item of productList;let i = index">
+                                  <td (click)="selectedProductList(i)"
+                                    style="padding: 0.5rem !important; text-align: center;">{{ item.UnitBarcode }}</td>
+                                  <td (click)="selectedProductList(i)"
+                                    style="padding: 0.5rem !important; text-align: left;">
+                                    <label class="hidden-box" title="{{ item.PdName }}">
+                                      <label class="hidden-text" style="font-weight: 400 !important;">{{ item.PdName
+                                        }}</label>
+                                    </label>
+                                  </td>
+                                  <td (click)="selectedProductList(i)"
+                                    style="padding: 0.5rem !important; text-align: center;">{{ item.UnitName }}</td>
+                                  <td (click)="selectedProductList(i)"
+                                    style="padding: 0.5rem !important; text-align: center;">{{ item.UnitPrice | number:
+                                    '1.2-2' }}</td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                    <div class="col-6" style="padding-left: 3%; padding-right: 3%;">
+                      <form [formGroup]="myGroup">
+                        <div class="row form-group">
+                          <div class="table-responsive table-custom-scrollbar"
+                            style=" max-height: 30vh !important; font-size: 15px;">
+                            <table class="table table-sm table-bordered table-hover">
+                              <thead>
+                                <tr>
+                                  <th style="padding: 0.5rem !important; text-align: center;">รหัสสินค้า</th>
+                                  <th style="padding: 0.5rem !important; text-align: left;">ชื่อสินค้า</th>
+                                  <th style="padding: 0.5rem !important; text-align: center;">หน่วย</th>
+                                  <th style="padding: 0.5rem !important; text-align: right;">ราคา</th>
+                                  <th style="padding: 0.5rem !important; text-align: center;">ลบ</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr *ngFor="let item of productSelectedList;let i = index">
+                                  <td style="padding: 0.5rem !important; text-align: center;">{{ item.UnitBarcode }}
+                                  </td>
+                                  <td style="padding: 0.5rem !important; text-align: left;">
+                                    <label class="hidden-box" title="{{ item.PdName }}">
+                                      <label class="hidden-text" style="font-weight: 400 !important;">{{ item.PdName
+                                        }}</label>
+                                    </label>
+                                  </td>
+                                  <td style="padding: 0.5rem !important; text-align: center;">{{ item.UnitName }}</td>
+                                  <td style="padding: 0.5rem !important; text-align: center;">{{ item.UnitPrice |
+                                    number: '1.2-2'}}</td>
+                                  <td class="text-center" role="button" (click)="deleteSelected(i)"><i
+                                      class="fas fa-trash-alt text-danger"></i></td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button class="btn btn-primary" (click)="addItemtoLine()" data-dismiss="modal" style="width: 8%;">
+                    ตกลง
+                  </button>
+                  <button type="button" class="btn btn-primary" data-dismiss="modal" style="width: 8%;">
+                    ยกเลิก
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row -->
+    <div class="row">
+      <div class="col-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="table-responsive">
+          <table id="table-detail" class="table table-border table-hover m-0">
+            <thead>
+              <tr>
+                <th class="text-center text-nowrap">ทะเบียนรถ</th>
+                <th class="text-center text-nowrap">รหัสสินค้า</th>
+                <th class="text-center text-nowrap">ชื่อสินค้า</th>
+                <th class="text-center text-nowrap">แถม</th>
+                <th class="text-center text-nowrap">หน่วย</th>
+                <th class="text-center text-nowrap">ราคา/หน่วย</th>
+                <th class="text-center text-nowrap">ปริมาณ</th>
+                <th class="text-center text-nowrap">มูลค่าสินค้า</th>
+                <th class="text-center text-nowrap">ส่วนลด</th>
+                <th class="text-center text-nowrap">ภาษี</th>
+                <th class="text-center text-nowrap">มูลค่าสุทธิ</th>
+                <th class="text-center text-nowrap" *ngIf="CashTaxForCancel == null">ลบ</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of lines; let i=index">
+                <td>
+                  <input type="text" class="form-control text-xs"
+                    [(ngModel)]="item.LicensePlate" style="width: 100px;" />
+                </td>
+                <td class="text-center">{{ item.UnitBarcode }}</td>
+                <td class="text-left text-nowrap">{{ item.PdName }}</td>
+                <td>
+                  <input [disabled]="CashTaxForCancel !=null" type="checkbox" class="form-control form-control-sm"
+                    [(ngModel)]="item.IsFree" style="font-size: 3px;" (change)="setProductFree(i)" />
+                </td>
+                <td class="text-left text-nowrap">{{ item.UnitName }} </td>
+                <td class="text-right text-nowrap">{{ item.UnitPrice | number: '1.2-2'}} </td>
+                <td class="text-right">
+                  <app-InputNumberFormat [Disabled]="CashTaxForCancel !=null" [(InputNumber)]="item.ItemQty"
+                    (InputNumberChange)="calculateRow(i)">
+                  </app-InputNumberFormat>
+                </td>
+                <!-- <td class="text-right text-nowrap">{{ item.SubAmt | number: '1.2-2'}} </td> -->
+                <td class="text-right">
+                  <app-InputNumberFormat [Disabled]="CashTaxForCancel !=null" [(InputNumber)]="item.SubAmt"
+                    (InputNumberChange)="calculateRowProductValue(i)" [Disabled]="item.IsFree">
+                  </app-InputNumberFormat>
+                </td>
+                <td class="text-right">
+                  <app-InputNumberFormat [Disabled]="CashTaxForCancel !=null" [(InputNumber)]="item.DiscAmt"
+                    (InputNumberChange)="calculateRowDiscount(i)" [Disabled]="item.IsFree">
+                  </app-InputNumberFormat>
+                </td>
+                <td class="text-center text-nowrap">{{ item.VatType }} {{ item.VatRate }}% </td>
+                <td class="text-right text-nowrap">{{ item.SumItemAmt | number: '1.2-2'}} </td>
+                <td class="text-center btn-outline-danger" role="button" *ngIf="CashTaxForCancel == null"
+                  (click)="deleteRow(i)">
+                  <i class="fas fa-trash-alt text-sm align-middle"></i>
+                </td>
+              </tr>
+              <tr>
+                <td [hidden]="lines.length > 0" colspan="12" class="text-center">
+                  ------------------------------ กรุณาเพิ่มรายการสินค้า ------------------------------
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <br>
+    <!-- Row -->
+    <div class="row form-group">
+      <div class="col-1"></div>
+      <div class="col-9 topic text-right">รวมจำนวนเงิน :</div>
+      <div class="col-2 text-right">{{document.SubAmt | number: '1.2-2'}}</div>
+    </div>
+    <!-- Row -->
+    <div class="row form-group">
+      <div class="col-1"></div>
+      <div class="col-9 topic text-right">ส่วนลดท้ายเอกสาร :</div>
+      <div class="col-2 text-right">
+        <input type="number" [disabled]="CashTaxForCancel !=null" class="form-control" [(ngModel)]="document.DiscAmt" (blur)="calculateDocument()"
+          style="height: 30px; text-align: right; font-size: 15px;" />
+      </div>
+    </div>
+    <!-- Row -->
+    <div class="row form-group">
+      <div class="col-1"></div>
+      <div class="col-9 topic text-right">รวมจำนวนเงินหลังหักส่วนลดท้ายเอกสาร :</div>
+      <div class="col-2 text-right">{{document.TotalAmt | number: '1.2-2'}}</div>
+    </div>
+    <div *ngFor="let item of vatGroupList | keyvalue">
+      <!-- Row -->
+      <div class="row form-group">
+        <div class="col-1"></div>
+        <div class="col-9 topic text-right">มูลค่าก่อนภาษี อัตรา {{item.value.VatRate}}% :
+          <!-- Key: <b>{{item.key}}</b> and Value: <b>{{item.value.VatRate}}</b> -->
+          <!-- <label class="topic" style="float: right !important;">ฐานภาษี ประเภท {{item.value.VatTypeName}} {{item.value.VatRate}}% :</label> -->
+        </div>
+        <div class="col-2 text-right">{{item.value.TaxBase | number: '1.2-2'}}</div>
+      </div>
+
+      <!-- Row -->
+      <div class="row form-group">
+        <div class="col-1"></div>
+        <div class="col-9 topic text-right">ภาษีมูลค่าเพิ่ม อัตรา {{item.value.VatRate}}% :</div>
+        <div class="col-2 text-right">{{item.value.VatAmt | number: '1.2-2'}}</div>
+      </div>
+    </div>
+
+    <!-- Row -->
+    <div class="row form-group">
+      <div class="col-1"></div>
+      <div class="col-9 topic text-right">รวมมูลค่าก่อนภาษี :</div>
+      <div class="col-2 text-right">{{document.TaxBaseAmt | number: '1.2-2'}}</div>
+    </div>
+
+    <!-- Row -->
+    <div class="row form-group">
+      <div class="col-1"></div>
+      <div class="col-9 topic text-right">รวมภาษีมูลค่าเพิ่ม :</div>
+      <div class="col-2 text-right">{{document.VatAmt | number: '1.2-2'}}</div>
+    </div>
+
+    <!-- Row -->
+    <div class="row form-group">
+      <div class="col-1"></div>
+      <div class="col-9 topic text-right">รวมมูลค่าสุทธิ :</div>
+      <div class="col-2 text-right">{{document.NetAmt | number: '1.2-2'}}</div>
+    </div>
+  </div>
+
+  <!--container-right-->
+  <div class="right-bar" style="padding-top: 4%;">
+    <button class="btn circle-button circle-buttonSave" (click)="saveDocument()"
+      [hidden]="btnSave || CashTaxForCancel != null" data-tooltip="Save" data-tooltip-location="left">
+      <i class="far fa-save"></i>
+    </button>
+    <button class="btn circle-button circle-buttonSave shadow-success" (click)="CancelAndReplace()"
+      [hidden]="btnSave || CashTaxForCancel == null" data-tooltip="บันทีก และ ยกเลิกใบเดิม"
+      data-tooltip-location="left">
+      <i class="far fa-save"></i>
+    </button>
+    <button class="btn circle-button circle-buttonApprove" (click)="approveDocument()" [hidden]="btnApprove"
+      data-tooltip="Approve" data-tooltip-location="left">
+      <i class="fas fa-thumbs-up"></i>
+    </button>
+    <button class="btn circle-button circle-buttonReject" (click)="rejectDocument()" [hidden]="btnReject"
+      data-tooltip="Reject" data-tooltip-location="left">
+      <i class="fas fa-thumbs-down"></i>
+    </button>
+    <button class="btn circle-button circle-buttonComplete" (click)="completeDocument()" *ngIf="false"
+      [hidden]="btnComplete" data-tooltip="Complete" data-tooltip-location="left">
+      <i class="fas fa-check"></i>
+    </button>
+    <button class="btn circle-button circle-buttonPrint" (click)="exportPDF()" [hidden]="btnPrint" data-tooltip="Print" data-tooltip-location="left">
+      <i class="fas fa-print"></i>
+    </button>
+    <!-- <a class="btn circle-button circle-buttonPrint text-white"  href="https://pt-max-station-report-viewer-uat.azurewebsites.net/taxinvoice/PrintDoc/185500/8B7C62E1-D639-4365-A142-C79278A89026" target="_blank"  [hidden]="btnPrint" data-tooltip="Print" data-tooltip-location="left"> -->
+    <!-- <a class="btn circle-button circle-buttonPrint text-white" [href]="urlReportView" target="_blank"
+      [hidden]="btnPrint" data-tooltip="Print" data-tooltip-location="left">
+      <i class="fas fa-print"></i>
+    </a> -->
+
+    <button class="btn circle-button circle-buttonCancel" (click)="cancelDocument()" [hidden]="btnCancel"
+      data-tooltip="Cancel" data-tooltip-location="left">
+      <i class="fas fa-times"></i>
+    </button>
+    <button class="btn circle-button circle-buttonClear" (click)="clearDocument()" [hidden]="btnClear"
+      data-tooltip="Clear" data-tooltip-location="left">
+      <i class="fas fa-eraser"></i>
+    </button>
+    <button class="btn circle-button bg-gradient-blue shadow-success" [hidden]="btnCancelAndReplace"
+      (click)=PrepareCancelAndReplace() data-tooltip="ยกเลิก ออกทดแทน" data-tooltip-location="left">
+      <i class="fas fa-copy"></i>
+    </button>
+    <button class="btn circle-button circle-buttonBack" routerLink="/CashtaxList" [hidden]="btnBack" data-tooltip="Back"
+      data-tooltip-location="left">
+      <i class="fas fa-undo"></i>
+    </button>
+    <!-- [hidden]="btnApprove" -->
+  </div>
+
+</div>

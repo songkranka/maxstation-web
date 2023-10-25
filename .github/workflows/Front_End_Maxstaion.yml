@@ -1,0 +1,369 @@
+name: WEB Front End Maxstaion
+
+on: 
+ workflow_dispatch:
+  inputs:
+      tags:
+        description: 'Tags Image Release'
+# on:
+#   push:
+#     branches: ["master"]
+#   workflow_dispatch:
+
+env:
+  APP_NAME: ${{ vars.APP_NAMEFRONT }}
+  IMG_VERSIONDEV: ${{ vars.IMG_VERSIONDEV }}
+  IMG_VERSIONUAT: ${{ vars.IMG_VERSIONUAT }}
+  IMG_VERSIONPRD: ${{ vars.IMG_VERSIONPRD }}
+  RUNNUMBER: ${{ github.run_number }}
+  ECR_REPOSITORY: ${{vars.APP_NAMEFRONT}}
+  IMAGE_TAG_DEV: ${{vars.IMG_VERSIONDEV}}${{ github.run_number }}
+  IMAGE_TAG_UAT: ${{vars.IMG_VERSIONUAT}}${{ github.run_number }}
+
+  AWS_ACCESS_KEY_ID: ${{ secrets.SHARED_AWS_ACCESS_KEY }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.SHARED_AWS_SECRET_KEY }}
+  AWS_REGISTRY: ${{ secrets.AWS_REGISTRY }}
+  AWS_REGION: ${{secrets.AWS_REGION}}
+  
+jobs:
+
+  start_approval:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Manual Workflow Approval
+        uses: trstringer/manual-approval@v1.9.0
+        with:
+          secret: ${{ github.TOKEN }}
+          approvers: thavornch, lasttom
+          minimum-approvals: 1
+          issue-title: "Start Deploying"
+          issue-body: "Please approve or deny the Start Deploying "
+          exclude-workflow-initiator-as-approver: false
+          additional-approved-words: ''
+          additional-denied-words: ''
+
+  buildImage:
+    runs-on: ubuntu-latest
+    needs: [start_approval]
+    if: ${{ always() && github.event.inputs.tags == '' }}
+    steps:
+
+      - name: Checkout code
+        run: |
+          git config --global user.email "thavorn.ch@pt.co.th"
+          git config --global user.name "thavornch"
+          git clone https://${{ secrets.GITTOKEN}}@github.com/App-MaxStation/pt-max-station-test-repo.git
+          cd pt-max-station-test-repo
+          git checkout main
+          echo "Log level: ${{ github.event.inputs.logLevel }}"
+          echo "Tags: ${{ github.event.inputs.tags }}"  
+
+      - name: Configure AWS credentials
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.SHARED_AWS_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.SHARED_AWS_SECRET_KEY }}
+          AWS_REGION: ${{env.AWS_REGION}}
+        run: |
+          aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+          aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+          aws configure set default.region $AWS_REGION
+
+      - name: Log in to Amazon ECR
+        run: |
+          aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_REGISTRY
+
+      - name: "Build, tag, and push image to Amazon ECR"
+        env:
+          ECR_REGISTRY: ${{env.AWS_REGISTRY}}
+          ECR_REPOSITORY: ${{env.APP_NAME}}
+          IMAGE_TAG_DEV: ${{env.IMG_VERSIONDEV}}${{ github.run_number }}
+          IMAGE_TAG_UAT: ${{env.IMG_VERSIONUAT}}${{ github.run_number }}
+
+        run: |
+          cd pt-max-station-test-repo
+          new_img="$ECR_REPOSITORY:$IMAGE_TAG_DEV"
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_DEV -f Dockerfile .
+          
+          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_DEV $ECR_REGISTRY/$ECR_REPOSITORY:dev
+          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_DEV $ECR_REGISTRY/$ECR_REPOSITORY:uat
+          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_DEV $ECR_REGISTRY/$ECR_REPOSITORY:latest
+          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_DEV $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_DEV
+          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_DEV $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_UAT
+
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_DEV
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_UAT
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:dev
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:uat
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest 
+
+  approval_dev:
+    runs-on: ubuntu-latest
+    needs: [buildImage,start_approval]
+    steps:
+      - name: Manual Workflow Approval
+        uses: trstringer/manual-approval@v1.9.0
+        with:
+          secret: ${{ github.TOKEN }}
+          approvers: thavornch, lasttom
+          minimum-approvals: 1
+          issue-title: "Deploying to Dev"
+          issue-body: "Please approve or deny the deployment to Dev"
+          exclude-workflow-initiator-as-approver: false
+          additional-approved-words: ''
+          additional-denied-words: ''
+
+  deploy-dev:
+    permissions:
+      actions: read
+      contents: read
+      id-token: write
+    runs-on: ubuntu-latest
+    needs: [approval_dev,buildImage]
+    steps:
+      - name: Checkout code
+        run: |
+          git config --global user.email "thavorn.ch@pt.co.th"
+          git config --global user.name "thavornch"
+          git clone https://${{ secrets.GITTOKEN}}@github.com/App-MaxStation/pt-max-station-test-repo.git
+          cd pt-max-station-test-repo
+          git checkout main
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.PTC_DEV_SIT_AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.PTC_DEV_SIT_AWS_SECRET_KEY }}
+          aws-region: ${{env.AWS_REGION}}
+
+      - name: Install and configure AWS CLI
+        run: |
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          unzip awscliv2.zip
+          sudo ./aws/install --update
+        if: success()
+
+      - name: Update Kubeconfig
+        run: |
+          aws eks --region ${{env.AWS_REGION}} update-kubeconfig --name ${{ secrets.CLUSTERSDEV }}
+          aws eks list-clusters
+
+      - name: Deploy to EKS
+        run: |
+          cd pt-max-station-test-repo
+          new_img="${{env.ECR_REPOSITORY}}:${{env.IMAGE_TAG_DEV}}"
+          sed -i 's|IMAGE_NAME|${{env.AWS_REGISTRY}}/${{env.ECR_REPOSITORY}}:${{env.IMAGE_TAG_DEV}}|g' Deployment.yaml
+          # sed -i 's/'"$ECR_REGISTRY.*"'/'"$new_img"'/g' Deployment.yaml
+          kubectl apply -f Deployment.yaml
+          kubectl apply -f Service.yaml
+          kubectl apply -f HorizontalPodAutoscaler.yaml
+        if: success()
+
+
+  # karate_Test: 
+  #   runs-on: ubuntu-latest
+  #   needs: [deploy-dev]
+  #   steps:
+  #     - name: Checkout code
+  #       run: |
+  #         git config --global user.email "thavorn.ch@pt.co.th"
+  #         git config --global user.name "thavornch"
+  #         git clone https://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@github.com/App-MaxStation/pt-maxstaion-karate-Common.git
+  #         cd pt-maxstaion-karate-Common
+  #         git checkout main
+  #         java --version
+      
+  #     - name: Build and Run Karate Tests
+  #       id: my_step
+  #       run: |
+  #         cd pt-maxstaion-karate-Common
+  #         mvn test "-Dkarate.env=uat" "-Dkarate.options=--tags ~@ignore"
+  #       continue-on-error: true
+
+  #     - name: Upload HTML report
+  #       uses: actions/upload-artifact@v2
+  #       with:
+  #         name: karate-report
+  #         path: ./pt-maxstaion-karate-Common/target/
+
+  #     - name: Check Karate Test Result
+  #       run: |
+  #         if [[ "${{ steps.my_step.outcome }}" == "success" ]]; then
+  #           echo "The step succeeded!"
+  #         elif [[ "${{ steps.my_step.outcome }}" == "failure" ]]; then
+  #           echo "The step failed!"
+  #           exit 1
+  #         else
+  #           echo "The step was canceled or had another outcome."
+  #         fi
+
+  approval_UAT:
+    runs-on: ubuntu-latest
+    # needs: [buildImage,karate_Test]
+    needs: [buildImage]
+    # if: ${{ needs.karate_Test.result == 'success' }}
+    steps:
+      - name: Manual Workflow Approval
+        uses: trstringer/manual-approval@v1.9.0
+        with:
+          secret: ${{ github.TOKEN }}
+          approvers: thavornch
+          minimum-approvals: 1
+          issue-title: "Deploying to UAT"
+          issue-body: "Please approve or deny the deployment to UAT"
+          exclude-workflow-initiator-as-approver: false
+          additional-approved-words: ''
+          additional-denied-words: ''
+
+  deploy-UAT:
+    permissions:
+      actions: read
+      contents: read
+      id-token: write
+    runs-on: ubuntu-latest
+    needs: [approval_UAT,buildImage]
+    steps:
+      - name: Checkout code
+        run: |
+          git config --global user.email "thavorn.ch@pt.co.th"
+          git config --global user.name "thavornch"
+          git clone https://${{ secrets.GITTOKEN}}@github.com/App-MaxStation/pt-max-station-test-repo.git
+          cd pt-max-station-test-repo
+          git checkout main
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.PTC_UAT_QAS_AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.PTC_UAT_QAS_AWS_SECRET_KEY }}
+          aws-region: ${{env.AWS_REGION}}
+
+      - name: Install and configure AWS CLI
+        run: |
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          unzip awscliv2.zip
+          sudo ./aws/install --update
+        if: success()
+
+      - name: Update Kubeconfig
+        run: |
+          aws eks --region ${{env.AWS_REGION}} update-kubeconfig --name ${{ secrets.CLUSTERSUAT }}
+          aws eks list-clusters
+
+      - name: Deploy to EKS
+        run: |
+          cd pt-max-station-test-repo
+          new_img="${{env.ECR_REPOSITORY}}:${{env.IMAGE_TAG_UAT}}"
+          sed -i 's|IMAGE_NAME|${{env.AWS_REGISTRY}}/${{env.ECR_REPOSITORY}}:${{env.IMAGE_TAG_UAT}}|g' Deployment-uat.yaml
+          # sed -i 's/'"$ECR_REGISTRY.*"'/'"$new_img"'/g' Deployment-uat.yaml
+          kubectl apply -f Deployment-uat.yaml
+          kubectl apply -f Service-uat.yaml
+          kubectl apply -f HorizontalPodAutoscaler-uat.yaml
+        if: success()
+
+  # approval_PRD:
+  #   runs-on: ubuntu-latest
+  #   needs: [buildImage,deploy-UAT]
+  #   steps:
+  #     - name: Manual Workflow Approval
+  #       uses: trstringer/manual-approval@v1.9.0
+  #       with:
+  #         secret: ${{ github.TOKEN }}
+  #         approvers: thavornch
+  #         minimum-approvals: 1
+  #         issue-title: "Deploying to PROD"
+  #         issue-body: "Please approve or deny the deployment to PROD"
+  #         exclude-workflow-initiator-as-approver: false
+  #         additional-approved-words: ''
+  #         additional-denied-words: ''
+
+  # deploy-PRD:
+  #   permissions:
+  #     actions: read
+  #     contents: read
+  #     id-token: write
+  #   runs-on: ubuntu-latest
+  #   needs: [approval_PRD]
+  #   steps:
+  #     - name: Login to GitHub Container Registry
+  #       uses: docker/login-action@v2
+  #       with:
+  #         registry: ${{ env.REGISTRY_DOCKER }}
+  #         username: ${{ env.UDOCKER }}
+  #         password: ${{ env.PDOCKER }}
+
+  #     - name: Docker image retag
+  #       uses: tinact/docker.image-retag@1.0.3
+  #       with:
+  #         image_name: ${{ env.APP_NAME }}
+  #         image_old_tag: ${{ env.IMG_VERSIONUAT }}${{ env.RUNNUMBER}}
+  #         image_new_tag: ${{ env.IMG_VERSIONPRD }}${{ env.RUNNUMBER}}
+  #         registry: ${{ env.REGISTRY_DOCKER }}
+  #         registry_username: ${{ env.UDOCKER }}
+  #         registry_password: ${{ env.PDOCKER }}
+
+  #     - name: Checkout code
+  #       uses: actions/checkout@v2
+
+  #     - name: Configure kubectl
+  #       run: |
+  #         echo "${{ secrets.KUBE_CONFIG }}" > kubeconfig.yaml
+  #         kubectl --kubeconfig=kubeconfig.yaml apply -f Deployment.yaml
+
+  #     - name: Replace image to PROD yaml
+  #       run: | 
+  #         sed -i 's|IMAGE_NAME|${{ env.REGISTRY_DOCKER }}/${{ env.APP_NAME }}:${{ env.IMG_VERSIONPRD }}${{ env.RUNNUMBER}}|g' Deployment.yaml
+  #         cat Deployment.yaml
+
+  #     # - name: Deploy to AKS
+  #     #   run: |
+  #     #     kubectl --kubeconfig=kubeconfig.yaml apply -f Deployment.yaml
+  #     #     kubectl --kubeconfig=kubeconfig.yaml apply -f Service.yaml
+  #     #     kubectl --kubeconfig=kubeconfig.yaml apply -f HorizontalPodAutoscaler.yaml
+
+  # Release:
+  #   runs-on: ubuntu-latest
+  #   needs: [start_approval]
+  #   if: ${{ always() && github.event.inputs.tags != '' }}
+  #   steps:
+  #     - name: Checkout code
+  #       run: |
+  #         git config --global user.email "thavorn.ch@pt.co.th"
+  #         git config --global user.name "thavornch"
+  #         git clone https://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@github.com/App-MaxStation/pt-max-station-test-repo.git
+  #         cd pt-max-station-test-repo
+  #         git checkout main
+
+  #     - name: Configure kubectl
+  #       run: |
+  #         cd pt-max-station-test-repo
+  #         echo "${{ secrets.KUBE_CONFIG }}" > kubeconfig.yaml
+  #         kubectl --kubeconfig=kubeconfig.yaml apply -f Deployment.yaml
+
+  #     # - name: Replace image to DEV yaml
+  #     #   run: | 
+  #     #     sed -i 's|IMAGE_NAME|${{ env.REGISTRY_DOCKER }}/${{ env.APP_NAME }}:${{ env.IMG_VERSION }}${{ env.RUNNUMBER}}|g' Deployment.yaml
+  #     #     cat Deployment.yaml
+
+  #     - name: Deploy to AKS
+  #       run: |
+  #         cd pt-max-station-test-repo
+  #         sed -i 's|IMAGE_NAME|${{ env.REGISTRY_DOCKER }}/${{ env.APP_NAME }}:${{ env.IMG_VERSIONDEV }}${{ github.event.inputs.tags}}|g' Deployment.yaml
+  #         cat Deployment.yaml
+  #         kubectl --kubeconfig=kubeconfig.yaml delete -f Deployment.yaml
+  #         kubectl --kubeconfig=kubeconfig.yaml delete -f Service.yaml
+  #         kubectl --kubeconfig=kubeconfig.yaml delete -f HorizontalPodAutoscaler.yaml
+
+  #         kubectl --kubeconfig=kubeconfig.yaml apply -f Deployment.yaml
+  #         kubectl --kubeconfig=kubeconfig.yaml apply -f Service.yaml
+  #         kubectl --kubeconfig=kubeconfig.yaml apply -f HorizontalPodAutoscaler.yaml
+
+  # # Test_failure:
+  # #   runs-on: ubuntu-latest
+  # #   needs: [karate_Test]
+  # #   if: ${{ needs.karate_Test.result == 'failure' }}
+  # #   steps:
+  # #     - name: SendGrid Action
+  # #       uses: mmichailidis/sendgrid-mail-action@v1.0
+  # #       with:
+  # #         sendgrid-token: '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'
+  # #         mail: 'lattapon.ch@pt.co.th'

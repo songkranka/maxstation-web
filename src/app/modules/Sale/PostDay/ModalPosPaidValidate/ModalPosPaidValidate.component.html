@@ -1,0 +1,32 @@
+<div class="modal-header  bg-header">
+  <span class="modal-title h6">
+      <i class="fa fa-lightbulb mr-3"></i>รายละเอียดการตรวจสอบ
+  </span>
+  <button type="button" class="close" (click)=ActiveModal.dismiss()>
+      &times;
+  </button>
+</div>
+<div class="modal-body">
+  <table class="table table-sm table-hover  ">
+    <thead>
+      <tr>
+        <th class="align-middle text-center" colspan="2">Max Enterpise Connect</th>
+        <th class="align-middle text-center" colspan="2">Max Station</th>
+      </tr>
+      <tr>
+        <th class="text-center align-middle">รหัสลูกค้า</th>
+        <th class="text-center align-middle">จำนวนเงิน</th>
+        <th class="text-center align-middle">รหัสลูกค้า</th>
+        <th class="text-center align-middle">จำนวนเงิน</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of ListPostPaid;let i = index" [ngClass]="{'text-red':!ListPostPaid[i].IsValid}">
+        <td class="text-center">{{ListPostPaid[i].MecCuscode}}</td>
+        <td class="text-right">{{ListPostPaid[i].MecTotalBath | number:'1.2-2'}}</td>
+        <td class="text-center">{{ListPostPaid[i].MaxCusCode}}</td>
+        <td class="text-right">{{ListPostPaid[i].MaxCreditSaleSubAmt | number:'1.2-2'}}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

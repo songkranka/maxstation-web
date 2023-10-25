@@ -1,0 +1,140 @@
+<div *ngIf="isUserAuthenticated()" class="row form-group">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-header-page"
+                style="font-size: 16px !important; height: 40px;  padding-top: 10px; font-weight: 600;">
+                รายการโอนจ่ายสินค้า
+            </div>
+            <!-- End Of Card Header -->
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12" style="text-align: right;">
+                        <!-- routerLink="/Request/{{'New'}}" -->
+                        <button class="btn btn-primary" [routerLink]="['/TransferOut', 'New']">
+                            <i class="fa fa-plus mr-2"></i>
+                            เพิ่มเอกสาร
+                        </button>
+                        <!-- &nbsp;
+                        <button class="btn btn-primary" data-toggle="collapse" data-target="#criteria">
+                            <i class="fa fa-search mr-2"></i>
+                            ค้นหาข้อมูล
+                        </button> -->
+                    </div>
+                </div>
+                <!-- End Of Search And ADD Button -->
+                <div class="row">
+                    <div class="col-12">
+                        <!-- style="padding-left: 1.5%; padding-right: 1.5%; padding-top: 0.5%;" -->
+                        <div class="row border shadow mx-0 pt-3">
+                            <!-- style="background-color: #f3ffe2; padding: 2%; border-radius: 0px;" -->
+                            <div class="col-6 topic">
+                                <mat-form-field appearance="fill" style="width: 100% !important">
+                                    <mat-label>ค้นหา</mat-label>
+                                    <input matInput type="text" [(ngModel)]="filterValue"
+                                        (keyup.enter)="findByValue(filterValue)" placeholder="คำค้นหา">
+                                </mat-form-field>
+                            </div>
+                            <!-- End Of Text Keyword -->
+                            <!-- style="background-color: #f3ffe2; padding: 2%; border-radius: 0px;" -->
+                            <div class="col-4 topic">
+                                <mat-form-field appearance="fill" style="width: 100% !important">
+                                    <mat-label>วันที่</mat-label>
+                                    <mat-date-range-input [rangePicker]="picker" [formGroup]="dateRange">
+                                        <input matStartDate formControlName="start" placeholder="จากวันที่">
+                                        <input matEndDate formControlName="end" placeholder="ถึงวันที่">
+                                    </mat-date-range-input>
+                                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                                    <mat-date-range-picker #picker></mat-date-range-picker>
+                                </mat-form-field>
+                            </div>
+                            <!-- End Of Date Range -->
+                            <!-- style="background-color: #f3ffe2; padding: 2%; border-radius: 0px;" -->
+                            <div class="col-2">
+                                <button class="btn btn-sm btn-primary h-75 w-100" (click)="findByValue('')"
+                                    mat-raised-button>
+                                    <i class="fa fa-search"></i>
+                                    ค้นหา
+                                </button>
+                            </div>
+                            <!-- End Of Search Button -->
+                            <!-- <div class="col-2"  style="background-color: #f3ffe2; padding: 2%; border-radius: 0px 5px 5px 0px; padding-top: 6%;">
+                <button class="btn btn-primary" style="width: 100%;">
+                  <i class="fa fa-search"></i>&nbsp;ค้นหา
+                </button>
+              </div> -->
+                        </div>
+                    </div>
+                </div>
+                <!-- End Of Search Panel -->
+                <table mat-table [dataSource]="dataSource" matSort
+                    class="table-hover table-sm mt-3 mb-0 table-bordered shadow">
+                    <tbody>
+                        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                        <tr mat-row *matRowDef="let row; columns: displayedColumns" style="cursor: pointer;"
+                            [routerLink]="['/TransferOut', row.guid]"></tr>
+                        <ng-container matColumnDef="no">
+                            <th class="text-center text-nowrap" mat-header-cell *matHeaderCellDef>
+                                ลำดับ
+                            </th>
+                            <td class="text-center p-2" mat-cell *matCellDef="let element; let i = index">
+                                {{no + (i + 1)}}
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="docNo">
+                            <th class="text-center text-nowrap" mat-header-cell *matHeaderCellDef>
+                                เลขที่เอกสาร
+                            </th>
+                            <td class="text-center p-2" mat-cell *matCellDef="let element">
+                                {{element.docNo}}
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="docDate">
+                            <th class="text-center text-nowrap" mat-header-cell *matHeaderCellDef>
+                                วันที่เอกสาร
+                            </th>
+                            <td class="text-center p-2" mat-cell *matCellDef="let element">
+                                {{element.docDate | date:'dd/MM/yyyy'}}
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="updateBy">
+                            <th class="text-center text-nowrap" mat-header-cell *matHeaderCellDef>
+                                สาขาที่ร้องขอ
+                            </th>
+                            <td class="text-left p-2" mat-cell *matCellDef="let element">
+                                {{element.brnCodeTo}} : {{ element.brnNameTo}}
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="refNo">
+                            <th class="text-center text-nowrap" mat-header-cell *matHeaderCellDef>
+                                เลขที่ใบร้องขอ
+                            </th>
+                            <td class="text-center p-2" mat-cell *matCellDef="let element">
+                                {{element.refNo}}
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="status">
+                            <th class="text-center text-nowrap" mat-header-cell *matHeaderCellDef>
+                                สถานะเอกสาร
+                            </th>
+                            <td class="text-center p-2" mat-cell *matCellDef="let element">
+                                <span [ngClass]="element.docStatus === 'Cancel'? 'text-danger':''">{{ SvDefault.GetThaiDocStatus(element.docStatus)}}</span>
+                                <!-- {{ SvDefault.GetThaiDocStatus( element.docStatus)}} -->
+                            </td>
+                        </ng-container>
+                    </tbody>
+                </table>
+                <div>
+                    <mat-paginator [length]="length" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions"
+                        (page)="pageEvent = $event; onPaginateChange($event)" showFirstLastButtons>
+                    </mat-paginator>
+                </div>
+                <div>
+                    <h4 style="color: red;">
+                        หมายเหตุ : เอกสารถูกอ้างอิง คือ รายการที่ถูกทำรับโอนสินค้าแล้ว
+                    </h4>
+                </div>
+                <!-- End of Card Body -->
+            </div>
+        </div>
+    </div>
+</div>

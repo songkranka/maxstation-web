@@ -1,0 +1,51 @@
+<div class="modal-header bg-header" style="height: 40px; padding-top: 10px;">
+  <span class="modal-title h6">รายการใบสั่งซื้อ</span>
+  <button type="button" class="close" (click)=ActiveModal.dismiss() >&times;
+  </button>
+</div>
+<div class="modal-body">
+  <div class="input-group w-50 pb-3">
+    <input type="text" class="form-control" placeholder="ค้นหา" [(ngModel)]="KeyWord" (keyup.enter)="FilterData()">
+    <div class="input-group-append">
+      <button class="btn btn-primary" (click)="FilterData()"><i class="fa fa-search"></i></button>
+    </div>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-sm table-hover m-0" *ngIf="ArrPoHeader.length">
+      <thead>
+        <tr>
+          <th class="text-center align-middle">#</th>
+          <th class="text-center align-middle">เลขที่เอกสาร</th>
+          <th class="text-center align-middle">เลขที่ใบสั่งซื้อ</th>
+          <th class="text-center align-middle">วันที่สั่ง</th>
+          <th class="text-center align-middle">ผู้จำหน่าย</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let po of ArrFilterPoHeader;let i = index" role="button" (click)="ActiveModal.close(po)">
+          <td class="align-middle pl-2 text-center">{{(NumPageIndex-1) * NumPageSize + i+1}}</td>
+          <td class="align-middle pl-2 text-center">{{ArrFilterPoHeader[i].DocNo}}</td>
+          <td class="align-middle pl-2 text-center">{{ArrFilterPoHeader[i].PoNo}}</td>
+          <td class="align-middle pl-2 text-center">{{ArrFilterPoHeader[i].PoDate | date :'dd/MM/yyyy'}}</td>
+          <td class="align-middle pl-2">{{ArrFilterPoHeader[i].SupCode}} : {{ArrFilterPoHeader[i].SupName}}</td>
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
+  <div class="d-flex justify-content-between p-2" *ngIf="ArrPoHeader.length > 0">
+    <ngb-pagination [collectionSize]="NumCollectionSize" [(page)]="NumPageIndex" [pageSize]="NumPageSize" (pageChange)="OnPageIndexChange()" [maxSize]=5 size="sm">
+      <!-- <ng-template ngbPaginationPrevious>Prev</ng-template>
+      <ng-template ngbPaginationNext>Next</ng-template>
+      <ng-template ngbPaginationNumber let-p>{{p}}</ng-template> -->
+    </ngb-pagination>
+  
+    <select class="custom-select custom-select-sm" style="width: auto" [(ngModel)]="NumPageSize" (ngModelChange)="OnPageSizeChange()" role="button">
+      <option [ngValue]="10">แสดง 10 รายการ</option>
+      <option [ngValue]="20">แสดง 20 รายการ</option>
+      <option [ngValue]="30">แสดง 30 รายการ</option>
+      <option [ngValue]="40">แสดง 40 รายการ</option>
+      <option [ngValue]="50">แสดง 50 รายการ</option>
+    </select>
+  </div>
+</div>

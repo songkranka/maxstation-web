@@ -1,0 +1,56 @@
+<div *ngIf="isUserAuthenticated()" class="card rounded-0 shadow-none">
+    <div class="card-header bg-header-page rounded-0 shadow-none">รายการข้อมูลสาขา</div>
+    <div class="card-body rounded-0 shadow-none">
+        <div class="row">
+            <div class="col-12">
+                <div class="row border-bottom border-left border-right border-top m-0 pt-3 rounded-0 shadow-none">
+                    <div class="col-10 topic">
+                        <mat-form-field appearance="fill" style="width: 100% !important">
+                            <mat-label>ค้นหา</mat-label>
+                            <input matInput type="text" [(ngModel)]="filterValue" (keyup.enter)="GetArrayHeader()"
+                                placeholder="คำค้นหา">
+                        </mat-form-field>
+                    </div>
+                    <div class="col-2">
+                        <button class="btn btn-primary h-75 w-100 rounded-0 shadow-none" (click)="GetArrayHeader()">
+                            <i class="fa fa-search"></i>&nbsp;ค้นหา
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div><!-- End Of Search Panel -->
+        <table mat-table [dataSource]="dataSource" matSort class="table table-border table-hover mb-0 mt-3">
+            <ng-container matColumnDef="no">
+                <th class="text-center" mat-header-cell *matHeaderCellDef>No</th>
+                <td class="text-center px-2 align-middle" mat-cell *matCellDef="let element; let i = index">{{no + (i +
+                    1)}}</td>
+            </ng-container>
+            <ng-container matColumnDef="brnCode">
+                <th class="text-center" mat-header-cell *matHeaderCellDef>รหัสสาขา</th>
+                <td class="text-center px-2 align-middle" mat-cell *matCellDef="let element"> {{element.brnCode}}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="brnName">
+                <th class="text-center" mat-header-cell *matHeaderCellDef>ชื่อสาขา</th>
+                <td class="pl-2 align-middle" mat-cell *matCellDef="let element"> {{element.brnName}} </td>
+            </ng-container>
+            <ng-container matColumnDef="fullAddress">
+                <th class="text-center" mat-header-cell *matHeaderCellDef>ที่อยู่</th>
+                <td class="pl-2 align-middle" mat-cell *matCellDef="let element"> {{element.fullAddress}}
+                </td>
+            </ng-container>
+            <ng-container matColumnDef="phone">
+                <th class="text-center" mat-header-cell *matHeaderCellDef>เบอร์โทรศัพท์</th>
+                <td class="pl-2 align-middle" mat-cell *matCellDef="let element"> {{element.phone}}
+                </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns" role="button"
+                [routerLink]='["..", "BranchTax",row.guid]'></tr>
+        </table>
+        <mat-paginator [length]="length" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions"
+            (page)="pageEvent = $event; OnPaginateChange($event)" showFirstLastButtons>
+        </mat-paginator>
+    </div>
+</div>

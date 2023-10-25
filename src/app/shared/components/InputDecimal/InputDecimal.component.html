@@ -1,0 +1,11 @@
+<input #numFormat
+    type="text" 
+    [placeholder]="Placeholder"
+    class="form-control form-control-sm text-right pr-0 m-0 w-100 {{InputClass}}"
+    [style.minWidth.px] = Width
+    [(ngModel)]="ShowValue"
+    (change)="OnChange($event)" 
+    (focus)="OnFocus($event)"
+    [disabled]="Disabled"
+    style="padding-right: 5px !important;"
+/>

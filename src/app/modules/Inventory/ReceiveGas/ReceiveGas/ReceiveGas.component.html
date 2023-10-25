@@ -1,0 +1,273 @@
+<div *ngIf="isUserAuthenticated()">
+  <div class="card pr-7">
+    <div class="card-header bg-header-page ">บันทึกรับแก๊ส
+      <div class="ml-auto">
+        <!-- [ngClass]=this.getBackgroundRibbon() {{status}}-->
+        <div [ngClass]="SvDefault.GetBackgroundRibbon(Header?.DocStatus)"><label
+            class="ribbon-1-text">{{HiddenButton?.status}}</label></div>
+      </div>
+    </div>
+    <!-- End Of Header -->
+    <div class="card-body">
+      <div class="row my-2">
+        <div class="col-7">
+          <div class="row my-2">
+            <div class="col-6 text-right">เลขที่เอกสาร : </div>
+            <div class="col-6">{{Header.DocNo}}</div>
+          </div>
+          <!-- End Of DocNo -->
+          <div class="row my-2">
+            <div class="col-6 text-right">อ้างอิงใบสั่งซื้อ : </div>
+            <div class="col-6">
+              <div class="input-group input-group-sm" *ngIf="Header.DocStatus==='New';else lblPoNo">
+                <input class="form-control form-control-sm" [(ngModel)]="Header.PoNo" disabled />
+                <div class="input-group-append">
+                  <button class="btn btn-primary" type="button" (click)="ShowModalPO()">
+                    <i class="fa fa-search"></i>
+                  </button>
+                </div>
+              </div>
+              <ng-template #lblPoNo>{{Header.PoNo}}</ng-template>
+            </div>
+          </div>
+          <!-- End Of PoNo -->
+          <div class="row my-2">
+            <div class="col-6 text-right">ผู้จัดจำหน่าย :</div>
+            <div class="col-6">
+              <input type="text" class="form-control form-control-sm w-100" [(ngModel)]="Header.SupCode"
+                (change)="OnSupCodeChange()" list="dtlSupplier" disabled>
+              <span class="w-100">{{Header.SupName}}</span>
+              <datalist id="dtlSupplier">
+                <option *ngFor="let item of ArrSupplier;let i = index" value="{{ArrSupplier[i].SupCode}}">
+                </option>
+              </datalist>
+            </div>
+          </div>
+          <!-- End Of Supplier -->
+          <div class="row my-2">
+            <div class="col-6 text-right">ใบกำกับภาษี/ใบส่งของ : </div>
+            <div class="col-6"><input class="form-control form-control-sm" [(ngModel)]="Header.InvNo" maxlength="10" />
+            </div>
+          </div>
+          <!-- End Of Invoice No. -->
+
+          <div class="row">
+            <div class="col-6 text-right">ประเภทใบกำกับภาษี : </div>
+            <div class="col-6">
+              <label class="px-2" role="button"><input role="button" name="VatType" type="radio" value="VI"
+                  [(ngModel)]=Header.VatType (change)="CalculateSummary()" /> รวมภาษี</label>
+              <label class="px-2" role="button"><input role="button" name="VatType" type="radio" value="VE"
+                  [(ngModel)]=Header.VatType (change)="CalculateSummary()" /> ไม่รวมภาษี</label>
+              <label class="px-2" role="button"><input role="button" name="VatType" type="radio" value="NV"
+                  [(ngModel)]=Header.VatType (change)="CalculateSummary()" /> ไม่มีภาษี</label>
+            </div>
+          </div>
+          <!-- End Of Vat Type -->
+
+        </div>
+        <!-- end of Left Column -->
+
+        <div class="col-5">
+          <div class="row my-2">
+            <div class="col-6 text-right">วันที่เอกสาร : </div>
+            <div class="col-6">{{Header.DocDate | date:'dd/MM/yyyy'}}</div>
+          </div>
+          <!-- End Of DocDate -->
+          <div class="row my-2">
+            <div class="col-6 text-right">วันที่ใบสั่งซื้อ : </div>
+            <div class="col-6">{{Header.PoDate | date:'dd/MM/yyyy'}}</div>
+          </div>
+          <!-- End Of PoDate -->
+          <div class="row my-2">
+            <div class="col-6 text-right">วันที่ครบกำหนด : </div>
+            <div class="col-6">{{Header.DueDate | date:'dd/MM/yyyy'}}</div>
+          </div>
+          <!-- End Of DueDate -->
+          <div class="row my-2">
+            <div class="col-6 text-right">สถานที่ชำระเงิน : </div>
+            <div class="col-6">{{Header.PayAddress}}</div>
+          </div>
+          <!-- End Of Pay Address -->
+          <div class="row my-2">
+            <div class="col-6 text-right">วันที่ใบกำกับภาษี/ใบส่งของ : </div>
+            <div class="col-6">
+              <div class="input-group input-group-sm">
+                <input class="form-control" placeholder="yyyy-mm-dd" (click)="d.toggle();" name="dp"
+                  [(ngModel)]="NdatInvoice" ngbDatepicker #d="ngbDatepicker">
+                <div class="input-group-append">
+                  <button class="btn btn-primary" (click)="d.toggle()" type="button">
+                    <i class="fa fa-chevron-down"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- End Of Invoice Date -->
+          <div class="row my-2">
+            <div class="col-6 text-right">ที่อยู่ตามใบกำกับภาษี : </div>
+            <div class="col-6">{{Header.InvAddress}}</div>
+          </div>
+          <!-- End Of Invoice Address -->
+        </div>
+        <!-- End Of Right Column -->
+      </div>
+
+      <div class="table-responsive  mt-3">
+        <table class="table table-bordered table-hover m-0">
+          <thead>
+            <tr>
+              <th class="align-top text-center text-nowrap">รหัสสินค้า</th>
+              <th class="align-top text-center text-nowrap">ชื่อสินค้า</th>
+              <th class="align-top text-center text-nowrap">น้ำหนักสั่งซื้อ</th>
+              <th class="align-top text-center text-nowrap">น้ำหนักรับจริง</th>
+              <th class="align-top text-center text-nowrap">หน่วย</th>
+              <!-- <th class="align-top text-center text-nowrap">ราคา/หน่วย<div>(KG.)</div></th> -->
+              <!-- <th class="align-top text-center text-nowrap">ราคา/หน่วย<div>(ลิตร)</div></th> -->
+              <th class="align-top text-center text-nowrap">ความถ่วง<div>(0.52-0.56)</div>
+              </th>
+              <th class="align-top text-center text-nowrap">ความถ่วง<div>(ค่ากลาง)</div>
+              </th>
+              <th class="align-top text-center text-nowrap">อุณหภูมิ<div>(°C)</div>
+              </th>
+              <th class="align-top text-center text-nowrap">ปริมาณ<div>(ลิตร)</div>
+              </th>
+              <!-- <th class="align-top text-center text-nowrap">มูลค่าสินค้า</th> -->
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of ArrDetail;let i= index">
+              <!--รหัสสินค้า-->
+              <td class="align-middle">{{ArrDetail[i].PdId}}</td>
+              <!--ชื่อสินค้า-->
+              <!-- <td class="align-middle">{{ArrDetail[i].PdName}}</td> -->
+              <td>
+                <div class="hidden-box" title="{{ArrDetail[i].PdName}}">
+                  <div class="hidden-text">{{ArrDetail[i].PdName}}</div>
+                </div>
+              </td>
+              <!--น้ำหนักสั่งซื้อ-->
+              <td class="align-middle text-right">{{ArrDetail[i].PoQty| number:'1.2-2'}}</td>
+              <!--น้ำหนักรับจริง-->
+              <td class="align-middle">
+                <app-InputNumberFormat [(InputNumber)]="ArrDetail[i].WeightQty" (OnChange)="CalculateRow(ArrDetail[i])">
+                </app-InputNumberFormat>
+              </td>
+              <!--หน่วย-->
+              <td class="align-middle text-right">{{ArrDetail[i].UnitName}}</td>
+              <!--ราคา/หน่วย (KG.)-->
+              <!-- <td class="align-middle text-right">{{ArrDetail[i].WeightPrice| number:'1.2-2'}}</td> -->
+              <!--ราคา/หน่วย (ลิตร)-->
+              <!-- <td class="align-middle text-right">{{ArrDetail[i].UnitPrice| number:'1.2-2'}}</td> -->
+              <!--ความถ่วง(0.52-0.56)-->
+              <td class="align-middle">
+                <app-InputNumberFormat [Min]="0.52" [Max]="0.56" [Step]="0.01" [(InputNumber)]="ArrDetail[i].Density"
+                  (OnChange)="CalculateRow(ArrDetail[i])"></app-InputNumberFormat>
+              </td>
+              <!--ความถ่วง(ค่ากลาง)-->
+              <td class="align-middle text-right">{{ArrDetail[i].DensityBase| number:'1.2-2'}}</td>
+              <!--อุณหภูมิ(°C)-->
+              <td class="align-middle">
+                <app-InputNumberFormat [(InputNumber)]="ArrDetail[i].Temperature"></app-InputNumberFormat>
+              </td>
+              <!--ปริมาณ (ลิตร)-->
+              <td class="align-middle text-right">{{ArrDetail[i].ItemQty | number:'1.0-0'}}</td>
+              <!--มูลค่าสินค้า-->
+              <!-- <td class="align-middle text-right">{{ArrDetail[i].SumItemAmt| number:'1.2-2'}}</td> -->
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- end of Table Responsive -->
+      <div class="row my-2">
+        <div class="col-6">
+          <label id="lblRemark">หมายเหตุ :</label>
+          <textarea class="form-control form-control-sm w-100" rows="5" [(ngModel)]="Header.Remark"></textarea>
+        </div>
+        <!-- End Of Remark -->
+        <div class="col-6 d-none">
+          <div class="row my-2">
+            <div class="col-6 text-right">รวมมูลค่าสินค้า:</div>
+            <div class="col-6 text-right">{{Header.SubAmt | number:'1.2-2'}}</div>
+          </div>
+          <!-- End Of SubAmt -->
+          <div class="row my-2">
+            <div class="col-6 text-right">ส่วนลดท้ายเอกสาร:</div>
+            <div class="col-6 text-right">
+              <app-InputNumberFormat [(InputNumber)]="Header.DiscAmt" (OnChange)="CalculateSummary()">
+              </app-InputNumberFormat>
+            </div>
+          </div>
+          <!-- End Of DiscountAmt -->
+          <div class="row my-2">
+            <div class="col-6 text-right">รวมจำนวนเงินหลังหักส่วนลด:</div>
+            <div class="col-6 text-right">{{Header.TotalAmt | number:'1.2-2'}}</div>
+          </div>
+          <!-- End Of TotalAmt -->
+          <div class="row my-2">
+            <div class="col-6 text-right">มูลค่าฐานภาษี:</div>
+            <div class="col-6 text-right">{{Header.TaxBaseAmt | number:'1.2-2'}}</div>
+          </div>
+          <!-- End Of TaxBaseAmt -->
+          <div class="row my-2">
+            <div class="col-6 text-right">ภาษีมูลค่าเพิ่ม 7%:</div>
+            <div class="col-6 text-right">{{Header.VatAmt | number:'1.2-2'}}</div>
+          </div>
+          <!-- End Of VatAmt -->
+          <!-- <div class="row my-2">
+          <div class="col-6 text-right">รวมภาษีมูลค่าเพิ่ม:</div>
+          <div class="col-6 text-right">{{Header.VatAmt | number:'1.2-2'}}</div>
+        </div> -->
+          <div class="row my-2">
+            <div class="col-6 text-right">ค่าขนส่ง:</div>
+            <div class="col-6 text-right">
+              <app-InputNumberFormat [(InputNumber)]="Header.ShippingAmt" (OnChange)="CalculateSummary()">
+              </app-InputNumberFormat>
+              <!-- {{Header.ShippingAmt | number:'1.2-2'}} -->
+            </div>
+          </div>
+          <!-- End Of ShippingAmt -->
+          <div class="row my-2">
+            <div class="col-6 text-right">รวมมูลค่าสฺทธิ:</div>
+            <div class="col-6 text-right">{{Header.NetAmt | number:'1.2-2'}}</div>
+          </div>
+          <!-- End Of NetAmt -->
+        </div>
+        <!-- End Of Summary -->
+      </div>
+      <!-- End Of Footer -->
+    </div>
+    <!-- card-body -->
+  </div>
+  <!-- end of card -->
+  <div class="right-bar mt-2">
+    <button class="btn circle-button circle-buttonSave" (click)="SaveData()" [hidden]="HiddenButton.btnSave"
+      data-tooltip="Save" data-tooltip-location="left">
+      <i class="far fa-save"></i>
+    </button>
+    <!-- <button class="btn circle-button circle-buttonApprove" (click)="SetDocStatus('Ready')" [hidden]="HiddenButton.btnApprove" data-tooltip="Approve" data-tooltip-location="left">
+    <i class="fas fa-thumbs-up"></i>
+  </button> -->
+    <!-- <button class="btn circle-button circle-buttonReject" (click)="SetDocStatus('Active')" [hidden]="HiddenButton.btnReject" data-tooltip="Reject" data-tooltip-location="left">
+    <i class="fas fa-thumbs-down"></i>
+  </button> -->
+    <!-- <button class="btn circle-button circle-buttonComplete" (click)="SetDocStatus('Ready')" [hidden]="HiddenButton.btnComplete" data-tooltip="Complete" data-tooltip-location="left">
+    <i class="fas fa-check"></i>
+  </button> -->
+    <button class="btn circle-button circle-buttonPrint" [hidden]="HiddenButton.btnPrint" data-tooltip="Print"
+      data-tooltip-location="left">
+      <i class="fas fa-print"></i>
+    </button>
+    <button class="btn circle-button circle-buttonCancel" (click)="SetDocStatus('Cancel')"
+      [hidden]="HiddenButton.btnCancel" data-tooltip="Cancel" data-tooltip-location="left">
+      <i class="fas fa-times"></i>
+    </button>
+    <button class="btn circle-button circle-buttonClear" (click)="NewData()" [hidden]="HiddenButton.btnClear"
+      data-tooltip="Clear" data-tooltip-location="left">
+      <i class="fas fa-eraser"></i>
+    </button>
+    <button class="btn circle-button circle-buttonBack" routerLink="/ReceiveGasList" [hidden]="HiddenButton.btnBack"
+      data-tooltip="Back" data-tooltip-location="left">
+      <i class="fas fa-undo"></i>
+    </button>
+  </div>
+</div>

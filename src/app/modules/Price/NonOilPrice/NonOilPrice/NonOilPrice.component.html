@@ -1,0 +1,143 @@
+<div *ngIf="isUserAuthenticated()">
+  <div class="card pr-7 shadow-none rounded-0">
+    <div class="card-header bg-header-page rounded-0">
+      บันทึกปรับราคาสินค้า NonOil
+      <div class="ml-auto">
+        <div [ngClass]="SvDefault.GetBackgroundRibbon(Header.DocStatus)">
+          <label class="ribbon-1-text">
+            {{HiddenButton.status}}
+          </label>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-6">
+          <div class="row">
+            <div class="col-6 text-right">เลขที่เอกสาร : </div>
+            <div class="col-6">{{Header.DocNo}}</div>
+          </div>
+          <div class="row">
+            <div class="col-6 text-right">วันที่มีผล : </div>
+            <div class="col-6">
+              <app-DateTimePicker [(DateValue)]="Header.EffectiveDate" CurrentId="datEffectiveDate">
+              </app-DateTimePicker>
+            </div>
+          </div>
+        </div>
+        <!-- End Of Left Column -->
+        <div class="col-6">
+          <div class="row">
+            <div class="col-6 text-right">วันที่เอกสาร : </div>
+            <div class="col-6">{{Header.DocDate | date:"dd/MM/yyyy"}}</div>
+          </div>
+          <div class="row">
+            <div class="col-12 text-right">
+              <button class="btn btn-primary btn-sm rounded-0" (click)="AddProduct()">
+                <i class="fa fa-plus mr-3"></i> เพิ่มรายการ
+              </button>
+            </div>
+          </div>
+        </div>
+        <!-- end Of Right COlumn -->
+      </div>
+
+      <div class="table-responsive mt-3">
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th class="align-middle text-center">รหัสสินค้า</th>
+              <th class="align-middle text-center">ชื่อสินค้า</th>
+              <th class="align-middle text-center">หน่วย</th>
+              <th class="align-middle text-center" colspan="6">สาขา</th>
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container *ngFor="let x of ArrayDetail;let i = index">
+              <tr>
+                <td [rowSpan]="ArrayDetail[i].ArrayBranch.length + 2">{{ArrayDetail[i].PdId}}</td>
+                <td [rowSpan]="ArrayDetail[i].ArrayBranch.length + 2">{{ArrayDetail[i].PdName}}</td>
+                <td [rowSpan]="ArrayDetail[i].ArrayBranch.length + 2">{{ArrayDetail[i].UnitName}}</td>
+                <td class="text-right" colspan="6">
+                  <button class="btn btn-primary btn-sm mr-3 rounded-0" (click)="AddBranch(ArrayDetail[i])">
+                    <i class="fa fa-plus mr-3"></i>เพิ่มสาขา
+                  </button>
+                  <button class="btn btn-danger btn-sm rounded-0" (click)="ArrayDetail.splice(i,1)">
+                    <i class="fa fa-trash mr-3"></i>ลบรายการ
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <th class="bg-success text-center align-middle">สาขา</th>
+                <th class="bg-success text-center align-middle">ราคาเดิม</th>
+                <th class="bg-success text-center align-middle">ผลต่าง</th>
+                <th class="bg-success text-center align-middle">ราคาใหม่</th>
+                <th class="bg-success text-center align-middle">ลบ</th>
+              </tr>
+              <tr *ngFor="let y of ArrayDetail[i].ArrayBranch;let j = index">
+                <td class="align-middle">
+                  <select class="form-control form-control-sm rounded-0"
+                    [(ngModel)]="ArrayDetail[i].ArrayBranch[j].BrnCode"
+                    (change)="OnBranchChange(ArrayDetail[i].ArrayBranch[j],ArrayDetail[i])">
+                    <option value="">กรุณาเลือกสาขา</option>
+                    <option *ngFor="let z of ArrAllBranch;let k=index" [value]="ArrAllBranch[k].BrnCode">
+                      {{ArrAllBranch[k].BrnCode}} : {{ArrAllBranch[k].BrnName}}
+                    </option>
+                  </select>
+                </td>
+                <td class="align-middle text-right">{{ArrayDetail[i].ArrayBranch[j].BeforePrice | number:'1.2-2'}}</td>
+                <td class="align-middle">
+                  <app-InputNumberFormat InputClass="rounded-0"
+                    [(InputNumber)]="ArrayDetail[i].ArrayBranch[j].AdjustPrice"
+                    (InputNumberChange)="OnCurrentPriceChange(ArrayDetail[i].ArrayBranch[j])"></app-InputNumberFormat>
+                </td>
+                <td class="align-middle text-right">{{ArrayDetail[i].ArrayBranch[j].CurrentPrice | number:'1.2-2'}}</td>
+                <td class="align-middle btn-outline-danger text-center" role="button"
+                  (click)="ArrayDetail[i].ArrayBranch.splice(j,1)">
+                  <i class="fa fa-trash"></i>
+                </td>
+              </tr>
+            </ng-container>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="right-bar mt-2">
+    <!-- (click)="saveDocument()" [hidden]="btnSave" -->
+    <button class="btn circle-button circle-buttonSave" (click)="SaveData()" [hidden]="HiddenButton.btnSave"
+      data-tooltip="Save" data-tooltip-location="left">
+      <i class="far fa-save"></i>
+    </button>
+    <!-- (click)="approveDocument()" [hidden]="btnApprove" -->
+    <!-- <button class="btn circle-button circle-buttonApprove" (click)="SetDocStatus('Ready')"
+      [hidden]="HiddenButton.btnApprove" data-tooltip="Approve" data-tooltip-location="left">
+      <i class="fas fa-thumbs-up"></i>
+  </button>
+  <button class="btn circle-button circle-buttonReject" (click)="SetDocStatus('Active')"
+      [hidden]="HiddenButton.btnReject" data-tooltip="Reject" data-tooltip-location="left">
+      <i class="fas fa-thumbs-down"></i>
+  </button>
+  <button class="btn circle-button circle-buttonComplete" (click)="SetDocStatus('Ready')"
+      [hidden]="HiddenButton.btnComplete" data-tooltip="Complete" data-tooltip-location="left">
+      <i class="fas fa-check"></i>
+  </button> -->
+    <!--(click)="printDocument()"  -->
+    <button class="btn circle-button circle-buttonPrint" [hidden]="HiddenButton.btnPrint" data-tooltip="Print"
+      data-tooltip-location="left">
+      <i class="fas fa-print"></i>
+    </button>
+    <button class="btn circle-button circle-buttonCancel" (click)="CancelNonOil()" [hidden]="HiddenButton.btnCancel"
+      data-tooltip="Cancel" data-tooltip-location="left">
+      <i class="fas fa-times"></i>
+    </button>
+    <button class="btn circle-button circle-buttonClear" (click)="NewData()" [hidden]="HiddenButton.btnClear"
+      data-tooltip="Clear" data-tooltip-location="left">
+      <i class="fas fa-eraser"></i>
+    </button>
+    <button class="btn circle-button circle-buttonBack" routerLink="/NonOilPriceList" [hidden]="HiddenButton.btnBack"
+      data-tooltip="Back" data-tooltip-location="left">
+      <i class="fas fa-undo"></i>
+    </button>
+  </div>
+</div>

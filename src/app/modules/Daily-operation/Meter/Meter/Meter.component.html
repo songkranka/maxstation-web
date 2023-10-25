@@ -1,0 +1,1142 @@
+<div *ngIf="isUserAuthenticated()">
+    <div class="card pr-7 rounded-0 shadow-none">
+        <div class="card-header bg-header-page  rounded-0 shadow-none"
+            style="font-size: 16px !important; height: 40px;  padding-top: 10px; font-weight: 600;">
+            {{headerCard}}
+            <div class="ml-auto">
+                <div [ngClass]=this.getBackgroundRibbon()>
+                    <label class="ribbon-1-text">{{status}}</label>
+                </div>
+            </div>
+        </div>
+        <div class="card-body rounded-0 shadow-none">
+            <br>
+            <div class="row">
+                <div class="col-12 col-md-6 col-lg-6">
+                    <div class="topic">
+                        <mat-form-field appearance="fill">
+                            <mat-label>วันที่</mat-label>
+                            <input #inputDate matInput [matDatepicker]="picker" [ngModel]="date"
+                                (dateChange)="changeDate($event)">
+                            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                            <mat-datepicker #picker></mat-datepicker>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-6">
+                    <div class="row justify-content-end">
+                        <!-- <div *ngFor="let item of listProductDisplay; let i=index" class="col-3 text-center"
+                        [ngClass]="[i === 0 ? calcuOffset() : '']" style="padding: 0%;"> -->
+                        <div *ngFor="let item of listProductDisplay; let i=index" class="col-2 text-center"
+                            style="padding: 0%;">
+                            <img [src]="item.PdImage" width="60" height="60">
+                            <div class="old-price text-center">{{item.Unitprice | number:'1.2-2'}}</div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li *ngFor="let item of TabEntity; let i=index" class="nav-item">
+                        <a class="nav-link" [ngClass]="[i === 0 ? 'active' : '']" data-toggle="tab"
+                            href="#{{item.tab_name}}" (click)="changeTab(item.tab_no)" aria-selected="true"
+                            style="vertical-align: middle;">
+                            <span [ngClass]="activeTab === item.tab_no ? 'text-danger' : ''">{{item.tab_name}}</span>
+                            <!-- &nbsp;&nbsp;
+                    <a
+                        class="text-dark h6"
+                        (click)="delTab(item.tab_no)"
+                    >
+                        &times;
+                    </a> -->
+                        </a>
+                    </li>
+                    <li #btnAddTab (click)="addTab(true)" class="nav-item">
+                        <i class="fas fa-plus nav-link"></i>
+                    </li>
+                </ul>
+            </div>
+            <div class="tab-content" id="TabContent">
+                <div *ngFor="let item of TabEntity; let i=index" class="tab-pane"
+                    [ngClass]="[i === 0 ? 'face show active' : '']" id="{{item.tab_name}}">
+                    <div class="row">
+                        <div class="col-12 text-right">
+                            <!-- <button class="btn btn-secondary btn-sm mr-3 rounded-0 shadow-none" (click)="Recalculate()">
+                            <i class="fa fa-calculator"></i> คำนวณใหม่
+                        </button> -->
+                            <!-- <div [hidden]="btnGetPos" class="btn btn-primary btn-sm rounded-0 shadow-none" (click)="getPosMeter()">
+                            <i class="fa fa-plus text-sm"></i>
+                            &nbsp; ดึงข้อมูล POS
+                        </div> -->
+                        </div>
+                    </div>
+                    <mat-horizontal-stepper #stepper (selectionChange)="selectionChange($event)"
+                        [selectedIndex]="IntStepperIndex">
+                        <mat-step>
+                            <ng-template matStepLabel>มิเตอร์</ng-template>
+                            <div class="row">
+                                <div class="col-8">
+                                    <h3>
+                                        <label>มิเตอร์</label>
+                                    </h3>
+                                </div>
+                                <div class="col-4 text-right">
+                                    <button *ngIf="MasBranchConfig.IsLockMeter === 'N' "
+                                        class="btn btn-secondary btn-sm rounded-0 shadow-none mr-3"
+                                        (click)="Recalculate()">
+                                        <i class="fa fa-calculator"></i> คำนวณใหม่
+                                    </button>
+                                    <div *ngIf="MasBranchConfig.IsPos === 'Y'" [hidden]="btnGetPos"
+                                        class="btn btn-primary btn-sm rounded-0 shadow-none" (click)="getPosMeter()">
+                                        <i class="fa fa-plus text-sm"></i>
+                                        &nbsp; ดึงข้อมูล POS
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12 col-sm-12 col-md-6 col-lg-6">
+                                    <!-- Row -->
+                                    <div class="row form-group ">
+                                        <div class="col-4 col-sm-4 col-md-4 text-right topic">ช่วงเวลาในกะเริ่มต้น :
+                                        </div>
+                                        <div class="col-8 col-sm-8 col-md-6 text-left data">
+                                            <input #periodStart type="time" class="form-control"
+                                                [(ngModel)]="meterData.PeriodStart" (change)="changePeriodStart()">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-12 col-md-6 col-lg-6">
+                                    <div class="row form-group">
+                                        <div class="col-4 col-sm-4 col-md-4 text-right topic">ช่วงเวลาในกะสิ้นสุด :
+                                        </div>
+                                        <div class="col-8 col-sm-8 col-md-6 text-left data">
+                                            <input #periodFinish type="time" class="form-control"
+                                                [(ngModel)]="meterData.PeriodFinish">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12 col-sm-12 col-md-12" *ngIf="!isOldData; else elseBlockIsOldData">
+                                    <div class="row form-group">
+                                        <div class="col-2 text-right topic">ผู้รับผิดชอบการขาย :</div>
+                                        <div class="col-9">
+                                            <ng-select #employee [virtualScroll]="true" [multiple]="true"
+                                                [items]="employeeSelect2" bindLabel="KEY" bindValue="VALUE"
+                                                placeholder="เลือกผู้รับผิดชอบการขาย" [(ngModel)]="meterData.Employee">
+                                            </ng-select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <ng-template class="row form-group" #elseBlockIsOldData>
+                                    <div class="col-2 text-right topic">ผู้รับผิดชอบการขาย :</div>
+                                    <div class="col-9">{{meterData.Employee.join(', ')}}</div>
+                                    <br>
+                                    <br>
+                                </ng-template>
+                            </div>
+                            <div class="row">
+                                <div class="col-12 col-sm-12 col-md-12 col-lg-12" *ngIf="isPosData; else elseBlock">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover"
+                                            style="border: 1px solid #dee2e6; font-size: 15px;  margin-bottom: 0px;">
+                                            <thead>
+                                                <tr>
+                                                    <th class="text-nowrap text-center align-middle p-2">ถัง</th>
+                                                    <th class="text-nowrap text-center align-middle p-2">หัวจ่าย</th>
+                                                    <th class="text-nowrap text-center align-middle p-2">สินค้า</th>
+                                                    <th class="text-nowrap text-center align-middle p-2">มิเตอร์เริ่มกะ
+                                                    </th>
+                                                    <th class="text-nowrap text-center align-middle p-2">มิเตอร์ปิดกะ
+                                                    </th>
+                                                    <th class="text-nowrap text-center align-middle p-2">ปริมาณขาย</th>
+                                                    <th class="text-nowrap text-center align-middle p-2">สถานะหัวจ่าย
+                                                    </th>
+                                                    <th class="text-nowrap text-center align-middle p-2">หมายเหตุ</th>
+                                                    <th class="text-nowrap text-center align-middle p-2">มิเตอร์ชำรุด
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr *ngFor="let item of listMasBranchDisp; let i=index">
+                                                    <td class="text-center align-middle">{{item.TankId}}</td>
+                                                    <td class="text-center align-middle">{{item.DispId}}</td>
+                                                    <td class="text-left align-middle">{{item.PdId}} - {{item.PdName}}
+                                                    </td>
+                                                    <td class="text-right align-middle">{{item.MeterStart |
+                                                        number:'1.2-2'}}
+                                                    </td>
+                                                    <td class="text-right align-middle">
+                                                      <span *ngIf="MasBranchConfig.IsLockMeter !== 'N'">
+                                                        {{item.MeterFinish |number:'1.2-2'}}
+                                                      </span>
+                                                      <!-- [Disabled]="MasBranchConfig.IsPos === 'Y' && MasBranchConfig.IsLockMeter === 'Y'" -->
+                                                      <app-InputNumberFormat
+                                                        *ngIf="MasBranchConfig.IsLockMeter === 'N'"
+                                                        [(InputNumber)]="item.MeterFinish"
+                                                        InputClass="rounded-0"
+                                                        (InputNumberChange)="calculateRowDisp(i)">
+                                                      </app-InputNumberFormat>
+                                                    </td>
+                                                    <td class="text-right align-middle">{{item.TotalQty |
+                                                        number:'1.2-2'}}
+                                                    </td>
+                                                    <td class="text-center align-middle">{{item.DispStatus}}</td>
+                                                    <td class="align-middle">
+                                                        <input type="text"
+                                                            class="form-control form-control-sm w-100 rounded-0"
+                                                            [(ngModel)]="item.Remark">
+                                                    </td>
+                                                    <!-- class="text-center btn-outline-warning align-middle" -->
+                                                    <td
+                                                      [className]="GetMeterDefectIconClass(item)"
+                                                      role="button" data-toggle="modal"
+                                                      data-target="#modal-meterDefective"
+                                                      (click)="openModalMeterDefective(i)"
+                                                    >
+                                                        <i class="fas fa-exclamation-triangle"></i>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                            <tfoot class="table-borderless">
+                                                <tr>
+                                                    <td colspan="5" class="text-right align-middle">
+                                                        <label>ปริมาณขายรวม</label>
+                                                    </td>
+                                                    <td class="text-right align-middle">
+                                                        <label>
+                                                            {{meterData.SumMeterTotalQty | number:'1.2-2'}}
+                                                        </label>
+                                                    </td>
+                                                    <td colspan="2" class="text-right align-middle">
+                                                        <label>บีบทดสอบรวม</label>
+                                                    </td>
+                                                    <td class="text-right align-middle">
+                                                        <label>
+                                                            {{GetSummaryTestQty()| number:'1.2-2'}}
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="5" class="text-right align-middle">
+                                                        <label>ยอดเงินรวม</label>
+                                                    </td>
+                                                    <td class="text-right align-middle">
+                                                        <label>
+                                                            {{SumSaleAMT()| number:'1.2-2'}}
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+                                <ng-template class="col-12 col-sm-12 col-md-12 col-lg-12" #elseBlock>
+                                    <div class="table-responsive">
+                                        <table class="table table-hover"
+                                            style="border: 1px solid #dee2e6; font-size: 15px;  margin-bottom: 0px;">
+                                            <thead>
+                                                <tr>
+                                                    <th class="text-nowrap text-center align-middle p-2">ถัง</th>
+                                                    <th class="text-nowrap text-center align-middle p-2">หัวจ่าย</th>
+                                                    <th class="text-nowrap text-center align-middle p-2">สินค้า</th>
+                                                    <th class="text-nowrap text-center align-middle p-2">มิเตอร์เริ่มกะ
+                                                    </th>
+                                                    <th class="text-nowrap text-center align-middle p-2">มิเตอร์ปิดกะ
+                                                    </th>
+                                                    <th class="text-nowrap text-center align-middle p-2">ปริมาณขาย</th>
+                                                    <th class="text-nowrap text-center align-middle p-2">สถานะหัวจ่าย
+                                                    </th>
+                                                    <th class="text-nowrap text-center align-middle p-2">หมายเหตุ</th>
+                                                    <th class="text-nowrap text-center align-middle p-2">
+                                                        ซ่อม/ทดสอบ/เทคืน
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr *ngFor="let item of listMasBranchDisp; let i=index">
+                                                    <td class="text-center align-middle">{{item.TankId}}</td>
+                                                    <td class="text-center align-middle">{{item.DispId}}</td>
+                                                    <td class="text-left align-middle">{{item.PdId}} - {{item.PdName}}
+                                                    </td>
+                                                    <td class="text-right align-middle">
+                                                        <span *ngIf="CanLoadPreviousMeter">
+                                                            {{item.MeterStart | number:'1.2-2'}}
+                                                        </span>
+                                                        <app-InputNumberFormat InputClass="rounded-0"
+                                                            *ngIf="!CanLoadPreviousMeter"
+                                                            [(InputNumber)]="item.MeterStart"
+                                                            (InputNumberChange)="calculateRowDisp(i)">
+                                                        </app-InputNumberFormat>
+                                                    </td>
+                                                    <td class="align-middle" *ngIf="item.IsRequire; else elseBlock">
+                                                      <!--[Disabled]="MasBranchConfig.IsPos === 'Y'" -->
+                                                        <app-InputNumberFormat
+                                                            [Disabled]="MasBranchConfig.IsPos === 'Y' && MasBranchConfig.IsLockMeter === 'Y'"
+                                                            [(InputNumber)]="item.MeterFinish"
+                                                            InputClass="requiredField rounded-0"
+                                                            (InputNumberChange)="calculateRowDisp(i)">
+                                                        </app-InputNumberFormat>
+                                                    </td>
+                                                    <ng-template #elseBlock>
+                                                        <td class="align-middle">
+                                                            <app-InputNumberFormat
+                                                                [Disabled]="MasBranchConfig.IsPos === 'Y' && MasBranchConfig.IsLockMeter === 'Y'"
+                                                                InputClass="rounded-0"
+                                                                [(InputNumber)]="item.MeterFinish"
+                                                                (InputNumberChange)="calculateRowDisp(i)">
+                                                            </app-InputNumberFormat>
+                                                        </td>
+                                                    </ng-template>
+                                                    <td class="text-right align-middle">{{item.TotalQty |
+                                                        number:'1.2-2'}}
+                                                    </td>
+                                                    <td class="text-center align-middle">{{item.DispStatus}}</td>
+                                                    <td class="align-middle">
+                                                        <input type="text"
+                                                            class="form-control form-control-sm w-100 rounded-0"
+                                                            [(ngModel)]="item.Remark">
+                                                    </td>
+                                                    <!-- class="text-center btn-outline-warning align-middle" -->
+                                                    <td
+                                                        [className]="GetMeterDefectIconClass(item)"
+                                                        role="button" data-toggle="modal"
+                                                        data-target="#modal-meterDefective"
+                                                        (click)="openModalMeterDefective(i)"
+                                                    >
+                                                        <i class="fas fa-exclamation-triangle"></i>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                            <tfoot class="table-borderless">
+                                                <tr>
+                                                    <td colspan="5" class="text-right align-middle">
+                                                        <label>ปริมาณขายรวม</label>
+                                                    </td>
+                                                    <td class="text-right align-middle">
+                                                        <label>
+                                                            {{meterData.SumMeterTotalQty | number:'1.2-2'}}
+                                                        </label>
+                                                    </td>
+                                                    <td colspan="2" class="text-right align-middle">
+                                                        <label>บีบทดสอบรวม</label>
+                                                    </td>
+                                                    <td class="text-right align-middle">
+                                                        <label>
+                                                            {{GetSummaryTestQty()| number:'1.2-2'}}
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="5" class="text-right align-middle">
+                                                        <label>ยอดเงินรวม</label>
+                                                    </td>
+                                                    <td class="text-right align-middle">
+                                                        <label>
+                                                            {{SumSaleAMT()| number:'1.2-2'}}
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </ng-template>
+                            </div>
+                            <!-- <br>
+                        <div class="row">
+                            <div class="offset-6 col-6">
+                                <div class="row my-2">
+                                    <div class="col-6 text-right">ปริมาณขายรวม:</div>
+                                    <div class="col-6 text-right">
+                                        {{meterData.SumMeterSaleQty | number:'1.2-2'}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div> -->
+                        </mat-step>
+                        <mat-step>
+                            <ng-template matStepLabel>วัดถัง</ng-template>
+                            <div class="row">
+                                <div class="col-8">
+                                    <div class="row">
+                                        <h3>
+                                            <label>วัดถัง</label>
+                                        </h3>
+                                    </div>
+                                    <div class="row">
+                                        <h4>
+                                            <label>บันทึกการวัดปริมาณถังเก็บ</label>
+                                        </h4>
+                                    </div>
+                                </div>
+                                <div class="col-4 position-relative">
+                                    <!--  [disabled]="activeTab === 1" -->
+                                    <button *ngIf="MasBranchConfig.IsLockMeter === 'N'" style="bottom: 0px;right: 0px;"
+                                        class="btn btn-secondary btn-sm rounded-0 shadow-none mb-3 mr-3 position-absolute"
+                                        (click)="RecalculateTank()">
+                                        <i class="fa fa-calculator"></i> คำนวณใหม่
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-12 col-sm-12 col-md-12 col-lg-12">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th class="text-nowrap text-center  sticky-col-th first-col">ถัง
+                                                    </th>
+                                                    <th
+                                                        class="text-nowrap text-center align-middle p-2 sticky-col-th second-col">
+                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;สินค้า&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                    </th>
+                                                    <!-- <th class="text-nowrap text-center align-middle p-2">สถานะ</th> -->
+
+                                                    <th class="text-nowrap text-center align-middle p-2">ยอดยกมา</th>
+                                                    <th class="text-nowrap text-center align-middle p-2">รับเข้าถัง</th>
+                                                    <th class="text-nowrap text-center align-middle p-2">
+                                                        โอนน้ำมันกลับคลัง
+                                                    </th>
+                                                    <th class="text-nowrap text-center align-middle p-2">จ่ายผ่านมิเตอร์
+                                                    </th>
+                                                    <th class="text-nowrap text-center align-middle p-2">คงเหลือ</th>
+                                                    <th class="text-nowrap text-center align-middle p-2">เบิกใช้</th>
+                                                    <th class="text-nowrap text-center align-middle p-2">ขายผ่านมิเตอร์
+                                                    </th>
+                                                    <th class="text-nowrap text-center align-middle p-2">
+                                                        ค่าความสูงที่วัดได้
+                                                        <div>
+                                                            {{listMasBranchCalibrate.length > 0 ? "(" +
+                                                            listMasBranchCalibrate[0].LevelUnit + ")" : ""}}
+                                                        </div>
+                                                    </th>
+                                                    <th class="text-nowrap text-center align-middle p-2">
+                                                        วัดได้จริง
+                                                        <div>(ลิตร)</div>
+                                                    </th>
+                                                    <th class="text-nowrap text-center align-middle p-2">ขาด/เกิน</th>
+                                                    <th class="text-nowrap text-center align-middle p-2">หมายเหตุ</th>
+                                                    <th class="text-nowrap text-center align-middle p-2">
+                                                        ค่าความสูงน้ำที่วัดได้
+                                                        <div>
+                                                            {{listMasBranchCalibrate.length > 0 ? "(" +
+                                                            listMasBranchCalibrate[0].LevelUnit + ")" : ""}}
+                                                        </div>
+                                                    </th>
+                                                    <th class="text-nowrap text-center align-middle p-2">
+                                                        วัดน้ำในถัง
+                                                        <div>(ลิตร)</div>
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr *ngFor="let item of listMasBranchTank; let i=index">
+                                                    <td class="text-center sticky-col-td first-col">{{item.TankId}}</td>
+                                                    <td class="text-nowrap sticky-col-td second-col">
+                                                        <div class="hidden-box" title="{{item.PdId}} - {{item.PdName}}">
+                                                            <div class="hidden-text ">{{item.PdId}} - {{item.PdName}}
+                                                            </div>
+                                                        </div>
+                                                    </td>
+
+                                                    <!-- <td class="text-right align-middle text-nowrap">
+                                                    {{item.TankStatus}}
+                                                </td> -->
+                                                    <td class="text-right align-middle">{{item.BeforeQty |
+                                                        number:'1.2-2'}}
+                                                    </td>
+                                                    <td class="align-middle">
+                                                        <app-InputNumberFormat [(InputNumber)]="item.ReceiveQty"
+                                                            Width="150" InputClass="rounded-0" [Min]="0"
+                                                            (InputNumberChange)="calculateRowTank(i, 'Remain')">
+                                                        </app-InputNumberFormat>
+                                                    </td>
+                                                    <td class="align-middle">
+                                                        <app-InputNumberFormat [(InputNumber)]="item.TransferQty"
+                                                            Width="150" [Min]="0" InputClass="rounded-0"
+                                                            (InputNumberChange)="calculateRowTank(i, 'Remain')">
+                                                        </app-InputNumberFormat>
+                                                    </td>
+                                                    <td class="text-right align-middle">{{item.IssueQty |
+                                                        number:'1.2-2'}}
+                                                    </td>
+                                                    <td class="text-right align-middle">{{item.RemainQty |
+                                                        number:'1.2-2'}}
+                                                    </td>
+                                                    <td class="align-middle">
+                                                        <app-InputNumberFormat [(InputNumber)]="item.WithdrawQty"
+                                                            Width="150" [Min]="0" InputClass="rounded-0"
+                                                            (InputNumberChange)="calculateRowTank(i, 'Sale')">
+                                                        </app-InputNumberFormat>
+                                                    </td>
+                                                    <td class="text-right align-middle">{{item.SaleQty |
+                                                        number:'1.2-2'}}
+                                                    </td>
+                                                    <td class="align-middle"
+                                                        *ngIf="listMasBranchCalibrate.length > 0 && item.IsRequire; else elseBlock">
+                                                        <app-InputNumberFormat [(InputNumber)]="item.Height"
+                                                            [InputClass]="'requiredField  rounded-0'" Width="150"
+                                                            [Min]="0" InputClass="rounded-0"
+                                                            (InputNumberChange)="calculateRowTank(i, 'Height')">
+                                                        </app-InputNumberFormat>
+                                                    </td>
+                                                    <ng-template #elseBlock>
+                                                        <td class="align-middle">
+                                                            <app-InputNumberFormat [(InputNumber)]="item.Height"
+                                                                Width="150" InputClass="rounded-0" [Min]="0"
+                                                                (InputNumberChange)="calculateRowTank(i, 'Height')">
+                                                            </app-InputNumberFormat>
+                                                        </td>
+                                                    </ng-template>
+                                                    <td class="text-right align-middle"
+                                                        *ngIf="listMasBranchCalibrate.length > 0; else realQtyElseBlock">
+                                                        <!-- [Disabled]="true" -->
+                                                        <app-InputNumberFormat [(InputNumber)]="item.RealQty"
+                                                            InputClass="rounded-0"
+                                                            (InputNumberChange)="calculateRowTank(i, 'Real')"
+                                                            Width="150" [Min]="0"></app-InputNumberFormat>
+                                                    </td>
+                                                    <ng-template #realQtyElseBlock>
+                                                        <!-- <td class="align-middle">
+                                                        <app-InputNumberFormat
+                                                            [(InputNumber)]="item.RealQty"
+                                                            Width="150"
+                                                            [Min]="0"
+                                                        ></app-InputNumberFormat>
+                                                    </td> -->
+                                                        <td class="align-middle" *ngIf="item.IsRequire; else elseBlock">
+                                                            <app-InputNumberFormat [(InputNumber)]="item.RealQty"
+                                                                InputClass="rounded-0"
+                                                                (InputNumberChange)="calculateRowTank(i, 'Real')"
+                                                                [InputClass]="'requiredField'" Width="150" [Min]="0">
+                                                            </app-InputNumberFormat>
+                                                        </td>
+                                                        <ng-template #elseBlock>
+                                                            <td class="align-middle">
+                                                                <app-InputNumberFormat [(InputNumber)]="item.RealQty"
+                                                                    InputClass="rounded-0"
+                                                                    (InputNumberChange)="calculateRowTank(i, 'Real')"
+                                                                    Width="150" [Min]="0"></app-InputNumberFormat>
+                                                            </td>
+                                                        </ng-template>
+                                                    </ng-template>
+                                                    <td class="text-right align-middle">{{item.DiffQty |
+                                                        number:'1.2-2'}}
+                                                    </td>
+                                                    <!-- (click)="SelectTank = listMasBranchTank[i]" -->
+                                                    <td class="text-center align-middle btn-outline-{{item.Hold === 'Y'?'danger':'warning'}}"
+                                                        role="button" (click)="ShowModalHoldReason(i)"
+                                                        data-toggle="modal" data-target="#ModalHoldReason">
+                                                        <i class="fas fa-exclamation-triangle"></i>
+                                                    </td>
+                                                    <td class="align-middle">
+                                                        <app-InputNumberFormat [(InputNumber)]="item.WaterHeight"
+                                                            Width="150" [Min]="0" InputClass="rounded-0"
+                                                            (InputNumberChange)="calculateRowTank(i, 'Water')">
+                                                        </app-InputNumberFormat>
+                                                    </td>
+                                                    <td class="text-right align-middle"
+                                                        *ngIf="listMasBranchCalibrate.length > 0; else waterQtyElseBlock">
+                                                        <app-InputNumberFormat [(InputNumber)]="item.WaterQty"
+                                                            InputClass="rounded-0" [Disabled]="true" Width="150"
+                                                            [Min]="0"></app-InputNumberFormat>
+                                                    </td>
+                                                    <ng-template #waterQtyElseBlock>
+                                                        <td class="align-middle">
+                                                            <app-InputNumberFormat [(InputNumber)]="item.WaterQty"
+                                                                InputClass="rounded-0" Width="150" [Min]="0">
+                                                            </app-InputNumberFormat>
+                                                        </td>
+                                                    </ng-template>
+                                                </tr>
+                                            </tbody>
+                                            <tfoot class="table-borderless">
+                                                <td class="text-right align-middle text-bold" colspan="2">ยอดรวม</td>
+                                                <td class="text-right align-middle text-bold">
+                                                    {{SumMasBranchTank("BeforeQty") | number:'1.2-2'}}</td>
+                                                <td class="text-right align-middle text-bold">
+                                                    {{SumMasBranchTank("ReceiveQty") | number:'1.2-2'}}</td>
+                                                <td class="text-right align-middle text-bold">
+                                                    {{SumMasBranchTank("TransferQty") | number:'1.2-2'}}</td>
+                                                <td class="text-right align-middle text-bold">
+                                                    {{SumMasBranchTank("IssueQty") | number:'1.2-2'}}</td>
+                                                <td class="text-right align-middle text-bold">
+                                                    {{SumMasBranchTank("RemainQty") | number:'1.2-2'}}</td>
+                                                <td class="text-right align-middle text-bold">
+                                                    {{SumMasBranchTank("WithdrawQty") | number:'1.2-2'}}</td>
+                                                <td class="text-right align-middle text-bold">
+                                                    {{SumMasBranchTank("SaleQty") | number:'1.2-2'}}</td>
+                                                <td class="text-right align-middle text-bold">
+                                                    {{SumMasBranchTank("Height") | number:'1.2-2'}}</td>
+                                                <td class="text-right align-middle text-bold">
+                                                    {{SumMasBranchTank("RealQty") | number:'1.2-2'}}</td>
+                                                <td class="text-right align-middle text-bold">
+                                                    {{SumMasBranchTank("DiffQty") | number:'1.2-2'}}</td>
+                                                <td class="text-right align-middle text-bold" colspan="2">
+                                                    {{SumMasBranchTank("WaterHeight") | number:'1.2-2'}}</td>
+                                                <td class="text-right align-middle text-bold">
+                                                    {{SumMasBranchTank("WaterQty") | number:'1.2-2'}}</td>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <h4>
+                                    <label>
+                                        สรุปยอดรวมปริมาณน้ำมันหน้าลาน แยกตามชนิดน้ำมัน
+                                    </label>
+                                </h4>
+                            </div>
+                            <div class="row">
+                                <div class="col-12 col-sm-12 col-md-12 col-lg-12">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover"
+                                            style="border: 1px solid #dee2e6; font-size: 15px;  margin-bottom: 0px;">
+                                            <thead>
+                                                <tr>
+                                                    <th class="text-nowrap text-center align-middle p-2"
+                                                        [style.width.px]="220">
+                                                        ผลิตภัณฑ์
+                                                    </th>
+                                                    <th class="text-nowrap text-center align-middle p-2">ยอดยกมา</th>
+                                                    <th class="text-nowrap text-center align-middle p-2">รับเข้าถัง</th>
+                                                    <th class="text-nowrap text-center align-middle p-2">จ่ายผ่านมิเตอร์
+                                                    </th>
+                                                    <th class="text-nowrap text-center align-middle p-2">หักเบิกใช้</th>
+                                                    <th class="text-nowrap text-center align-middle p-2">โอนกลับคลัง
+                                                    </th>
+                                                    <th class="text-nowrap text-center align-middle p-2">ขายผ่านมิเตอร์
+                                                    </th>
+                                                    <th class="text-nowrap text-center align-middle p-2">ยอดยกไป</th>
+                                                    <th class="text-nowrap text-center align-middle p-2">ปรับปรุง</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr
+                                                    *ngFor="let item of listSumMasBranchTankModelByProduct; let i=index">
+                                                    <td class="text-center align-middle">
+                                                        <div class="row">
+                                                            <div class="col-6" style="padding-right: 0%;">
+                                                                <img [src]="item.PdImage" alt="Image Source" width="60"
+                                                                    height="60">
+                                                            </div>
+                                                            <div class="col-6"
+                                                                style="display:flex;justify-content:left;align-items:center; padding-left: 0%;">
+                                                                {{item.PdName}}
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td class="text-right align-middle">{{item.BeforeQty |
+                                                        number:'1.2-2'}}
+                                                    </td>
+                                                    <td class="text-right align-middle">{{item.ReceiveQty |
+                                                        number:'1.2-2'}}
+                                                    </td>
+                                                    <td class="text-right align-middle">{{item.IssueQty |
+                                                        number:'1.2-2'}}
+                                                    </td>
+                                                    <td class="text-right align-middle">{{item.WithdrawQty |
+                                                        number:'1.2-2'}}</td>
+                                                    <td class="text-right align-middle">{{item.TransferQty |
+                                                        number:'1.2-2'}}</td>
+                                                    <td class="text-right align-middle">{{item.SaleQty |
+                                                        number:'1.2-2'}}
+                                                    </td>
+                                                    <td class="text-right align-middle">{{item.BalanceQty |
+                                                        number:'1.2-2'}}
+                                                    </td>
+                                                    <td class="text-right align-middle">{{item.AdjustQty |
+                                                        number:'1.2-2'}}
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </mat-step>
+                        <mat-step>
+                            <ng-template matStepLabel>รับจ่าย</ng-template>
+                            <div class="row">
+                                <div class="col-8">
+                                    <div class="row">
+                                        <h3>
+                                            <label>รับจ่าย</label>
+                                        </h3>
+                                    </div>
+                                    <div class="row">
+                                        <h4>
+                                            <label>บันทึกยอดเงินจำหน่ายน้ำมันหน้าลาน</label>
+                                        </h4>
+                                    </div>
+                                </div>
+                                <div class="col-4 position-relative">
+                                    <!-- <button style="bottom: 0px;right: 0px;" class="btn btn-secondary btn-sm rounded-0 shadow-none mb-3 mr-3 position-absolute" (click)="Recalculate()">
+                                    <i class="fa fa-calculator"></i> คำนวณใหม่
+                                </button> -->
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-12 col-sm-12 col-md-12 col-lg-12">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th class="text-nowrap text-center  sticky-col-th first-col">
+                                                        รหัสสินค้า</th>
+                                                    <th
+                                                        class="text-nowrap text-center align-middle p-2 sticky-col-th second-col">
+
+
+                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ชื่อสินค้า
+                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                    </th>
+                                                    <th class="text-nowrap text-center align-middle p-2">จ่ายผ่านมิเตอร์
+                                                    </th>
+                                                    <th class="text-nowrap text-center align-middle p-2">ราคา/หน่วย</th>
+                                                    <th class="text-nowrap text-center align-middle p-2">ยอดขาย</th>
+                                                    <th class="text-nowrap text-center align-middle p-2">ขายเชื่อ</th>
+                                                    <th class="text-nowrap text-center align-middle p-2">ขายสด</th>
+                                                    <th class="text-nowrap text-center align-middle p-2"
+                                                        [style.width.px]="150">
+                                                        คูปอง
+                                                    </th>
+                                                    <th class="text-nowrap text-center align-middle p-2"
+                                                        [style.width.px]="150">
+                                                        ส่วนลด
+                                                    </th>
+                                                    <th class="text-nowrap text-center align-middle p-2">เงินสุทธิ</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr *ngFor="let item of listMasBranchCash; let i=index">
+                                                    <td class="text-center bg-white sticky-col-th first-col">
+                                                        {{item.PdId}}</td>
+                                                    <td class="text-nowrap bg-white sticky-col-th second-col">
+                                                        <div class="hidden-box" title="{{item.PdName}}">
+                                                            <div class="hidden-text ">{{item.PdName}}</div>
+                                                        </div>
+                                                    </td>
+                                                    <td class="text-right align-middle">{{item.MeterAmt |
+                                                        number:'1.2-2'}}
+                                                    </td>
+                                                    <td class="text-right align-middle">{{item.UnitPrice |
+                                                        number:'1.2-2'}}
+                                                    </td>
+                                                    <td class="text-right align-middle">{{item.SaleAmt |
+                                                        number:'1.2-2'}}
+                                                    </td>
+                                                    <td class="align-middle">
+                                                        <app-InputNumberFormat InputClass="rounded-0"
+                                                            [(InputNumber)]="item.CreditAmt" Width="150" [Min]="0"
+                                                            (InputNumberChange)="calculateRowCash(i, 'Cash')">
+                                                        </app-InputNumberFormat>
+                                                    </td>
+                                                    <td class="text-right align-middle">{{item.CashAmt |
+                                                        number:'1.2-2'}}
+                                                    </td>
+                                                    <td class="align-middle">
+                                                      <!-- [Disabled]="MasBranchConfig.IsPos === 'Y' && MasBranchConfig.IsLockMeter === 'Y'" -->
+                                                        <app-InputNumberFormat InputClass="rounded-0"
+                                                            [(InputNumber)]="item.CouponAmt" Width="150" [Min]="0"
+                                                            (InputNumberChange)="calculateRowCash(i, 'Total')">
+                                                        </app-InputNumberFormat>
+                                                    </td>
+                                                    <td class="align-middle">
+                                                      <!-- [Disabled]="MasBranchConfig.IsPos === 'Y' && MasBranchConfig.IsLockMeter === 'Y'" -->
+                                                        <app-InputNumberFormat InputClass="rounded-0"
+                                                            [(InputNumber)]="item.DiscAmt" Width="150" [Min]="0"
+                                                            (InputNumberChange)="calculateRowCash(i, 'Total')">
+                                                        </app-InputNumberFormat>
+                                                    </td>
+                                                    <td class="text-right align-middle">{{item.TotalAmt |
+                                                        number:'1.2-2'}}
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                            <tfoot class="table-borderless">
+                                                <td colspan="2" class="text-right align-middle">
+                                                    <label>ยอดรวม</label>
+                                                </td>
+                                                <td class="text-right align-middle">
+                                                    <label>
+                                                        {{MasBranchSumCash.SumMeterAmt | number:'1.2-2'}}
+                                                    </label>
+                                                </td>
+                                                <td colspan="2" class="text-right align-middle">
+                                                    <label>
+                                                        {{SumSaleAMT() | number:'1.2-2'}}
+                                                        <!-- {{MasBranchSumCash.SumSaleAmt | number:'1.2-2'}} -->
+                                                    </label>
+                                                </td>
+                                                <td class="text-right align-middle">
+                                                    <label>
+                                                        {{MasBranchSumCash.SumCreditAmt | number:'1.2-2'}}
+                                                    </label>
+                                                </td>
+                                                <td class="text-right align-middle">
+                                                    <label>
+                                                        {{MasBranchSumCash.SumCashAmt | number:'1.2-2'}}
+                                                    </label>
+                                                </td>
+                                                <td class="text-right align-middle">
+                                                    <label>
+                                                        {{MasBranchSumCash.SumCouponAmt | number:'1.2-2'}}
+                                                    </label>
+                                                </td>
+                                                <td class="text-right align-middle">
+                                                    <label>
+                                                        {{MasBranchSumCash.SumDiscAmt | number:'1.2-2'}}
+                                                    </label>
+                                                </td>
+                                                <td class="text-right align-middle">
+                                                    <label>
+                                                        {{MasBranchSumCash.SumTotalAmt | number:'1.2-2'}}
+                                                    </label>
+                                                </td>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <br>
+                            <br>
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover"
+                                            style="border: 1px solid #dee2e6; font-size: 15px;  margin-bottom: 0px;">
+                                            <thead>
+                                                <tr>
+                                                    <th class="text-nowrap text-center align-middle p-2"
+                                                        [style.width.px]="50">
+                                                        ลำดับ
+                                                    </th>
+                                                    <th colspan="2" class="text-nowrap text-center align-middle p-2">
+                                                        รายการเงินรับเพิ่ม
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr *ngFor="let item of listMasBranchCashCr; let i=index">
+                                                    <td class="text-center align-middle">{{i + 1}}</td>
+                                                    <td class="text-left align-middle">{{item.GlDesc}}</td>
+                                                    <div *ngIf="item.GlLock == 'Y'; else elseBlock">
+                                                        <td class="align-middle">
+                                                            <input [disabled]="true" type="text"
+                                                                class="form-control text-right rounded-0"
+                                                                [(ngModel)]="item.GlAmt">
+                                                        </td>
+                                                    </div>
+                                                    <ng-template #elseBlock>
+                                                        <td class="align-middle">
+                                                            <app-InputNumberFormat [(InputNumber)]="item.GlAmt"
+                                                                Width="150" [Min]="0" (change)="reCalculateCashStep()"
+                                                                InputClass="rounded-0">
+                                                            </app-InputNumberFormat>
+                                                        </td>
+                                                    </ng-template>
+                                                </tr>
+                                            </tbody>
+                                            <tfoot class="table-borderless">
+                                                <td colspan="2" class="text-left align-middle">
+                                                    <label>รวมจำนวนเงินรับเพิ่ม</label>
+                                                </td>
+                                                <td class="text-right align-middle">
+                                                    <label>
+                                                        {{MasBranchSumCash.SumCrAmt | number:'1.2-2'}}
+                                                    </label>
+                                                </td>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover"
+                                            style="border: 1px solid #dee2e6; font-size: 15px;  margin-bottom: 0px;">
+                                            <thead>
+                                                <tr>
+                                                    <th class="text-nowrap text-center align-middle p-2"
+                                                        [style.width.px]="50">
+                                                        ลำดับ
+                                                    </th>
+                                                    <th colspan="2" class="text-nowrap text-center align-middle p-2">
+                                                        รายการหักเงินสด
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr *ngFor="let item of listMasBranchCashDr; let i=index">
+                                                    <td class="text-center align-middle">{{i + 1}}</td>
+                                                    <td class="text-left align-middle">{{item.GlDesc}}</td>
+                                                    <div *ngIf="item.GlLock == 'Y'; else elseBlock">
+                                                        <td class="align-middle">
+                                                            <input [disabled]="true" type="text"
+                                                                class="form-control text-right rounded-0"
+                                                                [(ngModel)]="item.GlAmt">
+                                                        </td>
+                                                    </div>
+                                                    <ng-template #elseBlock>
+                                                        <td class="align-middle">
+                                                            <app-InputNumberFormat [(InputNumber)]="item.GlAmt"
+                                                                Width="150" [Min]="0" (change)="reCalculateCashStep()"
+                                                                InputClass="rounded-0">
+                                                            </app-InputNumberFormat>
+                                                        </td>
+                                                    </ng-template>
+                                                </tr>
+                                            </tbody>
+                                            <tfoot class="table-borderless">
+                                                <tr>
+                                                    <td colspan="2" class="text-left align-middle">
+                                                        <label>รวมสลิปบัตรเครดิต</label>
+                                                    </td>
+                                                    <td class="text-right align-middle">
+                                                        <label>
+                                                            {{MasBranchSumCash.SumSlipAmt | number:'1.2-2'}}
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                                <!-- <tr *ngIf="isPosData">
+                                                <td colspan="2" class="text-left align-middle">
+                                                    <label>รวมสลิปบัตรเครดิต (จาก POS)</label>
+                                                </td>
+                                                <td class="text-right align-middle">
+                                                    <label>
+                                                        {{MasBranchSumCash.SumPosSlipAmt | number:'1.2-2'}}
+                                                    </label>
+                                                </td>
+                                            </tr> -->
+                                                <tr>
+                                                    <td colspan="2" class="text-left align-middle">
+                                                        <label>รวมจำนวนเงินหัก</label>
+                                                    </td>
+                                                    <td class="text-right align-middle">
+                                                        <label>
+                                                            {{MasBranchSumCash.SumDrAmt | number:'1.2-2'}}
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="offset-6 col-6">
+                                    <div class="row my-2">
+                                        <div class="col-6 text-right">
+                                            <label>ยอดเงินตามบัญชี :</label>
+                                        </div>
+                                        <div class="col-6 text-right">
+                                            <label>
+                                                {{MasBranchSumCash.CashAmt | number:'1.2-2'}}
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="row my-2">
+                                        <div class="col-6 text-right">
+                                            <label>ยอดเงินนำส่งจริง :</label>
+                                        </div>
+                                        <div class="col-6 text-right">
+                                            <app-InputNumberFormat [(InputNumber)]="MasBranchSumCash.RealAmt"
+                                                Width="150" InputClass="rounded-0 shadow-none" [Min]="0"
+                                                (change)="reCalculateCashStep()"></app-InputNumberFormat>
+                                        </div>
+                                    </div>
+                                    <div class="row my-2">
+                                        <div class="col-6 text-right">
+                                            <label>ยอดเงินนำฝากธนาคาร :</label>
+                                        </div>
+                                        <div class="col-6 text-right">
+                                            <label>
+                                                {{MasBranchSumCash.DepositAmt | number:'1.2-2'}}
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="row my-2">
+                                        <div class="col-6 text-right">
+                                            <label>ยอดเงินขาด/เกิน :</label>
+                                        </div>
+                                        <div class="col-6 text-right">
+                                            <label>
+                                                {{MasBranchSumCash.DiffAmt | number:'1.2-2'}}
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </mat-step>
+                    </mat-horizontal-stepper>
+                    <br>
+                    <br>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="right-bar mt-2">
+        <!-- <button class="btn circle-button circle-buttonSave" [hidden]="btnSave" data-tooltip="Save"
+        data-tooltip-location="left" (click)="saveDocument()">
+        <i class="far fa-save"></i>
+    </button> -->
+        <!-- *ngIf = "stepper?.selectedIndex === 1" -->
+        <button class="btn circle-button circle-buttonComplete" [hidden]="btnComplete || IntStepperIndex !==2"
+            data-tooltip="SAVE" data-tooltip-location="left" (click)="submitDocument()">
+            <i class="far fa-save"></i>
+            <!-- <i class="fas fa-check"></i> -->
+        </button>
+        <button class="btn circle-button circle-buttonClear" [hidden]="btnClear" data-tooltip="Clear"
+            data-tooltip-location="left" (click)="clearDocumentByOneStep()">
+            <i class="fas fa-eraser"></i>
+        </button>
+    </div>
+    <div class="modal fade" role="dialog" id="modal-meterDefective" aria-labelledby="modal-test" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content  rounded-0 shadow-none"
+                style="width: 200% !important; margin-left: -45%; margin-top: 20%;">
+                <div class="modal-header bg-header rounded-0 shadow-none" style="height: 40px; padding-top: 10px;">
+                    <span class="modal-title h6">ซ่อม/ทดสอบ/เทคืน : {{activeMeterDefective.DispId}}</span>
+                    <button type="button" class="close" data-dismiss="modal">
+                        &times;
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-3">
+                            <div>
+                                <h3>เหตุผล</h3>
+                            </div>
+                            <div class="text-danger">
+                                <label class="text-dark">ซ่อม </label> *
+                            </div>
+                            <div class="pt-3 text-danger">
+                                <label class="text-dark">ทดสอบ/เทคืน</label> *
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div>
+                                <h3>มิเตอร์ก่อนซ่อม</h3>
+                            </div>
+                            <div>
+                                <app-InputNumberFormat InputClass="rounded-0 shadow-none"
+                                    [Disabled]="MasBranchConfig.IsLockMeter ==='Y'"
+                                    [(InputNumber)]="activeMeterDefective.RepairStart" (OnChange)="onRepairChange()">
+                                </app-InputNumberFormat>
+                            </div>
+                            <div class="pt-3">
+                                <app-InputNumberFormat InputClass="rounded-0 shadow-none"
+                                    [Disabled]="MasBranchConfig.IsLockMeter ==='Y'"
+                                    [(InputNumber)]="activeMeterDefective.TestStart">
+                                </app-InputNumberFormat>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div>
+                                <h3>มิเตอร์หลังซ่อม</h3>
+                            </div>
+                            <div>
+                                <app-InputNumberFormat InputClass="rounded-0 shadow-none"
+                                    [Disabled]="MasBranchConfig.IsLockMeter ==='Y'"
+                                    [(InputNumber)]="activeMeterDefective.RepairFinish" (OnChange)="onRepairChange()">
+                                </app-InputNumberFormat>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div>
+                                <h3>ปริมาณ</h3>
+                            </div>
+                            <div>
+                                <app-InputNumberFormat InputClass="rounded-0 shadow-none"
+                                    [Disabled]="MasBranchConfig.IsLockMeter ==='Y'"
+                                    [(InputNumber)]="activeMeterDefective.RepairQty">
+                                </app-InputNumberFormat>
+                            </div>
+                            <div class="pt-3">
+                                <!-- [Disabled]="isPosData" -->
+                                <app-InputNumberFormat InputClass="rounded-0 shadow-none"
+                                    [(InputNumber)]="activeMeterDefective.TestQty"
+                                    [Disabled]="MasBranchConfig.IsLockMeter ==='Y'"
+                                    (InputNumberChange)="changeTestQtyReCalTotalQty(activeMeterDefective.Index)">
+                                </app-InputNumberFormat>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                </div>
+                <div class="modal-footer">
+                    <div class="row form-group col-md-12">
+                        <div class="col-md-6 text-left">
+                            <div class="text-danger">** กรณีซ่อม/ทดสอบ/เทคืน กรุณากรอกเลขมิเตอร์ </div>
+                        </div>
+                        <div class="col-md-6 text-right">
+                            <!-- style="width: 8%;" -->
+                            <button class="btn btn-primary rounded-0 shadow-none px-3 " data-dismiss="modal"
+                                (click)="saveModalMeterDefective(activeMeterDefective.Index)">
+                                ตกลง
+                            </button>&nbsp;
+                            <button type="button" class="btn btn-warning rounded-0 shadow-none px-3 "
+                                data-dismiss="modal">
+                                ยกเลิก
+                            </button>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" role="dialog" id="ModalHoldReason" aria-labelledby="modal-test" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content rounded-0 shadow-none"
+                style="width: 200% !important; margin-left: -45%; margin-top: 20%;">
+                <div class="modal-header bg-header rounded-0" style="height: 40px; padding-top: 10px;">
+                    <span class="modal-title h6">เหตผลที่ระงับการใช้งาน</span>
+                    <button type="button" class="close" data-dismiss="modal">
+                        &times;
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-3 text-right pt-1">
+                            <label role="button">
+                                <!--  class="form-control form-control-sm pr-3" -->
+                                <input type="checkbox" #chkHoldReason class=" rounded-0 shadow-none"
+                                    [checked]="SelectTank.Hold === 'Y'"
+                                    (change)="SelectTank.Hold = chkHoldReason.checked?'Y':'N'" /> เหตุผล
+                            </label>
+                        </div>
+                        <div class="col-9">
+                            <select class="form-control form-control-sm w-100 rounded-0 shadow-none"
+                                [disabled]="SelectTank.Hold !=='Y'" [(ngModel)]="SelectTank.HoldReasonId">
+                                <option value="">กรุณาเลือกเหตุผล</option>
+                                <option *ngFor="let item of ArrHoldReason;let i = index"
+                                    [value]="ArrHoldReason[i].ReasonId">
+                                    {{ArrHoldReason[i].ReasonDesc}}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="d-flex justify-content-center w-100">
+                        <button class="btn btn-primary rounded-0 shadow-none mr-2" data-dismiss="modal"
+                            (click)="SaveHoldReason()">
+                            ตกลง
+                        </button>
+                        <button type="button" class="btn btn-warning rounded-0 shadow-none ml-2" data-dismiss="modal"
+                            (click)="CancelHoldReason()">
+                            ยกเลิก
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

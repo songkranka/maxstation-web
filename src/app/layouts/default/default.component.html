@@ -1,0 +1,22 @@
+<html>
+  <body class="hold-transition sidebar-mini layout-navbar-fixed layout-fixed">
+    <div class="wrapper">
+      <app-header (OnLoadeSysDateComplete)="IsLoadSysDateComplete = $event" (OnBranchChange)="sidebar.RefreshMenu()"></app-header>
+      <app-sidebar #sidebar></app-sidebar>
+      <div class="content-wrapper">
+        <div class="content-header">
+
+          <section class="content">
+            <div class="container-fluid" *ngIf="IsLoadSysDateComplete">
+              <router-outlet ></router-outlet>
+            </div>
+          </section>
+
+        </div>
+      </div>
+      <app-footer></app-footer>
+    </div>
+  </body>
+</html>
+
+

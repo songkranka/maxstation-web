@@ -1,0 +1,143 @@
+<div *ngIf="isUserAuthenticated()">
+  <div class="card pr-7">
+    <div class="card-header bg-header-page ">บันทึกใบโอนจ่ายสินค้า Non Oil
+      <div class="ml-auto">
+        <div [ngClass]=GetBackgroundRibbon()><label class="ribbon-1-text">{{HiddenButton.status}}</label></div>
+      </div>
+      <!-- end ribbon -->
+    </div>
+    <!-- end card header -->
+    <!-- <ng-select formControlName="branch" [items]="branchSelect2" bindLabel="KEY" bindValue="VALUE" placeholder="กรุณาเลือกสาขา" style="margin-top: -6px; width: 200px;" ></ng-select> -->
+    <div class="card-body">
+
+      <div class="form-horizontal">
+        <div class="row">
+          <div class="col-12 col-sm-12 col-md-6 col-lg-6">
+            <!-- Row -->
+            <div class="row form-group">
+              <div class="col-4 topic text-right">เลขที่เอกสาร :</div>
+              <div class="col-6 data">{{TransferOutHeader.docNo}}</div>
+            </div>
+            <!-- Row -->
+            <div class="row form-group">
+              <div class="col-4 topic text-right">เอกสารร้องขอเลขที่ :</div>
+              <div class="col-6 data">
+                <div class="input-group input-group-sm">
+                  <input class="form-control form-control-sm" disabled [(ngModel)]=TransferOutHeader.refNo>
+                  <div class="input-group-append">
+                    <button class="btn btn-sm btn-primary" (click)=ShowModal()
+                      [disabled]="TransferOutHeader.docStatus !== 'New'">
+                      <i class="fa fa-search"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="col-12 col-sm-12 col-md-6 col-lg-6">
+            <!-- Row -->
+            <div class="row form-group">
+              <div class="col-4 topic text-right">วันที่เอกสาร :</div>
+              <div class="col-6 data">{{TransferOutHeader.docDate | date : "dd/MM/yyyy"}}</div>
+            </div>
+            <!-- Row -->
+            <div class="row form-group">
+              <div class="col-4 topic text-right">สาขาที่ร้องขอ :</div>
+              <div class="col-6 data">{{TransferOutHeader.brnCodeTo}} &emsp; {{TransferOutHeader.brnNameTo}}</div>
+            </div>
+            <!-- Row -->
+            <div class="row form-group">
+              <div class="col-4 topic text-right">วันที่ใบร้องขอ :</div>
+              <div class="col-6 data">{{DateRequest | date : "dd/MM/yyyy"}}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- end row 3 -->
+        <div class="table-responsive">
+          <table class="table table-bordered table-sm table-hover ">
+            <thead>
+              <tr>
+                <th class="text-center">รหัส</th>
+                <th class="text-center">ชื่อรายการ</th>
+                <th class="text-center">หน่วย</th>
+                <th class="text-center">ปริมาณที่ร้องขอ</th>
+                <th class="text-center">ปริมาณที่โอนจ่าย</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let dt of TransferOutHeader.listTransOutDt">
+                <td class="align-middle">{{dt.pdId}}</td>
+                <td class="align-middle">{{dt.pdName}}</td>
+                <td class="align-middle">{{dt.unitName}}</td>
+                <td class="text-right align-middle">{{dt.refQty | number : "1.2-2"}}</td>
+                <td>
+                  <!-- (keyup)="OnKeyUp($event)" -->
+                  <input class="form-control form-control-sm text-right w-100 pr-0" type="number"
+                    (keypress)="numericOnly($event)" [(ngModel)]=dt.itemQty
+                    [disabled]="TransferOutHeader.docStatus !== 'New'" max="{{dt.refQty}}" min="0" />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <!-- End Of Table -->
+        <div class="row">
+          <div class="col-12 col-sm-12 col-md-12">
+            <div class="row form-group">
+              <div class="col-2 topic text-right">หมายเหตุ :</div>
+              <div class="col-9">
+                <textarea class="form-control form-control-sm" rows="5" [(ngModel)]=TransferOutHeader.remark></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- End Of Remark -->
+      </div>
+
+
+
+    </div>
+    <!-- end card body -->
+    <!-- end of table item -->
+    <div class="card-footer border-0">
+
+      <!-- end of row -->
+    </div>
+    <!-- end of footer -->
+  </div>
+  <!-- end card -->
+  <div class="right-bar" style="padding-top: 4%;">
+    <button class="btn circle-button circle-buttonSave" [hidden]="HiddenButton.btnSave" (click)="saveDocument()"
+      data-tooltip="Save" data-tooltip-location="left">
+      <i class="far fa-save"></i>
+    </button>
+    <!-- <button class="btn circle-button circle-buttonApprove" (click)="approveDocument()" [hidden]="HiddenButton.btnApprove" data-tooltip="Approve" data-tooltip-location="left">
+   <i class="fas fa-thumbs-up"></i>
+ </button>
+ <button class="btn circle-button circle-buttonReject" (click)="rejectDocument()" [hidden]="HiddenButton.btnReject" data-tooltip="Reject" data-tooltip-location="left">
+   <i class="fas fa-thumbs-down"></i>
+ </button> 
+ <button class="btn circle-button circle-buttonComplete" (click)="completeDocument()" [hidden]="HiddenButton.btnComplete" data-tooltip="Complete" data-tooltip-location="left">
+   <i class="fas fa-check"></i>
+ </button>-->
+    <button class="btn circle-button circle-buttonPrint" (click)="printDocument()" [hidden]="HiddenButton.btnPrint"
+      data-tooltip="Print" data-tooltip-location="left">
+      <i class="fas fa-print"></i>
+    </button>
+    <button class="btn circle-button circle-buttonCancel" (click)="cancelDocument()" [hidden]="HiddenButton.btnCancel"
+      data-tooltip="Cancel" data-tooltip-location="left">
+      <i class="fas fa-times"></i>
+    </button>
+    <button class="btn circle-button circle-buttonClear" [hidden]="HiddenButton.btnClear" (click)="clearDocument()"
+      data-tooltip="Clear" data-tooltip-location="left">
+      <i class="fas fa-eraser"></i>
+    </button>
+    <button class="btn circle-button circle-buttonBack" [routerLink]="['/TransferOutList']" data-tooltip="Back"
+      data-tooltip-location="left">
+      <i class="fas fa-undo"></i>
+    </button>
+  </div>
+</div>

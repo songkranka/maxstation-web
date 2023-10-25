@@ -1,0 +1,249 @@
+<div *ngIf="isUserAuthenticated()">
+  <div class="card pr-7">
+
+
+      <div class="card-header bg-header-page "
+        style="font-size: 16px !important; height: 40px;  padding-top: 10px; font-weight: 600;">{{HeaderCard}}
+        <div class="ml-auto">
+          <!-- [ngClass]=SvDefault.GetBackgroundRibbon(document?.DocStatus) -->
+          <!-- [ngClass]=this.GetBackgroundRibbon() -->
+          <div [ngClass]=SvDefault.GetBackgroundRibbon(CreditNote?.CreditNoteHeader?.DocStatus)>
+            <label class="ribbon-1-text">{{HiddenButton.status}}</label>
+          </div>
+        </div>
+      </div>
+      <!-- [formGroup]="myGroup" -->
+      <!-- style="font-size: 1rem;" -->
+      <div class="card-body">
+        <table class="table table-sm table-borderless">
+          <tr>
+            <td class="text-right col-2">เลขที่เอกสาร : </td>
+            <td>{{CreditNote.CreditNoteHeader.DocNo }}</td>
+          </tr>
+          <tr>
+            <td class="text-right">ประเภทเอกสาร : </td>
+            <td>
+              <label role="button" class="mx-3">
+                <input type="radio" [disabled]="CreditNote.CreditNoteHeader.DocStatus !== 'New'"
+                  [(ngModel)]="CreditNote.CreditNoteHeader.DocType" value="CreditNote" class="mr-2"
+                  (change)="GenPattern('CreditNote')" />
+                ลดหนี้
+              </label>
+              <label role="button">
+                <input type="radio" [disabled]="CreditNote.CreditNoteHeader.DocStatus !== 'New'"
+                  [(ngModel)]="CreditNote.CreditNoteHeader.DocType" value="DebitNote" class="mr-2"
+                  (change)="GenPattern('DebitNote')" />
+                เพิ่มหนี้
+              </label>
+            </td>
+            <td class="text-right">วันที่เอกสาร : </td>
+            <td>{{CreditNote.CreditNoteHeader.DocDate | date:"dd/MM/yyyy"}}</td>
+          </tr>
+          <tr>
+            <td class="text-right">
+              <label for="btnSearchCustomer" style="cursor: pointer;font-weight: normal;">รหัสลูกค้า : </label>
+              <app-CustomerModal #modalCustomer (OnSelectCustomer)=ReceiveCustomer($event)></app-CustomerModal>
+            </td>
+            <td class="align-middle">
+              <div class="input-group input-group-sm">
+                <input type="text" class="form-control form-control-sm" value="{{CreditNote.CreditNoteHeader.CustCode}}"
+                  disabled>
+                <div class="input-group-append">
+                  <button id="btnSearchCustomer"
+                    [disabled]="['Active' , 'Cancel','Reference'].includes(CreditNote.CreditNoteHeader.DocStatus)"
+                    class="btn btn-sm btn-primary px-3 float-right" (click)=ShowCustomerModal() data-toggle="tooltip"
+                    data-placement="top" title="Search Customer">
+                    <i class="fa fa-search float-right"></i>
+                  </button>
+                </div>
+              </div>
+            </td>
+            <td class="text-right">ผู้ทำรายการ : </td>
+            <td>{{CreditNote.CreditNoteHeader.UpdatedBy || CreditNote.CreditNoteHeader.CreatedBy}}</td>
+          </tr>
+          <tr>
+            <td class="text-right">ชื่อลูกค้า : </td>
+            <td colspan="3">{{CreditNote.CreditNoteHeader.CustPrefix}} {{CreditNote.CreditNoteHeader.CustName}}</td>
+          </tr>
+          <tr>
+            <td class="text-right">เลขประจำตัวผู้เสียภาษี : </td>
+            <td colspan="3">{{CreditNote.CreditNoteHeader.CitizenId}}</td>
+          </tr>
+          <tr>
+            <td class="text-right">ที่อยู่ลูกค้า : </td>
+            <td colspan="3">{{CreditNote.CreditNoteHeader.CustAddr1}}<br/>{{CreditNote.CreditNoteHeader.CustAddr2}}</td>
+          </tr>
+          <tr>
+            <td class="text-right">
+              <label for="btnSearchTaxInvoice" style="cursor: pointer;font-weight: normal;">ใบกำกับภาษี : </label>
+            </td>
+            <td class="align-middle">
+              <div class="input-group input-group-sm">
+                <input type="text" class="form-control form-control-sm" value="{{CreditNote.CreditNoteHeader.TxNo}}"
+                  disabled>
+                <div class="input-group-append">
+                  <button id="btnSearchTaxInvoice" (click)="ShowTaxModal()"
+                    [disabled]="['Active','Cancel','Reference'].includes(CreditNote.CreditNoteHeader.DocStatus)"
+                    class="btn btn-sm btn-primary px-3 float-right" data-toggle="tooltip" data-placement="top"
+                    title="Search TaxInvoice">
+                    <i class="fa fa-search float-right"></i>
+                  </button>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td class="text-right">สาเหตุที่ เพิ่ม/ลดหนี้ : </td>
+            <td>
+              <ng-select
+                [(ngModel)]="CreditNote.CreditNoteHeader.ReasonId"
+                role="button"
+                (change)="CalculateDetail()"
+              >
+                <ng-option value="">
+                  --- กรุณาเลือกสาเหตุที่ เพิ่ม/ลดหนี้ ---
+                </ng-option>
+                <ng-option *ngFor="let item of ArrReason;let i = index" [value]="ArrReason[i].ReasonId">
+                  {{ArrReason[i].ReasonId}} : {{ArrReason[i].ReasonDesc}}
+                </ng-option>
+              </ng-select>
+              <!-- <select class="form-control form-control-sm w-100" [(ngModel)]="CreditNote.CreditNoteHeader.ReasonDesc" role="button">
+                <option value="ราคาผิดพลาด">ราคาผิดพลาด</option>
+                <option value="ปริมาณผิดพลาด">ปริมาณผิดพลาด</option>
+                <option value="ราคาและปริมาณผิดพลาด">ราคาและปริมาณผิดพลาด</option>
+              </select> -->
+            </td>
+          </tr>
+          <!-- End Of Reason -->
+        </table>
+        <!-- table-custom-scrollbar -->
+        <div class="table-responsive ">
+          <!-- style="font-size: 1rem;" -->
+          <table class="table table-hover table-bordered table-sm m-0">
+            <thead>
+              <tr>
+                <th class="text-center align-middle" rowspan="2">รหัส</th>
+                <th class="text-center align-middle" rowspan="2">ชื่อสินค้า</th>
+                <th class="text-center align-middle" colspan="3">เดิม</th>
+                <th class="text-center align-middle" colspan="3">ที่ถูกต้อง</th>
+                <th class="text-center align-middle" rowspan="2">ปริมาณรวม</th>
+                <th class="text-center align-middle" rowspan="2">มูลค่ารวม</th>
+                <th class="text-center align-middle" rowspan="2">ลบ</th>
+              </tr>
+              <tr>
+                <th class="text-center align-middle">ปริมาณ</th>
+                <th class="text-center align-middle">ราคา/หน่วย</th>
+                <th class="text-center align-middle">มูลค่า</th>
+                <th class="text-center align-middle">ปริมาณ</th>
+                <th class="text-center align-middle">ราคา/หน่วย</th>
+                <th class="text-center align-middle">มูลค่า</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of CreditNote.ArrCreditNoteDetail;let i= index">
+                <td class=" align-middle">{{item.PdId}}</td>
+                <td class=" align-middle">{{item.PdName}}</td>
+                <td class="text-right align-middle">{{item.BeforeQty | number:'1.2-2'}}</td>
+                <td class="text-right align-middle">{{item.BeforePrice | number:'1.2-2'}}</td>
+                <td class="text-right align-middle">{{item.BeforeAmt | number:'1.2-2'}}</td>
+                <td>
+                  <app-InputNumberFormat [Disabled]="GetDisableAfterQty()"
+                    [(InputNumber)]="item.AfterQty" (OnChange)="CalculateRow(item)"></app-InputNumberFormat>
+                  <!-- <input
+                  type="number"
+                  class="form-control form-control-sm text-right round-0"
+                  style="width: 100px;"
+                  [(ngModel)]="item.AfterQty"
+                  (change)="CalculateRow(item)"
+                  /> -->
+                </td>
+                <td class="text-right align-middle">{{item.AfterPrice | number:'1.2-2'}}</td>
+                <td>
+                  <app-InputNumberFormat [Disabled]="GetDisableAfterAmt()"
+                    [(InputNumber)]="item.AfterAmt" (OnChange)="CalculateRow(item)"></app-InputNumberFormat>
+                  <!-- <input
+                  type="number"
+                  class="form-control form-control-sm text-right"
+                  style="width: 100px;"
+                  [(ngModel)]="item.AfterAmt"
+                  (change)="CalculateRow(item)"
+                  > -->
+                </td>
+                <td class="text-right align-middle">{{item.AdjustQty | number:'1.2-2'}}</td>
+                <td class="text-right align-middle">{{item.AdjustAmt | number:'1.2-2'}}</td>
+                <td class="btn-outline-danger align-middle text-center" role="button" (click)="RemoveItem(item)">
+                  <i class="fa fa-trash"></i>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card-footer border-top-0">
+        <table class="table table-sm table-borderless">
+          <tr>
+            <td rowspan="3" class="text-right">หมายเหตุ : </td>
+            <td rowspan="3"><textarea class="form-control form-control-sm"
+                [(ngModel)]="CreditNote.CreditNoteHeader.Remark"></textarea></td>
+            <td class="text-right">มูลค่าที่ปรับ(ไม่รวมภาษี) : </td>
+            <td class="text-right">{{CreditNote.CreditNoteHeader.SubAmt | number:'1.2-2'}}</td>
+          </tr>
+          <tr>
+            <td class="text-right">ภาษีมูลค่าเพิ่ม : </td>
+            <td class="text-right">{{CreditNote.CreditNoteHeader.VatAmt | number:'1.2-2'}}</td>
+          </tr>
+          <!-- End Of VatAmt -->
+          <tr>
+            <td class="text-right">รวมมูลค่าปรับปรุง : </td>
+            <td class="text-right">{{CreditNote.CreditNoteHeader.NetAmt | number:'1.2-2'}}</td>
+          </tr>
+          <!-- End Of NetAmt -->
+        </table>
+      </div>
+
+    <div class="right-bar mt-2">
+      <!-- (click)="saveDocument()" -->
+      <button class="btn circle-button circle-buttonSave" (click)="SaveData()" [hidden]="HiddenButton.btnSave"
+        data-tooltip="Save" data-tooltip-location="left">
+        <i class="far fa-save"></i>
+      </button>
+      <!-- (click)="approveDocument()" -->
+      <button class="btn circle-button circle-buttonApprove" (click)="ApproveData()" [hidden]="HiddenButton.btnApprove"
+        data-tooltip="Approve" data-tooltip-location="left">
+        <i class="fas fa-thumbs-up"></i>
+      </button>
+      <!-- (click)="rejectDocument()" -->
+      <button class="btn circle-button circle-buttonReject" (click)="RejectData()" [hidden]="HiddenButton.btnReject"
+        data-tooltip="Reject" data-tooltip-location="left">
+        <i class="fas fa-thumbs-down"></i>
+      </button>
+      <!-- (click)="completeDocument()" -->
+      <!-- <button class="btn circle-button circle-buttonComplete" (click)="CompleteData()" [hidden]="HiddenButton.btnComplete"
+        data-tooltip="Complete" data-tooltip-location="left">
+        <i class="fas fa-check"></i>
+      </button> -->
+      <!-- (click)="printDocument()" -->
+      <button class="btn circle-button circle-buttonPrint" (click)="exportPDF()" [hidden]="HiddenButton.btnPrint" data-tooltip="Print"
+        data-tooltip-location="left">
+        <i class="fas fa-print"></i>
+      </button>
+      <!-- (click)="cancelDocument()"  -->
+      <button class="btn circle-button circle-buttonCancel" (click)="CancelData()" [hidden]="HiddenButton.btnCancel"
+        data-tooltip="Cancel" data-tooltip-location="left">
+        <i class="fas fa-times"></i>
+      </button>
+      <button class="btn circle-button circle-buttonClear" (click)="ClearData()" [hidden]="HiddenButton.btnClear"
+        data-tooltip="Clear" data-tooltip-location="left">
+        <i class="fas fa-eraser"></i>
+      </button>
+      <button class="btn circle-button circle-buttonBack" routerLink="/CreditNoteList" [hidden]="HiddenButton.btnBack"
+        data-tooltip="Back" data-tooltip-location="left">
+        <i class="fas fa-undo"></i>
+      </button>
+    </div>
+
+
+  </div>
+
+</div>

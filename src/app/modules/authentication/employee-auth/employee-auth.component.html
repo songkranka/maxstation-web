@@ -1,0 +1,94 @@
+<div *ngIf="isUserAuthenticated()">
+    <div class="card pr-7">
+        <div class="card-header bg-header-page ">กำหนดสิทธิผู้ใช้งาน
+            <div class="ml-auto">
+            </div>
+        </div>
+        <div class="card-body">
+            <!-- Row -->
+            <div class="row" style="margin-bottom: 0.2%;">
+                <div class="col-12">
+                    <div class="card-body" style="padding-right: 0px;margin-bottom: -30px;padding-bottom: 0px;">
+                        <div class="btn btn-primary" style="float: right !important; height: 36px;" (click)="addRow()">
+                            &nbsp;+
+                            รายการ</div> &nbsp;&nbsp;
+                    </div>
+                </div>
+            </div>
+            <!-- Row -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="text-center text-nowrap">รหัสพนักงาน</th>
+                                    <th class="text-center text-nowrap">ชื่อพนักงาน</th>
+                                    <th class="text-center text-nowrap">กลุ่มสาขาที่ใช้งาน</th>
+                                    <th class="text-center text-nowrap">สิทธิการเข้าใช้ระบบ</th>
+                                    <th class="text-center text-nowrap">สาขารับผิดชอบ</th>
+                                    <th class="text-center text-nowrap">ผู้แก้ไขล่าสุด</th>
+                                    <th class="text-center text-nowrap">วันที่แก้ไขล่าสุด</th>
+                                    <th class="text-center text-nowrap">ลบ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let item of lines; let i=index">
+                                    <td class="text-left align-middle">
+                                        <input type="text" class="form-control form-control-sm w-100 rounded-0 shadow-none"
+                                            [disabled]="item.Selected ===true" [(ngModel)]="item.EmpCode"
+                                            (keyup.enter)="GetEmployee(item, i)" />
+                                    </td>
+                                    <td class="text-left align-middle">{{ item.EmpName }} </td>
+                                    <td class="text-left align-middle">
+                                        <select class="form-control form-control-sm w-100 rounded-0 shadow-none" [(ngModel)]="item.AuthCode">
+                                            <option value="0">เฉพาะสาขาที่รับผิดชอบ</option>
+                                            <option *ngFor="let mapping of ArrMasMapping;let i = index"
+                                                [value]="ArrMasMapping[i].MapId"
+                                                [selected]="mapping.MapId == item.AuthCode">
+                                                {{ArrMasMapping[i].MapId}} : {{ArrMasMapping[i].MapDesc}}
+                                            </option>
+                                        </select>
+                                    </td>
+                                    <td class="text-left align-middle">
+                                        <select class="form-control form-control-sm w-100 rounded-0 shadow-none" [(ngModel)]="item.PositionCode">
+                                            <option value="">กรุณาเลือกตำแหน่งงาน</option>
+                                            <option *ngFor="let mapping of ArrMasPosition;let i = index"
+                                                [value]="ArrMasPosition[i].PositionCode"
+                                                [selected]="mapping.PositionCode == item.PositionCode">
+                                                {{ArrMasPosition[i].PositionCode}} : {{ArrMasPosition[i].PositionName}}
+                                            </option>
+                                        </select>
+                                    </td>
+                                    <td class="text-center btn-outline-info align-middle" role="button"
+                                        (click)="ShowModalOrg(item)"><i class="fas fa-search"></i></td>
+                                    <td class="text-left align-middle">{{ item.UpdatedBy }} </td>
+                                    <td class="text-left align-middle">{{ item.UpdatedDate | date:'dd/MM/yyyy hh:mm' }}
+                                    </td>
+                                    <td class="text-center btn-outline-danger align-middle" role="button"
+                                        (click)="deleteRow(i)"><i class="fas fa-trash-alt"></i></td>
+                                </tr>
+                                <tr>
+                                    <td [hidden]="lines.length > 0" colspan="6"
+                                        style="text-align: center; border: 0px;">
+                                        ------------------------------ กรุณาเพิ่มพนักงาน ------------------------------
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="right-bar" style="padding-top: 4%;">
+        <button class="btn circle-button circle-buttonSave" (click)="saveDocument()" data-tooltip="Save"
+            data-tooltip-location="left">
+            <i class="far fa-save"></i>
+        </button>
+        <button class="btn circle-button circle-buttonClear" (click)="clearDocument()" data-tooltip="Clear"
+            data-tooltip-location="left">
+            <i class="fas fa-eraser"></i>
+        </button>
+    </div>
+</div>

@@ -1,0 +1,81 @@
+::ng-deep .custom-style{
+  background-color:brown;
+  color:white;
+}
+
+.table-container {
+  height: 450px;
+  overflow: auto;
+}
+
+table{
+  width: 100%;
+ }
+
+.checkbox-h2 {
+  margin: 10px;
+}
+
+.checkbox-section {
+  display: flex;
+  align-content: center;
+  align-items: center;
+  height: 60px;
+}
+
+.checkbox-margin {
+  margin: 0 10px;
+}
+
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #fafafa;
+  box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2), 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+.my-form-field .mat-form-field-wrapper{
+  margin: 0 !important;
+  padding: 0;
+}
+
+section {
+  display: table;
+}
+
+.example-label {
+  display: table-cell;
+  font-size: 14px;
+  margin-left: 8px;
+  min-width: 120px;
+}
+
+.example-button-row {
+  display: table-cell;
+  width: 490px;
+}
+
+.example-button-row .mat-button-base {
+  margin: 8px 8px 8px 0;
+}
+
+.example-flex-container {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.example-button-container {
+  display: flex;
+  justify-content: center;
+  width: 120px;
+}
+
+.spinner-container {
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+  background-color: #fafafa; 
+  box-shadow:0 5px 5px -3px rgba(0,0,0,.2), 0 8px 10px 1px rgba(0,0,0,.14), 0 3px 14px 2px rgba(0,0,0,.12)
+}

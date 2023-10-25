@@ -1,0 +1,69 @@
+<div *ngIf="isUserAuthenticated()" class="card rounded-0 shadow-none">
+  <div class="card-header bg-header-page rounded-0" >รายการข้อมูลสินค้า
+  </div>
+  <div class="card-body rounded-0">
+    <div class="row border-bottom border-left border-right border-top m-0 pt-3 rounded-0 shadow-none">
+      <div class="col-8 topic" >
+        <mat-form-field appearance="fill" style="width: 100% !important">
+          <mat-label>ค้นหา</mat-label>
+          <input matInput type="text" [(ngModel)]="filterValue"
+          (keyup.enter) = "GetArrayHeader(0)"
+           placeholder="คำค้นหา">
+        </mat-form-field>
+      </div>
+      <div class="col-2" >
+        <button class="btn btn-primary h-75 w-100 rounded-0 shadow-none" (click)="GetArrayHeader(0)" >
+          <i class="fa fa-search"></i>&nbsp;ค้นหา
+        </button>
+      </div>
+      <div class="col-2" >
+        <button class="btn btn-primary h-75 w-100 rounded-0 shadow-none" routerLink="/Product/New" >
+          <i class="fa fa-plus"></i>&nbsp;เพิ่มเอกสาร
+        </button>
+      </div>
+    </div>
+    <table mat-table [dataSource]="dataSource" matSort class="table table-border table-hover mb-0 mt-3">
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns" role="button" [routerLink]='["..", "Product",row.Guid]' ></tr>
+      <ng-container matColumnDef="no">
+        <th class="text-center" mat-header-cell *matHeaderCellDef>No</th>
+        <td class="text-center px-2 align-middle" mat-cell *matCellDef="let element; let i = index">{{no + (i + 1)}}</td>
+      </ng-container>
+      <ng-container matColumnDef="PdId">
+        <th class="text-center" mat-header-cell *matHeaderCellDef >รหัสสินค้า</th>
+        <td class="pl-2 align-middle text-center"  mat-cell *matCellDef="let element">{{element.PdId}}</td>
+      </ng-container>
+      <ng-container matColumnDef="PdName">
+        <th class="text-center" mat-header-cell *matHeaderCellDef >ชื่อสินค้า</th>
+        <td class="pl-2 align-middle"  mat-cell *matCellDef="let element">
+          {{element.PdName}}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="PdType">
+        <th class="text-center" mat-header-cell *matHeaderCellDef >ประเภทสินค้า</th>
+        <td class="pl-2 align-middle text-center"  mat-cell *matCellDef="let element">
+          {{ GetProductType( element.PdType)}}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="GroupId">
+        <th class="text-center" mat-header-cell *matHeaderCellDef >กลุ่มสินค้า</th>
+        <td class="pl-2 align-middle "  mat-cell *matCellDef="let element">
+          {{ GetProductGroupName( element.GroupId)}}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="PdStatus">
+        <th class="text-center" mat-header-cell *matHeaderCellDef >สถานะสินค้า</th>
+        <td class="pl-2 align-middle text-center"  mat-cell *matCellDef="let element">
+          {{SvDefault.GetThaiDocStatus( element.PdStatus)}}
+        </td>
+      </ng-container>
+    </table>
+    <mat-paginator
+      [length]="length"
+      [pageSize]="pageSize"
+      [pageSizeOptions]="pageSizeOptions"
+      (page)="pageEvent = $event; OnPaginateChange($event)"
+      showFirstLastButtons>
+    </mat-paginator>
+  </div>
+</div>

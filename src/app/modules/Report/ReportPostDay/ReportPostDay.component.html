@@ -1,0 +1,64 @@
+<div class="card pr-7 rounded-0 shadow-none">
+  <div
+        class="card-header bg-header-page rounded-0 shadow-none"
+        style="font-size: 16px !important; height: 40px;  padding-top: 10px; font-weight: 600;"
+    >
+        {{headerCard}}
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-6">
+          ประเภทของข้อมูล :
+          <label class="pl-3" role="button">
+            <input type="radio" name="dataType" [(ngModel)]="dataType"  [value]=0/>
+            &nbsp; ทั้งหมด
+          </label>
+          <label class="pl-3" role="button">
+            <input type="radio" name="dataType"  [(ngModel)]="dataType"  [value]=1/>
+            &nbsp; ตรงกับวันที่
+          </label>
+          <label class="pl-3" role="button">
+            <input type="radio" name="dataType" [(ngModel)]="dataType"  [value]=2/>
+            &nbsp; น้อยกว่าวันที่
+          </label>
+        </div>
+        <div class="col-7">
+          <mat-form-field appearance="fill" [hidden]="dataType===0">
+            <input
+                matInput
+                [matDatepicker]="picker"
+                [ngModel]="docDate"
+                (dateChange)="changeDate($event)"
+            >
+            <mat-datepicker-toggle
+                matSuffix
+                [for]="picker"
+            ></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+            <!-- <mat-label>วันที่</mat-label> -->
+        </mat-form-field>
+
+        </div>
+      </div>
+    </div>
+</div>
+<div class="right-bar mt-2">
+  <button
+      class="btn circle-button circle-buttonPrint"
+      data-tooltip="Print"
+      data-tooltip-location="left"
+      (click)="exportPDF()"
+      *ngIf="isPdf === 'Y'"
+  >
+      <i class="fas fa-print"></i>
+  </button>
+  <button
+      class="btn circle-button circle-buttonPrint"
+      data-tooltip="Excel"
+      data-tooltip-location="left"
+      (click)="exportExcel()"
+      *ngIf="isExcel === 'Y'"
+  >
+      <i class="fas fa-file-excel"></i>
+  </button>
+</div>

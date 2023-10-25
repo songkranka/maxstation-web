@@ -1,0 +1,148 @@
+.main-header {
+  border: 0 !important;
+  border-bottom: 0 !important;
+}
+
+.remask-box {
+  padding: 0px;
+}
+
+.mat-mdc-form-field+.mat-mdc-form-field {
+  margin-left: 8px;
+}
+
+.layout-table {
+  width: 100%;
+}
+
+.expense-table {
+  width: 100%;
+  border: 1px solid black;
+  margin-top: 15px;
+
+  tr,
+  td {
+    border: 1px solid black;
+    height: 30px;
+  }
+}
+
+.expense-panel-title {
+  font-size: 16px;
+  color: #ffffff;
+}
+
+.input-text-expense-table {
+  width: 60px;
+  text-align: right;
+
+}
+
+.delete-icon {
+  width: 12.454px;
+  height: 14px;
+  cursor: pointer;
+}
+
+.input-text-ess-table {
+  width: 90%;
+}
+
+.expense-header-table {
+  text-align: center;
+  background-color: #7AD694;
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.ess-header-table {
+  text-align: center;
+  background-color: #277E40;
+  color: white;
+  font-size: 16px;
+}
+
+.ess-row-input-table {
+  padding-left: 5%;
+}
+
+.icon-delete-layout {
+  padding-bottom: 10px;
+}
+
+.summary-title {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+:host ::ng-deep .expansion-expense>.mat-expansion-indicator:after {
+  color: white;
+}
+
+:host ::ng-deep .mat-form-field {
+  width: 280px;
+}
+
+:host ::ng-deep .cdk-overlay-container,
+.cdk-overlay-pane {
+  z-index: 9999 !important;
+}
+
+.date-layout {
+  height: 21px;
+}
+
+.close-tab-layout {
+  margin-left: 10px;
+  width: 90.7083px;
+  text-align: left;
+}
+
+.expense-table-layout {
+  width: 80%;
+  padding-top: 30px;
+  padding-right: 10%;
+  padding-left: 10%;
+}
+
+.expense-tab-layout {
+  border: #ffffff 1px solid;
+}
+
+.expense-expansion-panel {
+  background-color: #277E40;
+}
+
+.expense-column-title {
+  width: 40%;
+  font-weight: bold;
+}
+
+.expense-column-qty {
+  width: 10%;
+  font-weight: bold;
+}
+
+.expense-column-unit {
+  width: 10%;
+  font-weight: bold;
+}
+
+.expense-column-data {
+  width: 25%;
+  font-weight: bold;
+}
+
+.expense-column-number {
+  width: 5%;
+  font-weight: bold;
+}
+
+.expense-row {
+  height: 50px;
+}
+
+.expense-row-center {
+  text-align: center;
+}

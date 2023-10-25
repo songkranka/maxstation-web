@@ -1,0 +1,223 @@
+<div  class="card rounded-0 shadow-none" style="margin-right: 6.5%;" >
+  <div class="card-header bg-header-page rounded-0 shadow-none" style="font-size: 16px !important; height: 40px;  padding-top: 10px; font-weight: 600;">
+    ข้อมูลผู้จำหน่าย
+    <div class="ml-auto">
+      <div class="{{SvDefault.GetBackgroundRibbon(Supplier.SupStatus)}}">
+        <label class="ribbon-1-text"  >{{HiddenButton?.status}}</label>
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="row pt-3">
+      <div class="col-2 text-right">รหัสผู้จำหน่าย :</div>
+      <div class="col-3">
+        <input
+          class="form-control form-control-sm rounded-0"
+          [(ngModel)]="Supplier.SupCode"
+          [disabled]="Supplier.SupStatus !== 'New'"
+        />
+      </div>
+      <div class="col-2 text-right">SAP CODE :</div>
+      <div class="col-3">
+        <input
+          class="form-control form-control-sm rounded-0"
+          [(ngModel)]="Supplier.MapSupCode"
+        />
+      </div>
+    </div>
+    <div class="row pt-3 text-right">
+      <div class="col-2 text-right">คำนำหน้า :</div>
+      <div class="col-3">
+        <input
+        class="form-control form-control-sm rounded-0 w-100"
+        [(ngModel)]="Supplier.SupPrefix"
+        />
+      </div>
+      <div class="col-2 text-right">ชื่อผู้จำหน่าย :</div>
+      <div class="col-4">
+        <input
+          class="form-control form-control-sm rounded-0 w-100"
+          [(ngModel)]="Supplier.SupName"
+        />
+      </div>
+    </div>
+    <div class="row pt-3">
+      <div class="col-2 text-right">ที่อยู่ :</div>
+      <div class="col-9">
+        <input
+          class="form-control form-control-sm rounded-0 w-100"
+          [(ngModel)]="Supplier.Address"
+        />
+      </div>
+    </div>
+    <div class="row pt-3">
+      <div class="col-2 text-right">จังหวัด :</div>
+      <div class="col-3">
+        <input
+          class="form-control form-control-sm rounded-0 w-100"
+          [(ngModel)]="Supplier.Province"
+        />
+      </div>
+      <div class="col-2 text-right">อำเภอ :</div>
+      <div class="col-4">
+        <input
+          class="form-control form-control-sm rounded-0 w-100"
+          [(ngModel)]="Supplier.District"
+        />
+      </div>
+    </div>
+    <div class="row pt-3">
+      <div class="col-2 text-right">ตำบล :</div>
+      <div class="col-3">
+        <input
+          class="form-control form-control-sm rounded-0 w-100"
+          [(ngModel)]="Supplier.SubDistrict"
+        />
+      </div>
+      <div class="col-2 text-right">รหัสไปรษณีย์ :</div>
+      <div class="col-4">
+        <input
+          class="form-control form-control-sm rounded-0 w-100"
+          [(ngModel)]="Supplier.Postcode"
+        />
+      </div>
+    </div>
+    <div class="row pt-3">
+      <div class="col-2 text-right">เบอร์โทรศัทพ์ :</div>
+      <div class="col-3">
+        <input
+          class="form-control form-control-sm rounded-0 w-100"
+          [(ngModel)]="Supplier.Phone"
+        />
+      </div>
+      <div class="col-2 text-right">Fax :</div>
+      <div class="col-4">
+        <input
+          class="form-control form-control-sm rounded-0 w-100"
+          [(ngModel)]="Supplier.Fax"
+        />
+      </div>
+    </div>
+    <div class="row pt-3">
+      <div class="col-2 text-right">เลขผู้เสียภาษี :</div>
+      <div class="col-3">
+        <input
+          class="form-control form-control-sm rounded-0 w-100"
+          [(ngModel)]="Supplier.TaxId"
+        />
+      </div>
+      <div class="col-2 text-right">วัน(Credit) :</div>
+      <div class="col-4">
+        <input
+          type="number"
+          [(ngModel)]="Supplier.CreditTerm"
+          class="form-control form-control-sm rounded-0 w-100 text-right"
+        />
+      </div>
+    </div>
+    <div class="row pt-3">
+      <div class="col-2 text-right">ประเภทออกใบกำกับภาษี :</div>
+      <div class="col-3 text-left pl-3">
+        <label role="button" class="mr-3">
+          <input
+            type="radio"
+            name="taxType"
+            value="VI"
+            role="button"
+            [(ngModel)]="Supplier.VatType"
+          />
+          &nbsp;&nbsp;&nbsp;รวมบิล
+        </label>
+        <label role="button">
+          <input
+            type="radio"
+            name="taxType"
+            value="NV"
+            role="button"
+            [(ngModel)]="Supplier.VatType"
+          />
+          &nbsp;&nbsp;&nbsp;ไม่รวมบิล
+        </label>
+      </div>
+     
+    </div>
+    <div class="row">
+      <div class="col-6 text-right offset-6">
+        <button
+          class="btn btn-primary rounded-0 shadow-none btn-sm"
+          (click)="AddProduct()"
+        >
+          <i class="fa fa-plus mr-3"></i>เพิ่มรายการ
+        </button>
+      </div>
+    </div>
+    <!-- <div class="row pt-3">
+      <div class="col-6 font-weight-bolder">ข้อมูลสินค้า</div>
+
+    </div> -->
+    <table class="table table-sm table-hover mt-3">
+      <thead>
+        <tr>
+          <th class="text-center aligh-middle">รหัสสินค้า</th>
+          <th class="text-center aligh-middle">จำนวนแพ็ค</th>
+          <th class="text-center aligh-middle">ราคาขาย</th>
+          <th class="text-center aligh-middle">ราคาต้นทุน</th>
+          <th class="text-center aligh-middle">ลบ</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of ArrSupplierProduct;let i = index">
+          <td class="text-center">
+            {{ArrSupplierProduct[i].UnitBarcode}}
+          </td>
+          <td>
+            <app-InputNumberFormat
+              InputClass="rounded-0 w-100"
+              [(InputNumber)]="ArrSupplierProduct[i].UnitPack"
+            ></app-InputNumberFormat>
+          </td>
+          <td>
+            <app-InputNumberFormat
+              InputClass="rounded-0 w-100"
+              [(InputNumber)]="ArrSupplierProduct[i].UnitPrice"
+            ></app-InputNumberFormat>
+          </td>
+          <td>
+            <app-InputNumberFormat
+              InputClass="rounded-0 w-100"
+              [(InputNumber)]="ArrSupplierProduct[i].UnitCost"
+            ></app-InputNumberFormat>
+          </td>
+          <td
+            class="align-middle text-center btn-outline-danger"
+            role="button"
+            (click)="ArrSupplierProduct.splice(i,1)"
+          >
+            <i class="fa fa-trash"></i>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<div class="right-bar mt-2" >
+  <!-- [disabled]="PositionRole" -->
+  <button class="btn circle-button circle-buttonSave"
+    (click)="SaveData()"
+    [hidden]="HiddenButton.btnSave"
+    data-tooltip="Save" data-tooltip-location="left">
+    <i class="far fa-save"></i>
+  </button>
+  <!-- <button class="btn circle-button circle-buttonPrint" (click)="ShowModalReport()" [hidden]="HiddenButton.btnPrint" data-tooltip="Print" data-tooltip-location="left">
+    <i class="fas fa-print"></i>
+  </button> -->
+  <button class="btn circle-button circle-buttonCancel" (click)="UpdateStatus('Cancel')" [hidden]="HiddenButton.btnCancel" data-tooltip="Cancel" data-tooltip-location="left">
+    <i class="fas fa-times"></i>
+  </button>
+  <button class="btn circle-button circle-buttonClear" (click)="NewData()" [hidden]="HiddenButton.btnClear" data-tooltip="Clear" data-tooltip-location="left">
+    <i class="fas fa-eraser"></i>
+  </button>
+  <button class="btn circle-button circle-buttonBack" routerLink="/SupplierList" [hidden]="HiddenButton.btnBack" data-tooltip="Back" data-tooltip-location="left">
+    <i class="fas fa-undo"></i>
+  </button>
+</div>

@@ -1,0 +1,148 @@
+<div *ngIf="isUserAuthenticated()">
+  <div class="card" style="margin-right: 6.5%;">
+    <div class="card-header bg-header-page "
+      style="font-size: 16px !important; height: 40px;  padding-top: 10px; font-weight: 600;">
+      ข้อมูลสาขา
+      <div class="ml-auto">
+        <div [ngClass]="SvDefault.GetBackgroundRibbon(Header?.BrnStatus)">
+          <label class="ribbon-1-text">{{HiddenButton?.status}}</label>
+        </div>
+      </div>
+    </div>
+    <!-- end of CardHeader -->
+
+    <div class="card-body">
+      <div class="row">
+        <!-- start column -->
+        <div class="col-6">
+          <div class="row my-2">
+            <div class="col-4 topic text-right">รหัสบริษัท :</div>
+            <div class="col-6">
+              <ng-select [(ngModel)]="Header.CompCode" (change)="getBranchChange()" [clearable]="false" [disabled]="isDisabled">
+                <ng-option *ngFor="let item of ArrCompany;let i = index" [value]="ArrCompany[i].CompCode">
+                  {{ArrCompany[i].CompCode}}
+                </ng-option>
+              </ng-select>
+            </div>
+          </div>
+
+          <div class="row my-2">
+            <div class="col-4 topic text-right">รหัสสาขา :</div>
+            <div class="col-6">
+              <input type="text" class="form-control form-control-sm w-100" [(ngModel)]="Header.BrnCode" [disabled]="isDisableBranch === false">
+            </div>
+          </div>
+          <div class="row my-2">
+            <div class="col-4 topic text-right">SAP CODE :</div>
+            <div class="col-6">
+              <input type="text" class="form-control form-control-sm w-100" [(ngModel)]="Header.BranchNo">
+            </div>
+          </div>
+          <div class="row my-2">
+            <div class="col-4 topic text-right">ที่อยู่ :</div>
+            <div class="col-6">
+              <input type="text" class="form-control form-control-sm w-100" [(ngModel)]="Header.Address">
+            </div>
+          </div>
+          <div class="row my-2">
+            <div class="col-4 topic text-right">อำเภอ :</div>
+            <div class="col-6">
+              <input type="text" class="form-control form-control-sm w-100" [(ngModel)]="Header.District">
+            </div>
+          </div>
+          <div class="row my-2">
+            <div class="col-4 topic text-right">รหัสไปรษณีย์ :</div>
+            <div class="col-6">
+              <input type="text" class="form-control form-control-sm w-100" [(ngModel)]="Header.Postcode">
+            </div>
+          </div>
+          <div class="row my-2">
+            <div class="col-4 topic text-right">โทรศัพท์ :</div>
+            <div class="col-6">
+              <input type="text" class="form-control form-control-sm w-100" [(ngModel)]="Header.Phone">
+            </div>
+          </div>
+          <div class="row my-2">
+            <div class="col-4 topic text-right">สถานะใช้งาน :</div>
+            <div class="col-6">
+              <mat-radio-group [(ngModel)]="selectedStatus">
+                <mat-radio-button style="margin-right:5px;" [value]="'Active'">เปิดใช้</mat-radio-button>
+                <mat-radio-button [value]="'Cancel'">ยกเลิก</mat-radio-button>
+              </mat-radio-group>
+            </div>
+          </div>
+          <div class="row my-2" *ngIf="selectedStatus === 'InActive'">
+            <div class="col-4 topic text-right">วันที่ปิดสถานี :</div>
+            <div class="col-6">
+              <mat-form-field appearance="fill" style="width: 100% !important">
+                <input matInput [matDatepicker]="dp" [formControl]="date"
+                    datePickerFormat="DD/MM/YYYY">
+                <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
+                <mat-datepicker #dp></mat-datepicker>
+            </mat-form-field>
+            </div>
+          </div>
+        </div><!-- end of Left Column -->
+        <div class="col-6">
+          <!-- start Of Right Column -->
+          <div class="row my-2">
+            <div class="col-3 topic text-right">ชื่อบริษัท :</div>
+            <div class="col-6">
+              <input type="text" class="form-control form-control-sm w-100" [(ngModel)]="strCompName" readonly>
+            </div>
+          </div>
+          <div class="row my-2">
+            <div class="col-3 topic text-right">ชื่อสาขา :</div>
+            <div class="col-6">
+              <input type="text" class="form-control form-control-sm w-100" [(ngModel)]="Header.BrnName">
+            </div>
+          </div>
+          <div class="row my-2">
+            <div class="col-3 topic text-right">ภพ 20. :</div>
+            <div class="col-6">
+              <input type="text" class="form-control form-control-sm w-100" [(ngModel)]="Header.MapBrnCode">
+            </div>
+          </div>
+          <div class="row my-2">
+            <div class="col-3 topic text-right">ตำบล :</div>
+            <div class="col-6">
+              <input type="text" class="form-control form-control-sm w-100" [(ngModel)]="Header.SubDistrict">
+            </div>
+          </div>
+          <div class="row my-2">
+            <div class="col-3 topic text-right">จังหวัด :</div>
+            <div class="col-6">
+              <input type="text" class="form-control form-control-sm w-100" [(ngModel)]="Header.Province">
+            </div>
+          </div>
+          <div class="row my-2">
+            <div class="col-3 topic text-right">แฟกซ์ :</div>
+            <div class="col-6">
+              <input type="text" class="form-control form-control-sm w-100" [(ngModel)]="Header.Fax">
+            </div>
+          </div>
+          <div class="row my-2">
+            <div class="col-3 topic text-right">จำนวนเครื่อง POS :</div>
+            <div class="col-6">
+              <input type="number" class="form-control form-control-sm w-100 text-right" [(ngModel)]="Header.PosCount">
+            </div>
+          </div>
+        </div> <!-- end Of Right Column -->
+      </div>
+    </div>
+    <!-- end of card -->
+    <div class="right-bar mt-2">
+      <button class="btn circle-button circle-buttonSave" (click)="SaveData()" [hidden]="HiddenButton.btnSave"
+        data-tooltip="Save" data-tooltip-location="left">
+        <i class="far fa-save"></i>
+      </button>
+      <button class="btn circle-button circle-buttonClear" (click)="NewData()" [hidden]="HiddenButton.btnClear"
+        data-tooltip="Clear" data-tooltip-location="left">
+        <i class="fas fa-eraser"></i>
+      </button>
+      <button class="btn circle-button circle-buttonBack" routerLink="/BranchList" [hidden]="HiddenButton.btnBack"
+        data-tooltip="Back" data-tooltip-location="left">
+        <i class="fas fa-undo"></i>
+      </button>
+    </div>
+  </div>

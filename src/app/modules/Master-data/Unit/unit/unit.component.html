@@ -1,0 +1,66 @@
+<div *ngIf="isUserAuthenticated()">
+    <div class="card" style="margin-right: 6.5%;">
+        <div class="card-header bg-header-page "
+            style="font-size: 16px !important; height: 40px;  padding-top: 10px; font-weight: 600;">
+            ข้อมูลหน่วยสินค้า
+            <div class="ml-auto">
+                <div class="{{SvDefault.GetBackgroundRibbon(Unit.UnitStatus)}}">
+                    <label class="ribbon-1-text">{{HiddenButton?.status}}</label>
+                </div>
+            </div>
+        </div>
+        <!-- end of card header -->
+
+        <div class="card-body">
+            <div class="row">
+                <!-- start column -->
+                <div class="col-6">
+                    <div class="row my-3">
+                        <div class="col-4 topic text-right">รหัสหน่วยสินค้า:</div>
+                        <div class="col-6">
+                            <input type="text" class="form-control form-control-sm w-100" [(ngModel)]="Unit.UnitId"
+                                [disabled]="isDisable === false">
+                        </div>
+                    </div>
+                    <div class="row my-3">
+                        <div class="col-4 topic text-right">ชื่อหน่วยสินค้า :</div>
+                        <div class="col-6">
+                            <input type="text" class="form-control form-control-sm w-100"
+                                [(ngModel)]="Unit.UnitName">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="row my-3">
+                        <div class="col-3 topic text-right">SAP CODE :</div>
+                        <div class="col-6">
+                            <input type="text" class="form-control form-control-sm w-100"
+                                [(ngModel)]="Unit.MapUnitId">
+                        </div>
+                    </div>
+                </div>
+            </div><!-- end of Left Column -->
+        </div>
+        <!-- end of card body -->
+
+        <div class="right-bar mt-2">
+            <button class="btn circle-button circle-buttonSave" (click)="SaveData()" [hidden]="HiddenButton.btnSave"
+                data-tooltip="Save" data-tooltip-location="left">
+                <i class="far fa-save"></i>
+            </button>
+            <button class="btn circle-button circle-buttonCancel" (click)="UpdateStatus('Cancel')"
+                [hidden]="HiddenButton.btnCancel" data-tooltip="Cancel" data-tooltip-location="left">
+                <i class="fas fa-times"></i>
+            </button>
+            <button class="btn circle-button circle-buttonClear" (click)="NewData()" [hidden]="HiddenButton.btnClear"
+                data-tooltip="Clear" data-tooltip-location="left">
+                <i class="fas fa-eraser"></i>
+            </button>
+            <button class="btn circle-button circle-buttonBack" routerLink="/UnitList" [hidden]="HiddenButton.btnBack"
+                data-tooltip="Back" data-tooltip-location="left">
+                <i class="fas fa-undo"></i>
+            </button>
+        </div>
+        <!-- end of button right bar -->
+    </div>
+</div>

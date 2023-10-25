@@ -1,0 +1,106 @@
+<!-- <div class="modal-header bg-header" style="height: 40px; padding-top: 10px;">
+  <span class="modal-title h6">ทะเบียนรถ</span>
+  <button type="button" class="close" (click)=ActiveModal.dismiss()>&times;
+  </button>
+</div>
+<div class="modal-body">
+  <div class="row">
+    <div class="col-sm-12 col-md-8 col-lg-6">
+      <div class="input-group">
+        <input type="text" [(ngModel)]="StrKeyWord" class="form-control form-control-sm" id="txtSearchLicensePlate"
+          (keyup.enter)=SearchData()>
+        <div class="input-group-append" style="width:100px;">
+          <button class="btn btn-primary w-100 btn-sm" type="button" (click)=SearchData()>
+            ค้นหา
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="table-responsive">
+    <div class="table-custom-scrollbar">
+      <table class="table table-sm table-hover m-0">
+        <thead>
+          <tr>
+            <th class="text-center align-middle">#</th>
+            <th class="text-center align-middle">ทะเบียนรถ</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let po of ArrFilterData;let i = index" role="button" (click)="ActiveModal.close(po)">
+            <td class="align-middle pl-2">{{(NumPageIndex-1) * NumPageSize + i+1}}</td>
+            <td class="align-middle pl-2">{{ArrFilterData[i].LicensePlate}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="d-flex justify-content-between p-2" *ngIf="ArrFilterData.length > 0">
+    <ngb-pagination [collectionSize]="NumCollectionSize" [(page)]="NumPageIndex" [pageSize]="NumPageSize" (pageChange)="OnPageIndexChange()" [maxSize]=5 size="sm">
+    </ngb-pagination>
+  
+    <select class="custom-select custom-select-sm" style="width: auto" [(ngModel)]="NumPageSize" (ngModelChange)="OnPageSizeChange()" role="button">
+      <option [ngValue]="10">แสดง 10 รายการ</option>
+      <option [ngValue]="20">แสดง 20 รายการ</option>
+      <option [ngValue]="30">แสดง 30 รายการ</option>
+      <option [ngValue]="40">แสดง 40 รายการ</option>
+      <option [ngValue]="50">แสดง 50 รายการ</option>
+    </select>
+  </div>
+</div> -->
+
+
+<div class="modal-header bg-header">
+  <span class="modal-title h6"><i class="fa fa-search mr-2"></i>ทะเบียนรถ</span>
+  <button type="button" class="close" (click)=ActiveModal.dismiss()>
+    &times;
+  </button>
+</div>
+<div class="modal-body">
+  <table class="table table-borderless">
+    <tr>
+      <td>
+        <input type="text" class="form-control form-control-sm" id="txtSearchLicensePlate" 
+          (keyup.enter)=SearchData()>
+      </td>
+      <td style="width: 150px;">
+        <button class="btn btn-primary w-100 btn-sm" type="button" (click)=SearchData()>
+          <i class="fa fa-search mx-2"></i>
+          ค้นหา
+        </button>
+      </td>
+    </tr>
+  </table>
+  <div class="table-custom-scrollbar">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th class="text-center align-middle">#</th>
+          <th class="text-center align-middle">ทะเบียนรถ</th>
+          <th class="text-center align-middle">รายละเอียด</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let cus of ArrFilterData;let i = index " role="button" (click)="ActiveModal.close(cus)">
+          <td class="text-center align-middle">{{(NumPageIndex-1) * NumPageSize + i+1}}</td>
+          <td class="align-middle">{{ArrFilterData[i].LicensePlate}}</td>
+          <td class="align-middle">{{ArrFilterData[i].CarRemark}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="d-flex justify-content-between p-2" *ngIf="ArrFilterData.length > 0">
+    <ngb-pagination [collectionSize]="NumCollectionSize" [(page)]="NumPageIndex" [pageSize]="NumPageSize"
+      (pageChange)="OnPageIndexChange()" [maxSize]=5 size="sm">
+    </ngb-pagination>
+
+    <select class="custom-select custom-select-sm" style="width: auto" [(ngModel)]="NumPageSize"
+      (ngModelChange)="OnPageSizeChange()" role="button">
+      <option [ngValue]="10">แสดง 10 รายการ</option>
+      <option [ngValue]="20">แสดง 20 รายการ</option>
+      <option [ngValue]="30">แสดง 30 รายการ</option>
+      <option [ngValue]="40">แสดง 40 รายการ</option>
+      <option [ngValue]="50">แสดง 50 รายการ</option>
+    </select>
+  </div>
+</div>

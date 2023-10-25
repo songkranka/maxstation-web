@@ -1,0 +1,263 @@
+<div class="table-dynamic">
+  <div class="table-dynamic-header">
+    <div class="table-dynamic-header-title">{{ config.tableTitle }}</div>
+    <div class="table-dynamic-header-action">
+      <button
+        class="table-dynamic-header-action-button button-form {{
+          config.buttonFormClass ? config.buttonFormClass : ''
+        }}"
+        *ngIf="config.buttonForm"
+        (click)="toggleFormDialog()"
+      >
+        {{ config.buttonFormText }}
+      </button>
+
+      <button
+        class="table-dynamic-header-action-button button-filter {{
+          config.buttonFilterClass ? config.buttonFilterClass : ''
+        }}"
+        *ngIf="config.buttonFilter"
+        (click)="toggleFilterDialog()"
+      >
+        {{ config.buttonFilterText }}
+      </button>
+    </div>
+  </div>
+
+  <div
+    class="table-dynamic-content"
+    [ngClass]="{ active: activeInfo === true }"
+  >
+    <div class="table-dynamic-content-body">
+      <table class="table-dynamic-item">
+        <thead>
+          <tr role="row">
+            <ng-container *ngFor="let column of columns">
+              <th
+                *ngIf="
+                  column.isShow === undefined ||
+                  (column.isShow && column.isShow === true)
+                "
+                [ngClass]="{
+                  'text-center': column.headerTextAlign === 'center',
+                  'text-left': column.headerTextAlign === 'left',
+                  'text-right': column.headerTextAlign === 'right'
+                }"
+              >
+                {{ column.headerText }}
+              </th>
+            </ng-container>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of dataTable; let rowIndex = index">
+            <ng-container
+              *ngFor="let column of columns; let columnIndex = index"
+            >
+              <td
+                *ngIf="
+                  column.isShow === undefined ||
+                  (column.isShow && column.isShow === true)
+                "
+                [ngClass]="{
+                  'text-center': column.textAlign === 'center',
+                  'text-left': column.textAlign === 'left',
+                  'text-right': column.textAlign === 'right'
+                }"
+              >
+                <ng-container *ngIf="column.fieldName !== undefined">
+                  {{ data[column.fieldName] }}
+                </ng-container>
+                <ng-container *ngIf="column.fieldName === undefined">
+                  <div class="table-dynamic-item-action">
+                    <ng-container
+                      *ngIf="column.isHtml && column.isHtml === true"
+                    >
+                      <ng-container></ng-container>
+                    </ng-container>
+                    <ng-container
+                      *ngIf="column.isButton && column.isButton === true"
+                    >
+                      <ng-container
+                        *ngFor="
+                          let button of column.customButton;
+                          let index = index
+                        "
+                      >
+                        <button
+                          class="table-dynamic-header-action-button"
+                          *ngIf="
+                            !button.actionCustomForm &&
+                            button.actionCustomMethod
+                          "
+                          (click)="button.actionCustomMethod(data, rowIndex)"
+                        >
+                          <span [innerHTML]="button.buttonText"></span>
+                        </button>
+
+                        <button
+                          class="table-dynamic-header-action-button"
+                          *ngIf="
+                            !button.actionCustomForm &&
+                            button.actionMethod &&
+                            button.actionMethod === 'delete'
+                          "
+                          (click)="delete(data, rowIndex)"
+                        >
+                          <span [innerHTML]="button.buttonText"></span>
+                        </button>
+
+                        <button
+                          class="table-dynamic-header-action-button"
+                          *ngIf="button.actionCustomForm"
+                          custom-action
+                          [attr.custom-action-target]="button.actionCustomForm"
+                          (click)="
+                            toggleCustomDialog(
+                              index,
+                              button.actionMethod ? button.actionMethod : null,
+                              button.actionMethod ? rowIndex : 0
+                            )
+                          "
+                        >
+                          <span [innerHTML]="button.buttonText"></span>
+                        </button>
+                      </ng-container>
+                    </ng-container>
+                  </div>
+                </ng-container>
+              </td>
+            </ng-container>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div
+      class="table-dynamic-content-form"
+      [ngClass]="{ open: openForm === true }"
+    >
+      <div class="table-dynamic-content-header">
+        Form
+
+        <div class="table-dynamic-content-header-action">
+          <a href="javascript:void(0)" (click)="resetDialog()">&times;</a>
+        </div>
+      </div>
+      <div class="p-3">
+        <ng-container *ngIf="isInsert">
+          <div class="form-group" *ngFor="let column of columns">
+            <ng-container *ngIf="!column.isButton">
+              <label [for]="'column-' + column.fieldName">
+                {{ column.headerText }}
+              </label>
+              <input
+                [type]="column.fieldType"
+                class="form-control"
+                [placeholder]="
+                  column.fieldPlaceholder ? column.fieldPlaceholder : ''
+                "
+                [(ngModel)]="newItem[column.fieldName]"
+              />
+            </ng-container>
+          </div>
+
+          <button class="btn btn-primary waves-effect" (click)="add()">
+            Save
+          </button>
+        </ng-container>
+        <ng-container *ngIf="isUpdate">
+          <div class="form-group" *ngFor="let column of columns">
+            <ng-container *ngIf="!column.isButton">
+              <label [for]="'column-' + column.fieldName">
+                {{ column.headerText }}
+              </label>
+              <input
+                [type]="column.fieldType"
+                class="form-control"
+                [placeholder]="
+                  column.fieldPlaceholder ? column.fieldPlaceholder : ''
+                "
+                [(ngModel)]="currentItem[column.fieldName]"
+              />
+            </ng-container>
+          </div>
+
+          <button class="btn btn-primary waves-effect" (click)="update()">
+            Update
+          </button>
+        </ng-container>
+      </div>
+    </div>
+
+    <div
+      class="table-dynamic-content-filter"
+      [ngClass]="{ open: openFilter === true }"
+      select="[filter-content]"
+    >
+      <div class="table-dynamic-content-header">
+        Filter
+
+        <div class="table-dynamic-content-header-action">
+          <a href="javascript:void(0)" (click)="resetDialog()">&times;</a>
+        </div>
+      </div>
+      <div class="p-3">
+        <div class="form-group" *ngFor="let column of columns">
+          <ng-container *ngIf="!column.isButton">
+            <input
+              [id]="'is-' + column.fieldName"
+              type="checkbox"
+              [(ngModel)]="column.isShow"
+            />
+
+            <label [for]="'is-' + column.fieldName">
+              {{ column.headerText }}
+            </label>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="table-dynamic-content-custom"
+      [ngClass]="{ open: openCustom === true }"
+      select="[custom-content]"
+    >
+      <div class="table-dynamic-content-header">
+        Custom
+
+        <div class="table-dynamic-content-header-action">
+          <a href="javascript:void(0)" (click)="resetDialog()">&times;</a>
+        </div>
+      </div>
+      <ng-content select="[custom-content]"></ng-content>
+    </div>
+  </div>
+
+  <div class="table-dynamic-footer">
+    <div class="table-dynamic-page-detail">Showing 1 to 20 of 100 entries</div>
+    <div class="table-dynamic-pagination">
+      Page Size
+      <select>
+        <option>20</option>
+        <option>40</option>
+        <option>60</option>
+        <option>100</option>
+        <option>120</option>
+      </select>
+      |
+      <ul>
+        <li><i class="fas fa-angle-double-left"></i></li>
+        <li><i class="fas fa-angle-left"></i></li>
+        <li>1</li>
+        <li>2</li>
+        <li>3</li>
+        <li>4</li>
+        <li>5</li>
+        <li><i class="fas fa-angle-right"></i></li>
+        <li><i class="fas fa-angle-double-right"></i></li>
+      </ul>
+    </div>
+  </div>
+</div>

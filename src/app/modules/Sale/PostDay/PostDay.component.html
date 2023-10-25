@@ -1,0 +1,462 @@
+<div *ngIf="isUserAuthenticated()" class="card pr-7">
+    <div
+        class="card-header bg-header-page "
+        style="font-size: 16px !important; height: 40px;  padding-top: 10px; font-weight: 600;"
+    >
+        {{headerCard}}
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-3">
+                <div class="col-4 topic">
+                    <mat-form-field appearance="fill">
+                        <mat-label>วันที่</mat-label>
+                        <input
+                            matInput
+                            [matDatepicker]="picker"
+                            [ngModel]="postDayHd.DocDate"
+                            (dateChange)="changeDate($event)"
+                        >
+                        <mat-datepicker-toggle
+                            matSuffix
+                            [for]="picker"
+                        ></mat-datepicker-toggle>
+                        <mat-datepicker #picker></mat-datepicker>
+                    </mat-form-field>
+                </div>
+            </div>
+        </div>
+        <br>
+        <br>
+        <br>
+        <div class="row">
+            <div class="col-12">
+                บันทึกใบกำกับภาษี ตามประมวลรัษฏากร มาตรา 86/4 (แบบเต็มรูป) และ 86/6 (แบบย่อ)
+            </div>
+            <div
+                class="col-12"
+                style="display:flex;justify-content:right;align-items:center; padding-left: 0%;"
+            >
+                <div class="dropdown">
+                    <button
+                        class="btn btn-primary dropdown-toggle"
+                        type="button"
+                        id="dropdownMenuButtonCr"
+                        data-toggle="dropdown"
+                        aria-haspopup="true"
+                        aria-expanded="false"
+                    >
+                        เพิ่มรายการ
+                    </button>
+                    <div
+                        class="dropdown-menu"
+                        aria-labelledby="dropdownMenuButtonCr"
+                        style="cursor: pointer;"
+                    >
+                        <p
+                            class="dropdown-item"
+                            *ngFor="let itemType of listMasMapping;let i = index"
+                            (click)="addDopPostDt('CR', itemType.MapId)"
+                        >
+                            {{itemType.MapDesc}}
+                        </p>
+                    </div>
+                </div>
+                <!-- <button
+                    class="btn btn-primary"
+                    style="width: 8%;"
+                    (click)="addDopPostDt('CR')"
+                >
+                    เพิ่มแถว
+                </button> -->
+            </div>
+            <div class="col-12">
+                <div class="table-responsive">
+                    <table
+                        class="table table-hover"
+                        style="border: 1px solid #dee2e6; font-size: 15px;  margin-bottom: 0px;"
+                    >
+                        <thead>
+                            <tr>
+                                <th class="text-nowrap text-center align-middle p-2">ประเภทเอกสาร</th>
+                                <th class="text-nowrap text-center align-middle p-2">เล่มที่</th>
+                                <th class="text-nowrap text-center align-middle p-2">ตั้งแต่เลขที่</th>
+                                <th class="text-nowrap text-center align-middle p-2">ถึงเลขที่</th>
+                                <th class="text-nowrap text-center align-middle p-2">รวม</th>
+                                <th class="text-nowrap text-center align-middle p-2">จำนวนเงิน</th>
+                                <th class="text-nowrap text-center align-middle p-2">ลบ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of listPostDayDtCr; let i=index">
+                                <td class="text-nowrap text-center align-middle p-2">
+                                    <p>{{item.TypeName}}</p>
+                                    <!-- <ng-select
+                                        [(ngModel)]="item.TypeId"
+                                        role="button"
+                                    >
+                                        <ng-option
+                                            *ngFor="let itemType of listMasMapping;let i = index"
+                                            [value]="itemType.MapId"
+                                        >
+                                            {{itemType.MapDesc}}
+                                        </ng-option>
+                                    </ng-select> -->
+                                </td>
+                                <td class="align-middle">
+                                    <!-- <app-InputNumberFormat
+                                        Width="150"
+                                        [(InputNumber)]="item.DocNo"
+                                    ></app-InputNumberFormat> -->
+                                    <input numbersOnly class="form-control data  text-right" [(ngModel)]="item.DocNo" Width="150">
+                                </td>
+                                <td class="align-middle">
+                                    <!-- <app-InputNumberFormat
+                                        Width="150"
+                                        [(InputNumber)]="item.DocStart"
+                                    ></app-InputNumberFormat> -->
+                                    <input numbersOnly class="form-control data  text-right" [(ngModel)]="item.DocStart" Width="150">
+                                </td>
+                                <td class="align-middle">
+                                    <!-- <app-InputNumberFormat
+                                        Width="150"
+                                        [(InputNumber)]="item.DocFinish"
+                                    ></app-InputNumberFormat> -->
+                                    <input numbersOnly class="form-control data  text-right" [(ngModel)]="item.DocFinish" Width="150">
+                                </td>
+                                <td class="align-middle">
+                                    <!-- <app-InputNumberFormat
+                                        Width="150"
+                                        [(InputNumber)]="item.Total"
+                                    ></app-InputNumberFormat> -->
+                                    <input numbersOnly class="form-control data text-right" [(ngModel)]="item.Total" Width="150">
+                                </td>
+                                <td class="align-middle">
+                                    <app-InputNumberFormat
+                                        Width="150"
+                                        [(InputNumber)]="item.Amount"
+                                    ></app-InputNumberFormat>
+                                </td>
+                                <td
+                                    class="text-center btn-outline-danger align-middle"
+                                    role="button"
+                                    (click)="deleteDopPostDt(i, 'CR')"
+                                >
+                                    <i class="fas fa-trash-alt"></i>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <br>
+        <br>
+        <br>
+        <div class="row">
+            <div class="col-12">
+                บันทึกยกเลิกหรือออกทดแทนใบกำกับภาษี และการออกใบกำกับภาษีประจำวัน
+            </div>
+            <div
+                class="col-12"
+                style="display:flex;justify-content:right;align-items:center; padding-left: 0%;"
+            >
+                <div class="dropdown">
+                    <button
+                        class="btn btn-primary dropdown-toggle"
+                        type="button"
+                        id="dropdownMenuButtonDr"
+                        data-toggle="dropdown"
+                        aria-haspopup="true"
+                        aria-expanded="false"
+                    >
+                        เพิ่มรายการ
+                    </button>
+                    <div
+                        class="dropdown-menu"
+                        aria-labelledby="dropdownMenuButtonDr"
+                        style="cursor: pointer;"
+                    >
+                        <p
+                            class="dropdown-item"
+                            *ngFor="let itemType of listMasMapping;let i = index"
+                            (click)="addDopPostDt('DR', itemType.MapId)"
+                        >
+                            {{itemType.MapDesc}}
+                        </p>
+                    </div>
+                </div>
+                <!-- <button
+                    class="btn btn-primary"
+                    style="width: 8%;"
+                    (click)="addDopPostDt('DR')"
+                >
+                    เพิ่มแถว
+                </button> -->
+            </div>
+            <div class="col-12">
+                <div class="table-responsive">
+                    <table
+                        class="table table-hover"
+                        style="border: 1px solid #dee2e6; font-size: 15px;  margin-bottom: 0px;"
+                    >
+                        <thead>
+                            <tr>
+                                <th class="text-nowrap text-center align-middle p-2">ประเภทเอกสาร</th>
+                                <th class="text-nowrap text-center align-middle p-2">เล่มที่</th>
+                                <th class="text-nowrap text-center align-middle p-2">ตั้งแต่เลขที่</th>
+                                <th class="text-nowrap text-center align-middle p-2">ถึงเลขที่</th>
+                                <th class="text-nowrap text-center align-middle p-2">รวม</th>
+                                <th class="text-nowrap text-center align-middle p-2">จำนวนเงิน</th>
+                                <th class="text-nowrap text-center align-middle p-2">ลบ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of listPostDayDtDr; let i=index">
+                                <td class="text-nowrap text-center align-middle p-2">
+                                    <p>{{item.TypeName}}</p>
+                                    <!-- <ng-select
+                                        [(ngModel)]="item.TypeName"
+                                        role="button"
+                                    >
+                                        <ng-option
+                                            *ngFor="let itemType of listMasMapping;let i = index"
+                                            [value]="itemType.MapDesc"
+                                        >
+                                            {{itemType.MapDesc}}
+                                        </ng-option>
+                                    </ng-select> -->
+                                </td>
+                                <td class="align-middle">
+                                    <!-- <app-InputNumberFormat
+                                        Width="150"
+                                        [(InputNumber)]="item.DocNo"
+                                    ></app-InputNumberFormat> -->
+                                    <input appPermit="numbers" class="form-control data  text-right" [(ngModel)]="item.DocNo" Width="150">
+                                </td>
+                                <td class="align-middle">
+                                    <!-- <app-InputNumberFormat
+                                        Width="150"
+                                        [(InputNumber)]="item.DocStart"
+                                    ></app-InputNumberFormat> -->
+                                    <input appPermit="numbers" class="form-control data  text-right" [(ngModel)]="item.DocStart" Width="150">
+                                </td>
+                                <td class="align-middle">
+                                    <!-- <app-InputNumberFormat
+                                        Width="150"
+                                        [(InputNumber)]="item.DocFinish"
+                                    ></app-InputNumberFormat> -->
+                                    <input appPermit="numbers" class="form-control data  text-right" [(ngModel)]="item.DocFinish" Width="150">
+                                </td>
+                                <td class="align-middle">
+                                    <!-- <app-InputNumberFormat
+                                        Width="150"
+                                        [(InputNumber)]="item.Total"
+                                    ></app-InputNumberFormat> -->
+                                    <input appPermit="numbers" class="form-control data text-right" [(ngModel)]="item.Total" Width="150">
+                                </td>
+                                <td class="align-middle">
+                                    <app-InputNumberFormat
+                                        Width="150"
+                                        [(InputNumber)]="item.Amount"
+                                    ></app-InputNumberFormat>
+                                </td>
+                                <td
+                                    class="text-center btn-outline-danger align-middle"
+                                    role="button"
+                                    (click)="deleteDopPostDt(i, 'DR')"
+                                >
+                                    <i class="fas fa-trash-alt"></i>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <br>
+        <br>
+        <br>
+        <div class="row">
+            <div class="col-6">
+                <div class="row">
+                    <div class="col-12">
+                        ตารางเปรียบเทียบรายการบันทึกข้อมูล ณ วันที่ {{postDayHd.DocDate |  date:'dd/MM/yyyy'}}
+                    </div>
+                    <br>
+                    <br>
+                    <div class="col-12">
+                        <div class="table-responsive">
+                            <table
+                                class="table table-hover"
+                                style="border: 1px solid #dee2e6; font-size: 15px;  margin-bottom: 0px;"
+                            >
+                                <thead>
+                                    <tr>
+                                        <th class="text-nowrap text-center align-middle p-2">รายการ</th>
+                                        <th class="text-nowrap text-center align-middle p-2">รายละเอียด</th>
+                                        <th class="text-nowrap text-center align-middle p-2">สรุปงานประจำวัน</th>
+                                        <th class="text-nowrap text-center align-middle p-2">หน่วย</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr
+                                        *ngFor="let item of listFormula; let i=index"
+                                        [ngClass]="{'textRed': item.DestinationAmount != item.SourceAmount}"
+                                    >
+                                        <td class="text-left align-middle">{{item.Remark}}</td>
+                                        <td class="text-right align-middle">{{item.SourceAmount | number: '1.2-2'}}</td>
+                                        <td class="text-right align-middle">
+                                            {{item.DestinationAmount | number: '1.2-2'}}
+                                        </td>
+                                        <td class="text-center align-middle">{{item.Unit}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="row">
+                    <div class="col-12">&nbsp;</div>
+                    <br>
+                    <br>
+                    <div class="col-12">
+                        <div class="table-responsive">
+                            <table
+                                class="table table-hover"
+                                style="border: 1px solid #dee2e6; font-size: 15px;  margin-bottom: 0px;"
+                            >
+                                <thead>
+                                    <tr>
+                                        <th class="text-nowrap text-center align-middle p-2">การตรวจสอบ</th>
+                                        <th class="text-nowrap text-center align-middle p-2">ผลลัพธ์</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                  <ng-container *ngFor="let item of listCheckBeforeSave; let i=index">
+                                    <tr (click)="GetDopValidData(listCheckBeforeSave[i])" role="button" *ngIf = "IsDisplayModalHtmlRow(listCheckBeforeSave[i])" class="textRed">
+                                      <td class="text-left align-middle">{{i+1}}. {{item.Label}}
+                                        <i class="text-danger fa fa-info-circle ml-1"></i>
+                                      </td>
+                                      <td class="text-center align-middle">{{item.PassValue}}</td>
+                                    </tr>
+                                    <tr (click)="ShowModalValidatePostPaid()" role="button" *ngIf = "IsDisplayModalPostPaidRow(listCheckBeforeSave[i])" class="textRed">
+                                      <td class="text-left align-middle">{{i+1}}. {{item.Label}}
+                                        <i class="text-danger fa fa-info-circle ml-1"></i>
+                                      </td>
+                                      <td class="text-center align-middle">{{item.PassValue}}</td>
+                                    </tr>
+                                    <tr *ngIf = "IsDisplayTextRedRow(listCheckBeforeSave[i])" class="textRed">
+                                      <td class="text-left align-middle">{{i+1}}. {{item.Label}}</td>
+                                      <td class="text-center align-middle">{{item.PassValue}}</td>
+                                    </tr>
+                                    <tr *ngIf = "IsDisplayNormalRow(listCheckBeforeSave[i])">
+                                      <td class="text-left align-middle">{{i+1}}. {{item.Label}}</td>
+                                      <td class="text-center align-middle">{{item.PassValue}}</td>
+                                    </tr>
+
+<!-- ---------------------------------------------------------- -->
+
+                                    <!-- <ng-container *ngIf = "listCheckBeforeSave[i].PassValue === 'No'">
+                                      <tr (click)="GetDopValidData(listCheckBeforeSave[i])" role="button" *ngIf = "listCheckBeforeSave[i].HaveValidSql" class="textRed">
+                                          <td class="text-left align-middle">{{i+1}}. {{item.Label}}
+                                            <i class="text-danger fa fa-info-circle ml-1"></i>
+                                          </td>
+                                          <td class="text-center align-middle">{{item.PassValue}}</td>
+                                      </tr>
+                                      <tr *ngIf = "!listCheckBeforeSave[i].HaveValidSql" class="textRed">
+                                          <td class="text-left align-middle">{{i+1}}. {{item.Label}}</td>
+                                          <td class="text-center align-middle">{{item.PassValue}}</td>
+                                      </tr>
+                                    </ng-container>
+                                    <tr *ngIf = "listCheckBeforeSave[i].PassValue === 'Yes'">
+                                        <td class="text-left align-middle">{{i+1}}. {{item.Label}}</td>
+                                        <td class="text-center align-middle">{{item.PassValue}}</td>
+                                    </tr> -->
+                                  </ng-container>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+        <br>
+        <div class="row">
+            <div class="offset-6 col-6">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="row form-group">
+                            <div class="col-6 text-right topic">รับเงินสดจากสถานีบริการ :</div>
+                            <div class="col-6 text-right topic">
+                                {{postDayHd.CashAmt | number: '1.2-2'}} บาท
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-6 text-right topic">เงินขาดเกิน :</div>
+                            <div class="col-6 text-right topic">
+                                {{postDayHd.DiffAmt | number: '1.2-2'}} บาท
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-6 text-right topic">เงินสดนำฝาก :</div>
+                            <div class="col-6 text-right topic">
+                                {{postDayHd.DepositAmt | number: '1.2-2'}} บาท
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-6 text-right topic">เช็คนำฝาก :</div>
+                            <div class="col-6 text-right topic">
+                                {{postDayHd.ChequeAmt | number: '1.2-2'}} บาท
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <label>หมายเหตุ :</label>
+                <textarea
+                    class="form-control form-control-sm w-100"
+                    rows="5"
+                    [(ngModel)]="postDayHd.Remark"
+                ></textarea>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="right-bar mt-2">
+    <button
+        class="btn circle-button circle-buttonSave"
+        [hidden]="btnSave"
+        data-tooltip="Save"
+        data-tooltip-location="left"
+        (click)="saveDocument()"
+    >
+        <i class="far fa-save"></i>
+    </button>
+    <!-- <button
+        class="btn circle-button circle-buttonComplete"
+        [hidden]="btnComplete"
+        data-tooltip="Complete"
+        data-tooltip-location="left"
+        (click)="submitDocument()"
+    >
+        <i class="fas fa-check"></i>
+    </button>
+    <button
+        class="btn circle-button circle-buttonClear"
+        [hidden]="btnClear"
+        data-tooltip="Clear"
+        data-tooltip-location="left"
+        (click)="ClearDocumentByOneStep()"
+    >
+        <i class="fas fa-eraser"></i>
+    </button> -->
+</div>

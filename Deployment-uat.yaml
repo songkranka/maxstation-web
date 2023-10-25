@@ -1,0 +1,91 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: pt-max-station-web
+  namespace: maxstation-uat
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app: pt-max-station-web
+  template:
+    metadata:
+      labels:
+        app: pt-max-station-web
+    spec:
+      containers:
+        - name: pt-max-station-web
+          # image: uatuatmaxstationscicd.azurecr.io/maxstaions-front-end:D01.01.1
+          image: IMAGE_NAME
+          #resources:    
+          #  requests:
+          #    memory: "64Mi"
+          #    cpu: "250m"
+          #  limits:
+          #    memory: "500Mi"
+          #    cpu: "500m"            
+          # volumeMounts:
+          # - name: azurefileshare
+          #   mountPath: /app/AppLogs
+          env:
+          - name: APP_VERSION
+            # value: uatuatmaxstationscicd.azurecr.io/maxstaions-front-end:D01.01.1
+            value: IMAGE_NAME
+          - name: FinanceApi
+            valueFrom:
+              secretKeyRef:
+                name: web-api-credentials
+                key: finance_api
+          - name: InventoryApi
+            valueFrom:
+              secretKeyRef:
+                name: web-api-credentials
+                key: inventory_api
+          - name: MasterdataApi
+            valueFrom:
+              secretKeyRef:
+                name: web-api-credentials
+                key: masterdata_api 
+          - name: PostdayApi
+            valueFrom:
+              secretKeyRef:
+                name: web-api-credentials
+                key: postday_api 
+          - name: PriceApi
+            valueFrom:
+              secretKeyRef:
+                name: web-api-credentials
+                key: price_api 
+          - name: ReportApi
+            valueFrom:
+              secretKeyRef:
+                name: web-api-credentials
+                key: report_api 
+          - name: SaleApi
+            valueFrom:
+              secretKeyRef:
+                name: web-api-credentials
+                key: sale_api 
+          - name: TransferdataApi
+            valueFrom:
+              secretKeyRef:
+                name: web-api-credentials
+                key: transferdata_api  
+          - name: TZ
+            value: "Asia/Bangkok"                 
+          imagePullPolicy: Always                
+      restartPolicy: Always
+      # imagePullSecrets:      
+      #   - name: pt-max-station-registry-secret
+      # volumes:
+      #   - name: azurefileshare
+      #     azureFile:
+      #       secretName: storage-credentials
+      #       shareName: api-qa
+      #       readOnly: false        

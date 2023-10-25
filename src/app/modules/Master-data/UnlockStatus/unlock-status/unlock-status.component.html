@@ -1,0 +1,130 @@
+<div *ngIf="isUserAuthenticated()" class="card pr-7">
+    <div class="card-header bg-header-page">ข้อมูลปลดล็อค</div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-1 topic" style="text-align: right;">
+                สาขา
+            </div>
+            <div class="col-8">
+                <div class="row form-group" [formGroup]="myGroup">
+                    <div class="col-4 topic" style="text-align: left;">
+                        <div>
+                            <ng-select formControlName="branchOption" [items]="branchSelect" bindValue="KEY"
+                                bindLabel="VALUE" placeholder="เลือกสาขา"></ng-select>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <button class="btn btn-primary" (click)="findByValue()">
+                            แสดงรายการ
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Row -->
+        <div class="row" *ngIf="isFindValue">
+            <div class="card-body">
+                <div class="card-header bg-header-page">
+                    <span>รายละเอียด</span>
+                </div>
+                <div class="card-body px-1">
+                    <div class="row form-group">
+                        <div class="col-5 text-left">
+                            <span class="topic">สาขา :</span>
+                            {{sysBranchConfig.BrnCode}} {{sysBranchConfig.BrnName}}
+                        </div>
+                        <div class="col-3 text-left">
+                            <span class="topic">วันปฏิบัติงานสาขา :</span>
+                            {{sysBranchConfig.DocDate | date:'dd/MM/yyyy'}}
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-5 text-left">
+                            <span class="topic">วันที่บันทึกล่าสุด :</span>
+                            {{sysBranchConfig.LockDate | date:'dd/MM/yyyy'}}
+                        </div>
+                        <div class="col-3 text-left">
+                            <span class="topic">ครั้งที่ :</span>
+                            {{sysBranchConfig.LockNo}}
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-5 text-left">
+                            <span class="topic">บันทึกโดย :</span>
+                            {{sysBranchConfig.EmpName}}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th class="text-center text-nowrap">ลำดับ</th>
+                                <th class="text-center text-nowrap">รายละเอียด</th>
+                                <th class="text-center text-nowrap">สถานะ</th>
+                                <th class="text-center text-nowrap">ตั้งแต่วันที่</th>
+                                <th class="text-center text-nowrap">ถึงวันที่</th>
+                                <th class="text-center text-nowrap">หมายเหตุ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of employeeBranchConfigs; let i=index">
+                                <td class="text-center text-nowrap align-middle">{{ item.ItemNo }}</td>
+                                <td class="text-nowrap align-middle">{{ item.ConfigName }} </td>
+                                <td class="text-nowrap">
+                                    <!-- <mat-form-field>
+                                        <mat-select [(value)]="unlockSelected" [(ngModel)]="item.IsLock">
+                                          <mat-option value="Y">Lock</mat-option>
+                                          <mat-option value="N">Unlock</mat-option>
+                                        </mat-select>
+                                      </mat-form-field> -->
+
+                                    <mat-form-field>
+                                        <mat-select [(ngModel)]="item.IsLock">
+                                            <mat-option *ngFor="let status of unlockStatus" [value]="status.value">
+                                                {{status.viewValue}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+
+                                    <!-- <div class="input-group input-group-sm">
+                                        <input class="form-control" placeholder="yyyy-mm-dd" name="dp"
+                                            [(ngModel)]="startDate" ngbDatepicker #d="ngbDatepicker">
+                                        <button class="btn btn-outline-secondary calendar" (click)="d.toggle()"
+                                            type="button"></button>
+                                    </div> -->
+                                </td>
+                                <td class="text-nowrap">
+                                    <mat-form-field>
+                                        <input matInput [matDatepicker]="pickerStart" disabled [(ngModel)]="item.StartDate">
+                                        <mat-datepicker-toggle matSuffix [for]="pickerStart"></mat-datepicker-toggle>
+                                        <mat-datepicker #pickerStart></mat-datepicker>
+                                    </mat-form-field>
+                                </td>
+                                <td class="text-nowrap">
+                                    <mat-form-field>
+                                        <input matInput [matDatepicker]="pickerEnd" [disabled]="item.IsLockDate === 'Y'" [(ngModel)]="item.EndDate">
+                                        <mat-datepicker-toggle matSuffix [for]="pickerEnd"></mat-datepicker-toggle>
+                                        <mat-datepicker #pickerEnd></mat-datepicker>
+                                    </mat-form-field>
+                                </td>
+                                <td class="text-left align-middle">
+                                    <input type="text" class="form-control form-control-sm w-100"
+                                        [(ngModel)]="item.Remark" />
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="right-bar mt-2">
+    <button class="btn circle-button circle-buttonSave" (click)="saveUnlock()" [hidden]="btnSave" data-tooltip="Save"
+        data-tooltip-location="left">
+        <i class="far fa-save"></i>
+    </button>
+</div>

@@ -1,0 +1,378 @@
+<div *ngIf="isUserAuthenticated()">
+  <div class="card pr-7">
+    <div class="card-header bg-header-page ">{{headerCard}}
+      <div class="ml-auto">
+        <div [ngClass]=this.getBackgroundRibbon()><label class="ribbon-1-text">{{status}}</label></div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="form-horizontal">
+        <!-- Row -->
+        <div class="row">
+          <!-- ========== Col01 ========== -->
+          <div class="col-12 col-sm-12 col-md-6 col-lg-6">
+            <!-- Row -->
+            <div class="row form-group" [formGroup]="myGroup">
+              <div class="col-4 topic text-right">เลขที่เอกสาร :</div>
+              <div class="col-6 data">{{document.DocNo}}</div>
+            </div>
+            <!-- Row -->
+            <div class="row form-group" [formGroup]="myGroup">
+              <div class="col-4 topic text-right">เอกสารอ้างอิง : </div>
+              <div class="col-6 data">
+                <input class="form-control" formControlName="taxno" type="text">
+              </div>
+            </div><!-- end of เอกสารอ้างอิง -->
+            <div class="row form-group">
+              <div class="col-4 text-right topic">ใบเสนอราคา : </div>
+              <div class="col-6 data">
+                <div class="input-group">
+                  <input class="form-control data" [disabled]="true" value="{{this.document.QtNo}}">
+                  <!-- (click)="getQutationValidate()"  data-toggle="modal" data-target="#modal-getQuotation"-->
+                  <button class="btn btn-primary btn-search" [disabled]="document.DocStatus !== 'New'"
+                    (click)="GetQuotation()">
+                    <i class="fa fa-search"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- ========== Col02 ========== -->
+          <div class="col-12 col-sm-12 col-md-6 col-lg-6">
+            <!-- Row -->
+            <div class="row form-group" [formGroup]="myGroup">
+              <div class="col-4 topic text-right">วันที่เอกสาร : </div>
+              <div class="col-6 data">{{document.DocDate | date:'dd/MM/yyyy'}}</div>
+            </div>
+            <!-- Row -->
+            <div class="row form-group" [formGroup]="myGroup">
+              <div class="col-4 topic text-right">ผู้ทำรายการ : </div>
+              <div class="col-6 data">{{document.CreatedBy}}</div>
+            </div>
+            <div class="row form-group" >
+              <div class="col-4 topic text-right">รหัสผู้ขาย : </div>
+              <div class="col-6 data">
+                <input
+                  class="form-control"
+                  [(ngModel)]="document.EmpCode"
+                  (keyup.enter)="FindEmp()"
+                />
+                <div [class]="ValidEmpClassName">
+                  {{document.EmpName}}
+                </div>
+              </div>
+
+              <!-- <div class="col-6 data">{{document.EmpCode}} {{document.EmpName}}</div> -->
+            </div>
+          </div>
+        </div>
+        <!-- Row -->
+        <div class="row">
+          <div class="col-12 col-sm-12 col-md-12 text-right">
+            <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal-getProduct"
+              (click)="getProductList()" [hidden]="document.RefNo != '' &&  document.RefNo!= null"><i
+                class="fa fa-plus fa-sm"></i>&nbsp; สินค้า</button>
+          </div>
+        </div>
+
+
+        <!-- Row -->
+        <div class="row">
+          <div class="col-12">
+            <div class="table-responsive  mt-3">
+              <table class="table table-bordered table-hover m-0">
+                <thead>
+                  <tr>
+                    <th class="text-center text-nowrap">รหัสสินค้า</th>
+                    <th class="text-center text-nowrap">ชื่อสินค้า</th>
+                    <th class="text-center text-nowrap">แถม</th>
+                    <th class="text-center text-nowrap">หน่วย</th>
+                    <th class="text-center text-nowrap">ราคา/หน่วย</th>
+                    <th class="text-center text-nowrap">ราคาที่เสนอ</th>
+                    <th class="text-center text-nowrap">ปริมาณ</th>
+                    <th class="text-center text-nowrap">มูลค่าสินค้า</th>
+                    <!-- <th style="padding: 0.4rem !important; text-align: right; width: 8%;">มูลค่าสินค้า</th> -->
+                    <th class="text-center text-nowrap">ส่วนลด</th>
+                    <th class="text-center text-nowrap">ภาษี</th>
+                    <th class="text-center text-nowrap">จำนวนเงิน</th>
+                    <th class="text-center text-nowrap">ลบ</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let item of lines; let i=index">
+                    <td class="text-center">{{ item.UnitBarcode }}</td>
+                    <td class="text-left text-nowrap">{{ item.PdName }}</td>
+                    <td class="text-left">
+                      <input type="checkbox" class="form-control form-control-sm check-small" [(ngModel)]="item.IsFree"
+                        (change)="setProductFree(i)"
+                        [disabled]="document.DocStatus !== 'New' && document.DocStatus !== 'Active' || document.Post != 'N' " />
+                    </td>
+                    <td class="text-center text-nowrap">{{ item.UnitName }} </td>
+                    <td class="text-right">{{ item.UnitPrice | number: '1.2-2'}} </td>
+                    <!-- ราคาที่เสนอ -->
+                    <td class="text-right">{{ item.RefPrice | number: '1.2-2'}} </td>
+                    <!-- ปริมาณ -->
+                    <td class="text-right no-padding">
+                      <app-InputNumberFormat [(InputNumber)]="item.ItemQty" (InputNumberChange)="calculateRow(i)"
+                        [Disabled]="document.DocStatus !== 'New' && document.DocStatus !== 'Active' || document.Post != 'N'">
+                      </app-InputNumberFormat>
+                      <!-- <span *ngIf="item.GroupId === '0000';else numberOnly">
+                          <app-InputNumberFormat [(InputNumber)]="item.ItemQty" (InputNumberChange)="calculateRow(i)" [Disabled]="document.DocStatus !== 'New' && document.DocStatus !== 'Active' || document.Post != 'N'">
+                          </app-InputNumberFormat>
+                        </span>
+                        <ng-template #numberOnly>
+                          <input type="text" class="text-right" [(ngModel)]="item.ItemQty" (blur)="calculateRow(i)" (keyup.enter)="calculateRow(i)" [disabled]="document.DocStatus !== 'New' && document.DocStatus !== 'Active' || document.Post != 'N'" appNumberInput [decimals]="0" [format]="'0'" >
+                        </ng-template> -->
+                      <!-- <input type="number" class="form-control text-right text-sm" style="width: 100px;" [(ngModel)]="item.ItemQty" (blur)="calculateRow(i)" (keyup.enter)="calculateRow(i)" [disabled]="document.DocStatus !== 'New' && document.DocStatus !== 'Active' || document.Post != 'N' " /> -->
+                    </td>
+                    <td class="text-right no-padding">
+                      <!-- มูลค่าสินค้า -->
+                      <app-InputNumberFormat [(InputNumber)]="item.SumItemAmt" (InputNumberChange)="CalculateRow3(i)"
+                        [Disabled]="item.IsFree || document.DocStatus !== 'New' && document.DocStatus !== 'Active' || document.Post != 'N'">
+                      </app-InputNumberFormat>
+                      <!-- <input type="number" class="form-control text-right text-sm" style="width: 100px;" [(ngModel)]="item.SumItemAmt" (blur)="CalculateRow3(i)"  (keyup.enter)="CalculateRow3(i)" [disabled]="item.IsFree || document.DocStatus !== 'New' && document.DocStatus !== 'Active' || document.Post != 'N'"  /> -->
+                    </td>
+                    <td class="text-right no-padding">
+                      <!-- ส่วนลด -->
+                      <app-InputNumberFormat [(InputNumber)]="item.DiscAmt" (InputNumberChange)="CalculateRow4(i)"
+                        [Disabled]="item.IsFree || document.DocStatus !== 'New' && document.DocStatus !== 'Active' || document.Post != 'N'">
+                      </app-InputNumberFormat>
+                      <!-- <input type="number" class="form-control  text-right text-sm" style="width: 100px;" [(ngModel)]="item.DiscAmt"  (blur)="CalculateRow4(i)"  (keyup.enter)="CalculateRow4(i)" [disabled]="item.IsFree || document.DocStatus !== 'New' && document.DocStatus !== 'Active' || document.Post != 'N'" /> -->
+                    </td>
+                    <!-- ภาษี -->
+                    <td class="text-center text-nowrap">{{ item.VatType }} {{ item.VatRate }}% </td>
+                    <!-- จำนวนเงิน -->
+                    <td class="text-right">{{ item.SubAmt | number: '1.2-2'}} </td>
+                    <td class="text-center btn-outline-danger align-middle" role="button" (click)="deleteRow(i)"><i
+                        class="fas fa-trash-alt text-sm"></i></td>
+                  </tr>
+                  <tr>
+                    <td [hidden]="lines.length > 0" colspan="12" class="text-center">
+                      ------------------------------ กรุณาเพิ่มรายการสินค้า ------------------------------
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row -->
+        <div class="row form-group">
+          <div class="col-1"></div>
+          <div class="col-9 topic text-right">รวมจำนวนเงิน :</div>
+          <div class="col-2 text-right">{{document.SubAmt | number: '1.2-2'}}</div>
+        </div>
+        <!-- Row -->
+        <div class="row form-group">
+          <div class="col-1"></div>
+          <div class="col-9 topic text-right">ส่วนลดท้ายเอกสาร :</div>
+          <div class="col-2 text-right">
+            <input type="number" class="form-control text-sm text-right" [(ngModel)]="document.DiscAmt"
+              (blur)="calculateDocument()" />
+          </div>
+        </div>
+        <!-- Row -->
+        <div class="row form-group">
+          <div class="col-1"></div>
+          <div class="col-9 topic text-right">รวมจำนวนเงินหลังหักส่วนลดท้ายเอกสาร :</div>
+          <div class="col-2 text-right">{{document.TotalAmt | number: '1.2-2'}}</div>
+        </div>
+        <div *ngFor="let item of vatGroupList | keyvalue">
+          <!-- Row -->
+          <div class="row form-group">
+            <div class="col-1"></div>
+            <div class="col-9 topic text-right">มูลค่าก่อนภาษี อัตรา {{item.value.VatRate}}% :
+              <!-- Key: <b>{{item.key}}</b> and Value: <b>{{item.value.VatRate}}</b> -->
+              <!-- <label class="topic" style="float: right !important;">ฐานภาษี ประเภท {{item.value.VatTypeName}} {{item.value.VatRate}}% :</label> -->
+            </div>
+            <div class="col-2 text-right">{{item.value.TaxBase | number: '1.2-2'}}</div>
+          </div>
+
+          <!-- Row -->
+          <div class="row form-group">
+            <div class="col-1"></div>
+            <div class="col-9 topic text-right">ภาษีมูลค่าเพิ่ม อัตรา {{item.value.VatRate}}% :</div>
+            <div class="col-2 text-right">{{item.value.VatAmt | number: '1.2-2'}}</div>
+          </div>
+        </div>
+
+        <!-- Row -->
+        <div class="row form-group">
+          <div class="col-1"></div>
+          <div class="col-9 topic text-right">รวมมูลค่าก่อนภาษี :</div>
+          <div class="col-2 text-right">{{document.TaxBaseAmt | number: '1.2-2'}}</div>
+        </div>
+
+        <!-- Row -->
+        <div class="row form-group">
+          <div class="col-1"></div>
+          <div class="col-9 topic text-right">รวมภาษีมูลค่าเพิ่ม : </div>
+          <div class="col-2 text-right">{{document.VatAmt | number: '1.2-2'}}</div>
+        </div>
+
+        <!-- Row -->
+        <div class="row form-group">
+          <div class="col-1"></div>
+          <div class="col-9 topic text-right">รวมมูลค่าสุทธิ :</div>
+          <div class="col-2 text-right">{{document.NetAmt | number: '1.2-2'}}</div>
+        </div>
+      </div>
+
+    </div>
+    <!--/form-horizontal-->
+
+    <div class="right-bar mt-2">
+      <button class="btn circle-button circle-buttonSave" (click)="saveDocument()" [hidden]="btnSave"
+        data-tooltip="Save" data-tooltip-location="left">
+        <i class="far fa-save"></i>
+      </button>
+      <button class="btn circle-button circle-buttonApprove" (click)="approveDocument()" [hidden]="btnApprove"
+        data-tooltip="Approve" data-tooltip-location="left">
+        <i class="fas fa-thumbs-up"></i>
+      </button>
+      <button class="btn circle-button circle-buttonReject" (click)="rejectDocument()" [hidden]="btnReject"
+        data-tooltip="Reject" data-tooltip-location="left">
+        <i class="fas fa-thumbs-down"></i>
+      </button>
+      <!-- <button class="btn circle-button circle-buttonComplete" (click)="completeDocument()" [hidden]="btnComplete" data-tooltip="Complete" data-tooltip-location="left">
+          <i class="fas fa-check"></i>
+        </button> -->
+      <button class="btn circle-button circle-buttonPrint" (click)="printDocument()" [hidden]="btnPrint"
+        data-tooltip="Print" data-tooltip-location="left">
+        <i class="fas fa-print"></i>
+      </button>
+      <button class="btn circle-button circle-buttonCancel" (click)="cancelDocument()" [hidden]="btnCancel"
+        data-tooltip="Cancel" data-tooltip-location="left">
+        <i class="fas fa-times"></i>
+      </button>
+      <button class="btn circle-button circle-buttonClear" (click)="clearDocument()" [hidden]="btnClear"
+        data-tooltip="Clear" data-tooltip-location="left">
+        <i class="fas fa-eraser"></i>
+      </button>
+      <button class="btn circle-button circle-buttonBack" routerLink="/CashsaleList" [hidden]="btnBack"
+        data-tooltip="Back" data-tooltip-location="left">
+        <i class="fas fa-undo"></i>
+      </button>
+    </div>
+  </div>
+  <!--/card-->
+
+
+
+  <!----- Modal Container ----->
+  <div class="modal fade"  id="modal-getProduct" role="dialog" aria-labelledby="modal-test" aria-hidden="true">
+    <div class="modal-dialog  modal-xl">
+      <div class="modal-content">
+        <div class="modal-header bg-header">
+          <span class="modal-title h6">เพิ่มสินค้า</span>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+
+          <!-- Row -->
+          <div class="row">
+            <div class="col-10 topic">
+              <label>ค้นหาสินค้า : </label>
+            </div>
+          </div>
+
+          <!-- Row -->
+          <div class="row">
+            <div class="col-10" [formGroup]="myGroup">
+              <input type="text" class="form-control" formControlName="searchProduct"
+                placeholder="กรุณาใส่คำที่ต้องการค้นหา" />
+            </div>
+            <div class="col-2 text-right ">
+              <button class="btn btn-primary btm-sm" (click)="getProductList()">
+                <i class="fa fa-search"></i>&nbsp;ค้นหา
+              </button>
+            </div>
+          </div>
+          <br>
+
+          <!-- Row -->
+          <div class="row mb-1">
+            <div class="col-6 topic text-center">รายการสินค้า</div>
+            <div class="col-6 topic text-center">รายการสินค้าที่เลือก</div>
+          </div>
+
+          <!-- Row -->
+          <div class="row">
+            <div class="col-6 col-sm-6 col-md-6">
+              <form [formGroup]="myGroup">
+                <div class="table-responsive table-custom-scrollbar">
+                  <table class="table table-sm table-bordered table-hover">
+                    <thead>
+                      <tr>
+                        <th class="text-center text-nowrap col-sm-2">รหัสสินค้า</th>
+                        <th class="text-center text-nowrap">ชื่อสินค้า</th>
+                        <th class="text-center text-nowrap col-sm-2">หน่วย</th>
+                        <th class="text-center text-nowrap col-sm-2">ราคา</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let item of productList;let i = index" role="button">
+                        <td (click)="selectedProductList(i)" class="text-center">{{ item.UnitBarcode }}</td>
+                        <td (click)="selectedProductList(i)" class="text-left text-nowrap">
+                          <div class="hidden-box" title="{{ item.PdName }}">
+                            <div class="hidden-text">{{ item.PdName }}</div>
+                          </div>
+                        </td>
+                        <td (click)="selectedProductList(i)" class="text-left">{{ item.UnitName }}</td>
+                        <td (click)="selectedProductList(i)" class="text-right">{{ item.UnitPrice | number: '1.2-2' }}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </form>
+            </div>
+            <div class="col-6 col-sm-6 col-md-6 pr-3">
+              <div class="row form-group">
+                <div class="table-responsive table-custom-scrollbar">
+                  <table class="table table-sm table-bordered table-hover">
+                    <thead>
+                      <tr>
+                        <th class="text-center text-nowrap col-sm-2">รหัสสินค้า</th>
+                        <th class="text-center text-nowrap">ชื่อสินค้า</th>
+                        <th class="text-center text-nowrap">หน่วย</th>
+                        <th class="text-center text-nowrap">ราคา</th>
+                        <th class="text-center text-nowrap">แถม</th>
+                        <th class="text-center text-nowrap col-sm-1">ลบ</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let item of productSelectedList;let i = index">
+                        <td class="text-center">{{ item.UnitBarcode }}</td>
+                        <td class="text-left">
+                          <div class="hidden-box" title="{{ item.PdName }}">
+                            <div class="hidden-text">{{ item.PdName }}</div>
+                          </div>
+                        </td>
+                        <td class="text-left">{{ item.UnitName }}</td>
+                        <td class="text-right">{{ item.UnitPrice | number: '1.2-2' }}</td>
+                        <td class="text-center aling-middle">
+                          <input type="checkbox" [(ngModel)]="item.IsFree">
+                        </td>
+                        <td class="text-center aling-middle btn-outline-danger" role="button"
+                          (click)="deleteSelected(i)"><i class="fas fa-trash-alt text-sm"></i></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <!-- <form [formGroup]="myGroup">
+            </form> -->
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-primary btn-sm" (click)="addItemtoLine()" data-dismiss="modal">ตกลง</button>
+          <button type="button" class="btn btn-warning btn-sm" data-dismiss="modal">ยกเลิก</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!----- /Modal Container ----->
+</div>

@@ -1,0 +1,8 @@
+<div *ngIf="isUserAuthenticated()">
+  <input class="form-control" #upload id="upload" type=file name="files[]" (change)="LoadFile($event)">
+  <label>{{CurrentIndex}} / {{TotalData}}</label>
+  <div class="progress">
+    <div class="progress-bar" role="progressbar" [style.width.%]="Percentage" aria-valuenow="25" aria-valuemin="0"
+      aria-valuemax="100"></div>
+  </div>
+</div>

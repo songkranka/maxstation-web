@@ -1,0 +1,202 @@
+<div  class="card rounded-0 shadow-none" style="margin-right: 6.5%;" >
+  <div class="card-header bg-header-page rounded-0 shadow-none" style="font-size: 16px !important; height: 40px;  padding-top: 10px; font-weight: 600;">
+    ข้อมูลสินค้า
+    <div class="ml-auto">
+      <div class="{{SvDefault.GetBackgroundRibbon(Product.PdStatus)}}">
+        <label class="ribbon-1-text"  >{{HiddenButton?.status}}</label>
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="row pt-3">
+      <div class="col-2 text-right">รหัสสินค้า : </div>
+      <div class="col-4">
+        <input class="form-control form-control-sm rounded-0 w-100"
+          [(ngModel)]="Product.PdId"
+          [disabled]="Product.PdStatus !== 'New'"
+        />
+      </div>
+      <div class="col-2 text-right">SAP CODE : </div>
+      <div class="col-4">
+        <input class="form-control form-control-sm rounded-0 w-100"
+          [(ngModel)]="Product.MapPdId"
+        />
+      </div>
+    </div>
+    <div class="row pt-3">
+      <div class="col-2 text-right">
+        ชื่อสินค้า :
+      </div>
+      <div class="col-10">
+        <input class="form-control form-control-sm rounded-0 w-100"
+          [(ngModel)]="Product.PdName"
+        />
+      </div>
+    </div>
+    <div class="row pt-3">
+      <div class="col-2 text-right">
+        รายละเอียด :
+      </div>
+      <div class="col-10">
+        <input class="form-control form-control-sm rounded-0 w-100"
+          [(ngModel)]="Product.PdDesc"
+        />
+      </div>
+    </div>
+    <div class="row pt-3">
+      <div class="col-2 text-right">กลุ่มสินค้า :</div>
+      <div class="col-4">
+        <ng-select [(ngModel)]="Product.GroupId">
+          <ng-option
+            *ngFor="let item of ArrProductGroup;let i = index"
+            [value]="ArrProductGroup[i].GroupId"
+          >{{ArrProductGroup[i].GroupName}}
+          </ng-option>
+        </ng-select>
+      </div>
+      <div class="col-2 text-right">รหัสลงบัญชี :</div>
+      <div class="col-4">
+        <input class="form-control form-control-sm rounded-0 w-100"
+          [(ngModel)]="Product.AcctCode"
+        />
+      </div>
+    </div>
+    <div class="row pt-3">
+      <div class="col-2 text-right">ประเภทภาษี : </div>
+      <div class="col-4">
+        <select class="form-control form-control-sm rounded-0 shadow-none" [(ngModel)]="Product.VatType">
+          <option value="VI">รวม Vat</option>
+          <option value="VE">แยก Vat</option>
+          <option value="NV">ไม่มี Vat</option>
+        </select>
+      </div>
+      <div class="col-2 text-right">อัตราภาษี :</div>
+      <div class="col-4">
+        <app-InputNumberFormat
+          [(InputNumber)]="Product.VatRate"
+          InputClass="form-control form-control-sm rounded-0 w-100"
+        ></app-InputNumberFormat>
+        <!-- <input class="form-control form-control-sm rounded-0 w-100"
+          [(ngModel)]="Product.VatRate"
+          [disabled]="Product.VatType == 'NV'"
+        /> -->
+      </div>
+    </div>
+    <div class="row pt-3">
+      <div class="col-2 text-right">ประเภทสินค้า : </div>
+      <div class="col-6">
+        <label class="px-3" role="button">
+          <input
+            role="button"
+            type="radio"
+            name="prodType"
+            value="Product"
+            [(ngModel)]="Product.PdType"
+            class="pr-2"
+          />
+          สินค้า
+        </label>
+        <label class="px-3" role="button">
+          <input
+            role="button"
+            type="radio"
+            name="prodType"
+            value="Service"
+            [(ngModel)]="Product.PdType"
+            class="pr-2"
+          />
+          บริการ
+        </label>
+      </div>
+      <div class="col-4 text-right">
+        <button
+          class="btn btn-sm btn-primary rounded-0 shadow-none"
+          (click)="AddProductUnit()"
+        ><i class="fa fa-plus pr-3"></i>เพิ่มรายการ
+        </button>
+      </div>
+    </div>
+    <table class="mt-3 table table-sm table-hover">
+      <thead>
+        <tr>
+          <th class="text-center align-middle">หน่วยสต๊อก</th>
+          <th class="text-center align-middle" style="min-width: 200px;">หน่วย</th>
+          <th class="text-center align-middle">รหัสบาร์โค๊ด</th>
+          <th class="text-center align-middle">Unit Ratio</th>
+          <th class="text-center align-middle">Unit Stock</th>
+          <th class="text-center align-middle">ลบ</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of ArrProductUnit;let i = index">
+          <td
+            class="align-middle text-center"
+            role="button"
+            (click)="NumSelectProductUnitIndex = i"
+          >
+            <input
+              role="button"
+              type="radio"
+              name="rdoUnitStock"
+              [value]="i"
+              [(ngModel)]="NumSelectProductUnitIndex"
+            />
+          </td>
+          <td class="align-middle">
+            <ng-select [(ngModel)]="ArrProductUnit[i].UnitId">
+              <ng-option *ngFor="let item of ArrUnit;let j = index" [value]="ArrUnit[j].UnitId">
+                {{ArrUnit[j].UnitId}} : {{ArrUnit[j].UnitName}}
+              </ng-option>
+            </ng-select>
+          </td>
+          <td class="align-middle">
+            <input
+              [(ngModel)]="ArrProductUnit[i].UnitBarcode"
+              class="form-control form-control-sm rounded-0 shadow-none"
+            />
+          </td>
+          <td class="align-middle">
+            <app-InputNumberFormat
+              [(InputNumber)]="ArrProductUnit[i].UnitRatio"
+              InputClass="rounded-0 shadow-none"
+            ></app-InputNumberFormat>
+          </td>
+          <td class="align-middle">
+            <app-InputNumberFormat
+              [(InputNumber)]="ArrProductUnit[i].UnitStock"
+              InputClass="rounded-0 shadow-none"
+            ></app-InputNumberFormat>
+          </td>
+          <td
+            class="align-middle text-center btn-outline-danger"
+            role="button"
+            (click)="RemoveProductUnit(i)"
+          >
+            <i class="fa fa-trash"></i>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<div class="right-bar mt-2" >
+  <!-- [disabled]="PositionRole" -->
+  <button class="btn circle-button circle-buttonSave"
+    (click)="SaveData()"
+    [hidden]="HiddenButton.btnSave"
+    data-tooltip="Save" data-tooltip-location="left">
+    <i class="far fa-save"></i>
+  </button>
+  <button class="btn circle-button circle-buttonPrint" (click)="ShowModalReport()" [hidden]="HiddenButton.btnPrint" data-tooltip="Print" data-tooltip-location="left">
+    <i class="fas fa-print"></i>
+  </button>
+  <button class="btn circle-button circle-buttonCancel" (click)="UpdateStatus('Cancel')" [hidden]="HiddenButton.btnCancel" data-tooltip="Cancel" data-tooltip-location="left">
+    <i class="fas fa-times"></i>
+  </button>
+  <button class="btn circle-button circle-buttonClear" (click)="NewData()" [hidden]="HiddenButton.btnClear" data-tooltip="Clear" data-tooltip-location="left">
+    <i class="fas fa-eraser"></i>
+  </button>
+  <button class="btn circle-button circle-buttonBack" routerLink="/ProductList" [hidden]="HiddenButton.btnBack" data-tooltip="Back" data-tooltip-location="left">
+    <i class="fas fa-undo"></i>
+  </button>
+</div>

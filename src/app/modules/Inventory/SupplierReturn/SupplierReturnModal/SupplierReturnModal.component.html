@@ -1,0 +1,30 @@
+<div class="modal-header bg-header" style="height: 40px; padding-top: 10px;">
+  <span class="modal-title h6">รายการสินค้า {{ArrPoDetail.length}}</span>
+  <button type="button" class="close" (click)=ActiveModal.dismiss() >&times;
+  </button>
+</div>
+<div class="modal-body">
+  <div class="table-responsive">
+    <table class="table table-sm table-hover m-0" *ngIf="ArrPoDetail.length">
+      <thead>
+        <tr>
+          <th class="text-center align-middle">#</th>
+          <th class="text-center align-middle">รหัสสินค้า</th>
+          <th class="text-center align-middle">ชื่อสินค้า</th>
+          <th class="text-center align-middle">หน่วย	</th>
+          <th class="text-center align-middle">ปริมาณในใบสั่งซื้อ	</th>
+          <!-- <th *ngFor="let x of ArrKey" >{{x}}</th>         -->
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let po of ArrPoDetail;let i = index" role="button" (click)="ActiveModal.close(po)">
+          <td class="align-middle pl-2">{{i+1}}</td>
+          <td class="align-middle pl-2">{{ArrPoDetail[i].PdId}}</td>
+          <td class="align-middle pl-2">{{ArrPoDetail[i].PdName}}</td>
+          <td class="align-middle pl-2">{{ArrPoDetail[i].UnitId}}</td>
+          <td class="align-middle pl-2">{{ArrPoDetail[i].PoQty}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

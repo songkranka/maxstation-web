@@ -1,0 +1,243 @@
+<div class="pt-holding-content">
+    <div class="pt-holding-content-cover">
+        <div class="card mb-0">
+            <div class="card-body p-1">
+                <div class="text-center p-0 d-block font-weight-bold">ปรับราคาล่าสุด</div>
+                <small class="text-center p-0 d-block">
+                    {{lastEffectiveDate | date:'dd/MM/yyyy'}}
+                </small>
+            </div>
+        </div>
+        <ul>
+            <li *ngFor="let item of productDisplayList; let i=index">
+                <div class="oil-price-cover">
+                    <img [src]="item.PdImage">
+                    <div class="oil-price-title">
+                        <div class="name">{{item.PdName}}</div>
+                        <!-- <div class="old-price">20.00</div> -->
+                        <div class="price">
+                            {{item.Unitprice}}
+                            <!-- <span class="update up">(+19)</span> -->
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div class="pt-freespace-content">
+    <div class="card">
+        <div class="card-header font-weight-bold"><i class="fas fa-gas-pump"></i>&emsp;สาขา {{ branch }}</div>
+        <div class="card-body">
+            <!-- <div class="row">
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-12">
+                            <h4>สาขา {{ branch }}</h4>
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+            <div class="row">
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-12">
+                            <h4>รายการรอทำโอนจ่ายสินค้า</h4>
+                        </div>
+                        <div class="col-12">
+                            <div class="table-responsive">
+                                <table
+                                    class="table table-hover"
+                                    style="border: 1px solid #dee2e6; font-size: 15px;  margin-bottom: 0px;"
+                                >
+                                    <thead>
+                                        <tr>
+                                            <th
+                                                class="text-nowrap text-center align-middle p-2"
+                                                [style.width.px]="220"
+                                            >
+                                                เลขที่ใบร้องขอ
+                                            </th>
+                                            <th class="text-nowrap text-center align-middle p-2">วันที่ร้องขอ</th>
+                                            <th class="text-nowrap text-center align-middle p-2">สาขาที่ร้องขอ</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let item of requestList; let i=index">
+                                            <td class="text-center align-middle">{{item.docNo}}</td>
+                                            <td class="text-center align-middle">{{item.docDate | date:'dd/MM/yyyy'}}</td>
+                                            <td class="text-left align-middle">{{item.brnCodeTo}} : {{item.brnNameTo}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td
+                                                [hidden]="requestList.length > 0"
+                                                colspan="9"
+                                                style="text-align: center; border: 0px;"
+                                            >
+                                                ------------------------------ ไม่พบรายการรอทำโอนจ่ายสินค้า ------------------------------
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <mat-paginator
+                                    [length]="lengthRequest"
+                                    [pageSize]="pageSizeRequest"
+                                    [pageSizeOptions]="pageSizeOptions"
+                                    (page)="pageEvent = $event; onPaginateChange($event, 'Request')"
+                                    showFirstLastButtons
+                                >
+                                </mat-paginator>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <br>
+                    <div class="row">
+                        <div class="col-12">
+                            <h4>รายการรอทำรับโอนสินค้า</h4>
+                        </div>
+                        <div class="col-12">
+                            <div class="table-responsive">
+                                <table
+                                    class="table table-hover"
+                                    style="border: 1px solid #dee2e6; font-size: 15px;  margin-bottom: 0px;"
+                                >
+                                    <thead>
+                                        <tr>
+                                            <th
+                                                class="text-nowrap text-center align-middle p-2"
+                                                [style.width.px]="220"
+                                            >
+                                                เลขที่ใบโอนจ่าย
+                                            </th>
+                                            <th class="text-nowrap text-center align-middle p-2">วันที่โอนจ่าย</th>
+                                            <th class="text-nowrap text-center align-middle p-2">สาขาที่โอนจ่าย</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let item of transferOutList; let i=index">
+                                            <td class="text-center align-middle">{{item.docNo}}</td>
+                                            <td class="text-center align-middle">{{item.docDate | date:'dd/MM/yyyy'}}</td>
+                                            <td class="text-left align-middle">{{item.brnCode}} : {{item.brnName}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td
+                                                [hidden]="transferOutList.length > 0"
+                                                colspan="9"
+                                                style="text-align: center; border: 0px;"
+                                            >
+                                                ------------------------------ ไม่พบรายการรอทำรับโอนสินค้า ------------------------------
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <mat-paginator
+                                    [length]="lengthTransferOut"
+                                    [pageSize]="pageSizeTransferOut"
+                                    [pageSizeOptions]="pageSizeOptions"
+                                    (page)="pageEvent = $event; onPaginateChange($event, 'TransferOut')"
+                                    showFirstLastButtons
+                                >
+                                </mat-paginator>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+<!-- --------------------------------------------------------- -->
+<div class="accordion" id="accordionExample">
+    <div class="card rounded-0 shadow-none border-0">
+      <div class="card-header rounded-0 shadow-none border-left-lg bg-pattern-white border-primary" id="headingOne">
+        <h2 class="mb-0">
+          <button class="btn btn-link btn-block text-left text-gray rounded-0 shadow-none" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+            งานประจำวัน(Warpad) <i class="fa fa-chevron-down pl-2"></i>
+          </button>
+        </h2>
+      </div>
+
+      <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+        <div class="card-body p-0">
+            <div class="list-group list-group-flush">
+                <a
+                target="_blank"
+                class="list-group-item list-group-item-action font-weight-light"
+                *ngFor="let item of ArrToDoTask;let i = index"
+                [href]="ArrToDoTask[i].Link"
+                >
+                    <i class="fa fa-check-circle pr-2"></i>{{ArrToDoTask[i].TaskName}}
+                </a>
+            </div>
+        </div>
+      </div>
+    </div>
+    <div class="card rounded-0 shadow-none border-0">
+      <div class="card-header rounded-0 shadow-none border-left-lg bg-pattern-white border-primary" id="headingTwo">
+        <h2 class="mb-0">
+          <button class="btn btn-link btn-block text-left text-gray rounded-0 shadow-none collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+            ข่าวสาร  <i class="fa fa-chevron-down pl-2"></i>
+          </button>
+        </h2>
+      </div>
+      <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+        <div class="card-body" *ngFor="let item of warpadTaskList; let i=index"
+            [ngClass]="[warpadTaskList.length > 1 && (i + 1) < warpadTaskList.length ? 'feed' : '']"
+        >
+            <div class="row">
+                <div class="col-6 text-left">{{splitAtFirstSpace(item.topic)[0]}}</div>
+                <div class="col-6 text-right">{{splitAtFirstSpace(item.topic)[1]}}</div>
+                <br>
+                <br>
+                <div class="col-12">Detail : {{item.detail}}</div>
+                <br>
+                <br>
+                <div class="col-12">Link : {{item.link}}</div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+<!-- -------------------------------------------------------------- -->
+                    <!-- <div class="row">
+                        <div class="col-12">
+                            <h4>ข่าวสาร</h4>
+                        </div>
+                        <div class="col-12 card">
+                            <div
+                                *ngFor="let item of warpadTaskList; let i=index"
+                                class="card-body"
+                                [ngClass]="[warpadTaskList.length > 1 && (i + 1) < warpadTaskList.length ? 'feed' : '']"
+                            >
+                                <div class="row">
+                                    <div class="col-6 text-left">{{splitAtFirstSpace(item.topic)[0]}}</div>
+                                    <div class="col-6 text-right">{{splitAtFirstSpace(item.topic)[1]}}</div>
+                                    <br>
+                                    <br>
+                                    <div class="col-12">Detail : {{item.detail}}</div>
+                                    <br>
+                                    <br>
+                                    <div class="col-12">Link : {{item.link}}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                      <h4 class="pl-3">รายการงานประจำวัน</h4>
+                      <br/>
+                      <a
+                        target="_blank"
+                        class="btn rounded-0 py-2 shadow-none w-100 btn-sm btn-link text-left"
+                        *ngFor="let item of ArrToDoTask;let i = index"
+                        [href]="ArrToDoTask[i].Link"
+                      >
+                        <b>{{ArrToDoTask[i].TaskName}}</b>
+                      </a>
+                    </div> -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,146 @@
+<div *ngIf="isUserAuthenticated()" class="card">
+    <div class="card-header bg-header-page">รายการขายเชื่อ</div>
+    <div class="card-body">
+        <div class="form-horizontal">
+            <div class="row">
+                <div class="col-12" style="text-align: right;">
+                    <button class="btn btn-primary" routerLink="/CreditSale/{{'New'}}">
+                        <i class="fa fa-plus"></i>
+                        &nbsp;เพิ่มเอกสาร
+                    </button>
+                    <!-- &nbsp;
+                    <button class="btn btn-primary" data-toggle="collapse" data-target="#criteria">
+                        <i class="fa fa-search"></i>
+                        &nbsp;ค้นหาข้อมูล
+                    </button> -->
+                </div>
+            </div>
+
+
+            <!-- End Of Panel Button -->
+            <div class="row">
+                <div class="col-12">
+                    <!-- style="padding-left: 1.5%; padding-right: 1.5%; padding-top: 0.5%;" -->
+                    <div class="row border-bottom border-left border-right border-top m-0 pt-3 shadow-sm">
+                        <!-- style="background-color: #f3ffe2; padding: 2%; border-radius: 5px 0px 0px 5px;" -->
+                        <div class="col-6 topic">
+                            <mat-form-field appearance="fill" style="width: 100% !important">
+                                <mat-label>ค้นหา</mat-label>
+                                <!-- (input)="findByValue(filterValue)" -->
+                                <input matInput type="text" [(ngModel)]="filterValue" (keyup.enter)="FindByValue()"
+                                    placeholder="คำค้นหา">
+                            </mat-form-field>
+                        </div>
+                        <!-- style="background-color: #f3ffe2; padding: 2%; border-radius: 5px 0px 0px 5px;" -->
+                        <div class="col-4 topic">
+                            <mat-form-field appearance="fill" style="width: 100% !important">
+                                <mat-label>วันที่</mat-label>
+                                <mat-date-range-input [rangePicker]="picker" [formGroup]="dateRange">
+                                    <input matStartDate formControlName="start" placeholder="จากวันที่">
+                                    <input matEndDate formControlName="end" placeholder="ถึงวันที่">
+                                </mat-date-range-input>
+                                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                                <mat-date-range-picker #picker></mat-date-range-picker>
+                            </mat-form-field>
+                        </div>
+                        <!-- style="background-color: #f3ffe2; padding: 2%; border-radius: 0px 5px 5px 0px; padding-top: 6%;" -->
+                        <div class="col-2">
+                            <button class="btn btn-primary h-75 w-100" (click)="FindByValue()">
+                                <i class="fa fa-search"></i>
+                                &nbsp;ค้นหา
+                            </button>
+                        </div>
+                    </div>
+
+
+
+                </div>
+            </div>
+            <!-- End Of Search Panel -->
+
+
+            <div class="table-responsive mt-3 shadow">
+                <table mat-table [dataSource]="dataSource" matSort class="table table-border table-sm table-hover">
+                    <ng-container matColumnDef="no">
+                        <th class="text-center px-2" mat-header-cell *matHeaderCellDef>
+                            ลำดับ
+                        </th>
+                        <td class="text-center px-2 align-middle" mat-cell *matCellDef="let element; let i = index">
+                            {{no + (i + 1)}}
+                            <!-- {{this.paginator.pageIndex == 0 ? i + 1 : 1 + i + this.paginator.pageIndex * this.paginator.pageSize}} -->
+                        </td>
+                    </ng-container>
+
+
+                    <ng-container matColumnDef="docno">
+                        <th class="text-center" mat-header-cell *matHeaderCellDef>
+                            เลขที่เอกสาร
+                        </th>
+                        <td class="text-center px-2 align-middle" mat-cell *matCellDef="let element">
+                            {{element.docno}}
+                        </td>
+                    </ng-container>
+
+
+                    <ng-container matColumnDef="docdate">
+                        <th class="text-center" mat-header-cell *matHeaderCellDef>
+                            วันที่เอกสาร
+                        </th>
+                        <td class="text-center px-2 align-middle" mat-cell *matCellDef="let element">
+                            {{element.docdate | date:'dd/MM/yyyy'}}
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="customer">
+                        <th class="text-center" mat-header-cell *matHeaderCellDef>
+                            ลูกค้า
+                        </th>
+                        <td class="pl-2 align-middle" mat-cell *matCellDef="let element" [innerHTML]=element.customer>
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="netAmt">
+                        <th class="text-center" mat-header-cell *matHeaderCellDef>
+                            มูลค่าสุทธิ (บาท)
+                        </th>
+                        <td class="text-right px-2 align-middle" mat-cell *matCellDef="let element">
+                            {{element.netAmt | number: '1.2-2'}}
+                        </td>
+                    </ng-container>
+
+
+                    <ng-container matColumnDef="docstatus">
+                        <th class="text-center" mat-header-cell *matHeaderCellDef>
+                            สถานะเอกสาร
+                        </th>
+                        <td class="text-center px-2 align-middle" mat-cell *matCellDef="let element">
+                            <!-- {{element.docstatus}} -->
+                            <span [ngClass]="element.docstatus === 'ยกเลิก'? 'text-danger':''">{{element.docstatus}}</span>
+                        </td>
+                    </ng-container>
+
+
+                    <tbody>
+                        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                        <!-- style="cursor: pointer;" -->
+                        <tr mat-row *matRowDef="let row; columns: displayedColumns" role="button"
+                            (click)="navigateToProfile(row.guid)"></tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- [length]="length" [pageSize]="pageSize" (page)="pageEvent = $event; onPaginateChange($event)" -->
+            <mat-paginator [length]="length" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions"
+                (page)="pageEvent = $event; OnPaginateChange($event)" showFirstLastButtons>
+            </mat-paginator>
+            <!-- <mat-paginator [pageSizeOptions]="pageSizeOptions" showFirstLastButtons [pageSize]= 10>
+          </mat-paginator> -->
+
+
+        </div>
+        <!-- /form-horizontal -->
+
+
+
+    </div>
+    <!-- End of Card Body -->
+
+
+</div>

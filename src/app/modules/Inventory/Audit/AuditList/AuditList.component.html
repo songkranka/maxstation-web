@@ -1,0 +1,104 @@
+<!-- <div class="alert alert-danger rounded-0 shadow-none" role="alert" *ngIf="PositionRole.IsView !=='Y'">
+  <i class="fa fa-ban mr-3"></i> คุณไม่มีสิทธ์ใช้งานหน้านี้
+</div> -->
+<!-- *ngIf="PositionRole.IsView ==='Y'" -->
+<div *ngIf="isUserAuthenticated()" class="card rounded-0 shadow-none" >
+    <div class="card-header bg-header-page rounded-0 shadow-none" >รายการตรวจนับสินค้า
+    </div>
+    <div class="card-body rounded-0 shadow-none">
+      <div class="row pb-3">
+        <div class="col-12" style="text-align: right;">
+          <!-- [disabled]="PositionRole.IsCreate !=='Y'" -->
+          <!-- routerLink="/Audit/New" -->
+          <!-- *ngIf="authPositionRole.isCreate ==='Y'" -->
+          <button class="btn btn-primary rounded-0 shadow-none" (click)="NewDocument()"    >
+            <i class="fa fa-plus"></i>&nbsp;เพิ่มเอกสาร
+          </button>
+          <!-- <button class="btn btn-primary rounded-0 shadow-none" (click)="ShowMessage('คุณไม่มีสิทธิ์เพิ่มเอกสาร')" *ngIf="authPositionRole.isCreate !=='Y'" >
+            <i class="fa fa-plus"></i>&nbsp;เพิ่มเอกสาร
+          </button> -->
+          <!-- &nbsp;
+          <button class="btn btn-primary" data-toggle="collapse" data-target="#criteria">
+              <i class="fa fa-search"></i>&nbsp;ค้นหาข้อมูล
+          </button> -->
+        </div>
+      </div>
+
+    <!-- End Of Panel Button -->
+    <div class="row">
+      <div class="col-12">
+        <div class="row border-bottom border-left border-right border-top m-0 pt-3 rounded-0 shadow-none">
+          <div class="col-6 topic" >
+            <mat-form-field appearance="fill" style="width: 100% !important">
+              <mat-label>ค้นหา</mat-label>
+              <input matInput type="text" [(ngModel)]="filterValue"
+              (keyup.enter) = "GetArrayHeader()"
+               placeholder="คำค้นหา">
+            </mat-form-field>
+          </div>
+          <div class="col-4 topic" >
+            <mat-form-field appearance="fill" style="width: 100% !important">
+              <mat-label>วันที่</mat-label>
+              <mat-date-range-input [rangePicker]="picker" [formGroup]="dateRange">
+                <input matStartDate formControlName="start"placeholder="จากวันที่">
+                <input matEndDate formControlName="end" placeholder="ถึงวันที่">
+              </mat-date-range-input>
+              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-date-range-picker #picker></mat-date-range-picker>
+            </mat-form-field>
+          </div>
+          <div class="col-2" >
+            <button class="btn btn-primary h-75 w-100 rounded-0 shadow-none" (click)="GetArrayHeader()" >
+              <i class="fa fa-search"></i>&nbsp;ค้นหา
+            </button>
+          </div>
+        </div>
+      </div>
+    </div><!-- End Of Search Panel -->
+    <table mat-table [dataSource]="dataSource" matSort class="table table-border table-hover mb-0 mt-3">
+      <ng-container matColumnDef="no">
+        <th class="text-center" mat-header-cell *matHeaderCellDef>No</th>
+        <td class="text-center px-2 align-middle" mat-cell *matCellDef="let element; let i = index">{{no + (i + 1)}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="docno">
+        <th class="text-center" mat-header-cell *matHeaderCellDef >เลขที่เอกสาร</th>
+        <td class="pl-2 align-middle"  mat-cell *matCellDef="let element"> {{element.DocNo}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="docdate">
+        <th class="text-center" mat-header-cell *matHeaderCellDef >วันที่เอกสาร</th>
+        <td class="text-center px-2 align-middle" mat-cell *matCellDef="let element"> {{element.DocDate | date:'dd/MM/yyyy'}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="user">
+        <th class="text-center" mat-header-cell *matHeaderCellDef >ผู้ทำรายการ</th>
+        <td class="pl-2 align-middle" mat-cell *matCellDef="let element"> {{GetEmployeeName(element)}} </td>
+      </ng-container>
+      <ng-container matColumnDef="actiondate">
+        <th class="text-center" mat-header-cell *matHeaderCellDef >วันที่ทำรายการ</th>
+        <td class="text-center px-2 align-middle" mat-cell *matCellDef="let element"> {{(element.UpdatedDate || element.CreatedDate) | date:'dd/MM/yyyy'}} </td>
+      </ng-container>
+      <ng-container matColumnDef="docstatus">
+        <th class="text-center" mat-header-cell *matHeaderCellDef >สถานะเอกสาร</th>
+        <td class="text-center px-2 align-middle" mat-cell *matCellDef="let element">
+          <!-- {{ SvDefault.GetThaiDocStatus(element.DocStatus)}}  -->
+          <span [ngClass]="element.DocStatus === 'Cancel'? 'text-danger':''">{{ SvDefault.GetThaiDocStatus(element.DocStatus)}}</span>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <!-- (click)="navigateToProfile(row.guid)" -->
+      <tr mat-row *matRowDef="let row; columns: displayedColumns" role="button" [routerLink]='["..", "Audit",row.Guid]' ></tr>
+    </table>
+    <mat-paginator
+      [length]="length"
+      [pageSize]="pageSize"
+      [pageSizeOptions]="pageSizeOptions"
+      (page)="pageEvent = $event; OnPaginateChange($event)"
+      showFirstLastButtons>
+    </mat-paginator>
+    </div>
+</div>
+
+

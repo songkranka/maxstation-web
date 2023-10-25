@@ -1,0 +1,173 @@
+<div *ngIf="isUserAuthenticated()" class="row form-group">
+    <div class="col-12 col-sm-12 col-md-12 col-lg-12">
+        <div
+            class="card"
+            style="margin-right: 6.5%;"
+        >
+            <div
+                class="card-header bg-header-page "
+                style="font-size: 16px !important; height: 40px;  padding-top: 10px; font-weight: 600;"
+            >
+                {{headerCard}}
+                <div class="ml-auto">
+                    <div [ngClass]=this.getBackgroundRibbon()>
+                        <label class="ribbon-1-text">{{status}}</label>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12 col-sm-12 col-md-6 col-lg-6">
+                        <div class="row form-group ">
+                            <div class="col-4 col-sm-4 col-md-4 text-right topic">เลขที่เอกสาร :</div>
+                            <div class="col-8 col-sm-8 col-md-6 text-left data">{{document.DocNo}}</div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-4 col-sm-4 col-md-4 text-right topic">ใบโอนเลขที่ :</div>
+                            <div class="col-6 col-sm-6 col-md-6 text-left data">
+                                <div class="input-group input-group-sm">
+                                    <input
+                                        class="form-control form-control-sm"
+                                        disabled
+                                        [(ngModel)]="document.RefNo"
+                                    >
+                                    <div class="input-group-append">
+                                        <button
+                                            class="btn btn-sm btn-primary"
+                                            (click)=showModal()
+                                            [disabled]="document.DocStatus !== 'New'"
+                                        >
+                                            <i class="fa fa-search"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-12 col-md-6 col-lg-6">
+                        <div class="row form-group">
+                            <div class="col-4 col-sm-4 text-right topic">วันที่เอกสาร :</div>
+                            <div class="col-8 col-sm-8 data">
+                                {{document.DocDate | date:'dd/MM/yyyy'}}
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-4 col-sm-4 text-right topic">รับโอนจากคลัง :</div>
+                            <div class="col-8 col-sm-8 data">
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-4 col-sm-4 text-right topic">วันที่โอน :</div>
+                            <div class="col-8 col-sm-8 data">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-sm-12 col-md-12 col-lg-12">
+                        <div class="table-responsive">
+                            <table
+                                class="table table-hover"
+                                style="border: 1px solid #dee2e6; font-size: 15px;  margin-bottom: 0px;"
+                            >
+                                <thead>
+                                    <tr>
+                                        <th class="text-nowrap text-center align-middle p-2">รหัส</th>
+                                        <th class="text-nowrap text-center align-middle p-2">ชื่อรายการ</th>
+                                        <th class="text-nowrap text-center align-middle p-2">หน่วย</th>
+                                        <th class="text-nowrap text-center align-middle p-2">จำนวนที่รับโอน</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let item of document.InvAdjustDt; let i=index">
+                                        <td class="text-left align-middle"></td>
+                                        <td class="text-left align-middle"></td>
+                                        <td class="text-center align-middle"></td>
+                                        <td class="text-right align-middle"></td>
+                                    </tr>
+                                    <tr>
+                                        <td
+                                            [hidden]="document.InvAdjustDt.length > 0"
+                                            colspan="9"
+                                            style="text-align: center; border: 0px;"
+                                        >
+                                            ------------------------------ กรุณาเพิ่มรายการสินค้า ------------------------------
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <div class="row form-group">
+                    <div class="col-12">
+                        <label class="topic">หมายเหตุ :</label>
+                        <textarea
+                            class="form-control"
+                            [(ngModel)]="document.Remark"
+                            placeholder
+                            rows="5"
+                        ></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="right-bar mt-2">
+            <button
+                class="btn circle-button circle-buttonSave"
+                (click)="saveDocument()"
+                [hidden]="btnSave"
+                data-tooltip="Save"
+                data-tooltip-location="left"
+            >
+                <i class="far fa-save"></i>
+            </button>
+            <button
+                class="btn circle-button circle-buttonReject"
+                (click)="rejectDocument()"
+                [hidden]="btnReject"
+                data-tooltip="Reject"
+                data-tooltip-location="left"
+            >
+                <i class="fas fa-thumbs-down"></i>
+            </button>
+            <button
+                class="btn circle-button circle-buttonPrint"
+                (click)="printDocument()"
+                [hidden]="btnPrint"
+                data-tooltip="Print"
+                data-tooltip-location="left"
+            >
+                <i class="fas fa-print"></i>
+            </button>
+            <button
+                class="btn circle-button circle-buttonCancel"
+                (click)="CancelDocument()"
+                [hidden]="btnCancel"
+                data-tooltip="Cancel"
+                data-tooltip-location="left"
+            >
+                <i class="fas fa-times"></i>
+            </button>
+            <button
+                class="btn circle-button circle-buttonClear"
+                (click)="clearDocument()"
+                [hidden]="btnClear"
+                data-tooltip="Clear"
+                data-tooltip-location="left"
+            >
+                <i class="fas fa-eraser"></i>
+            </button>
+            <button
+                class="btn circle-button circle-buttonBack"
+                routerLink="/SupplyTransferInList"
+                [hidden]="btnBack"
+                data-tooltip="Back"
+                data-tooltip-location="left"
+            >
+                <i class="fas fa-undo"></i>
+            </button>
+        </div>
+    </div>
+</div>

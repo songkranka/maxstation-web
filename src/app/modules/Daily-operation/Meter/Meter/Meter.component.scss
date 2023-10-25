@@ -1,0 +1,34 @@
+::ng-deep .mat-step-header .mat-step-icon-selected {
+    background-color: #358f61 !important;
+}
+::ng-deep .mat-step-header .mat-step-icon-state-done {
+    background-color: #358f61 !important;
+}
+::ng-deep .mat-step-header .mat-step-icon-state-edit {
+    background-color: #358f61 !important;
+}
+
+::ng-deep .requiredField {
+    border-color: red !important;
+}
+
+::ng-deep .hide {
+    display: none !important;
+}
+
+// ::ng-deep th:first-child,
+// td:first-child {
+//     position: sticky;
+//     left: 0px;
+// }
+
+// ::ng-deep th:nth-child(2),
+// td:nth-child(2) {
+//     position: sticky;
+//     left: 40px;
+// }
+
+// ::ng-deep td:first-child,
+// td:nth-child(2) {
+//     background-color: white;
+// }

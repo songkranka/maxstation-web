@@ -1,0 +1,61 @@
+<ng-template class="modal" #content1 let-modal>
+  <div class="modal-header bg-header">
+    <span class="modal-title h6"><i class="fa fa-search mr-2"></i>ค้นหาข้อมูลลูกค้า</span>
+    <button type="button" class="close" (click)=CloseModal()>
+      &times;
+    </button>
+  </div>
+  <div class="modal-body">
+    <table class="table table-borderless">
+      <tr>
+        <td>
+          <input type="text" class="form-control form-control-sm" id="txtSearchCustomer" [disabled]=IsLoading (keyup.enter)=SearchCustomer()>
+        </td>
+        <td style="width: 150px;">
+          <button class="btn btn-primary w-100 btn-sm" type="button"[disabled]=IsLoading (click)=SearchCustomer()>
+            <i class="fa fa-search mx-2"></i>
+            <!-- <i class="spinner-grow spinner-grow-sm mx-2" *ngIf=IsLoading></i> -->
+            ค้นหา
+          </button>
+        </td>
+      </tr>
+    </table>
+    <div class="table-custom-scrollbar">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>รหัสลูกค้า</th>
+            <th>ชื่อลูกค้า</th>
+            <th>ที่อยู่</th>
+            <!-- <th>เลือก</th> -->
+          </tr>
+        </thead>
+        <tbody >
+          <tr *ngFor="let cus of ArrCustomer;let i = index " 
+          (click)="SelectCusCode = cus.CustCode" 
+          class="{{SelectCusCode === cus.CustCode?'table-success':''}}"
+          style="cursor: pointer;"
+          >
+            <td class="text-center">{{i+1}}</td>
+            <td>{{cus.CustCode}}</td>
+            <td>{{cus.CustName}}</td>
+            <td>{{cus.Address}}</td>
+            <!-- <td><button class="btn btn-sm btn-primary btn-block" (click)=SelectCustomer(cus)>{{i+1}}</button></td> -->
+            <!-- <td class="btn-outline-success text-center" style="cursor: pointer;width: 50px;" (click)=SelectCustomer(cus)>
+              <i class="fa fa-check"></i>
+            </td> -->
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-primary btn-sm" (click)=SelectCustomer2()>
+      <i class="fa fa-check mx-2"></i>ตกลง
+    </button>
+    <button type="button" class="btn btn-default btn-sm" (click)=CloseModal()>
+      <i class="fa fa-times mx-2"></i>ยกเลิก
+    </button>
+  </div>
+</ng-template>

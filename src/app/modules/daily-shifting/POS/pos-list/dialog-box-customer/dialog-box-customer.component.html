@@ -1,0 +1,55 @@
+<!-- <h1 mat-dialog-title>Row Action :: <strong>{{action}}</strong></h1>
+<div mat-dialog-content>
+    <mat-form-field *ngIf="action != 'Delete'; else elseTemplate">
+    <input placeholder="{{action}} Name" matInput [(ngModel)]="local_data.name">
+  </mat-form-field>
+  <ng-template #elseTemplate>
+    Sure to delete <b>{{local_data.name}}</b>?
+  </ng-template>
+</div>
+<div mat-dialog-actions>
+    <button mat-button (click)="doAction()">{{action}}</button>
+    <button mat-button (click)="closeDialog()" mat-flat-button color="warn">Cancel</button>
+</div> -->
+<h2 mat-dialog-title>ข้อมูลลูกค้า</h2>
+
+<mat-dialog-content class="mat-typography">
+    <div class="col-10 topic">
+        <mat-form-field appearance="fill" style="width: 100% !important">
+            <mat-label>ค้นหา</mat-label>
+            <input matInput type="text" [(ngModel)]="filterValue" (keyup.enter)="findByValue(filterValue)"
+                placeholder="คำค้นหา">
+        </mat-form-field>
+    </div>
+
+    <div class="example-container mat-elevation-z8">
+        <table mat-table [dataSource]="dataSource" matSort class="table table-border table-hover mb-0 mt-3 shadow">
+            <ng-container matColumnDef="no">
+                <th class="text-center" mat-header-cell *matHeaderCellDef>No</th>
+                <td class="text-center p-2" mat-cell *matCellDef="let element; let i = index">{{no + (i
+                    + 1)}}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="custcode">
+                <th class="text-center" mat-header-cell *matHeaderCellDef>รหัสลูกค้า</th>
+                <td class="text-center p-2" mat-cell *matCellDef="let element"> {{element.custCode}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="custname">
+                <th class="text-center" mat-header-cell *matHeaderCellDef>ชื่อลูกค้า</th>
+                <td class="text-left p-2" mat-cell *matCellDef="let element"> {{element.custName}} </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns" role="button"
+                (click)="navigateToProfile(row.custCode, row.custName)"></tr>
+        </table>
+    </div>
+    <mat-paginator [length]="length" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions"
+        (page)="pageEvent = $event; onPaginateChange($event)" showFirstLastButtons>
+    </mat-paginator>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <button mat-button (click)="closeDialog()" mat-flat-button color="warn">ยกเลิก</button>
+</mat-dialog-actions>

@@ -1,0 +1,102 @@
+<div *ngIf="isUserAuthenticated()" class="card">
+    <div class="card-header bg-header-page" >รายการรับน้ำมันใส
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-12" style="text-align: right;">
+          <button class="btn btn-primary" routerLink="/ReceiveOil/New">
+            <i class="fa fa-plus"></i>&nbsp;เพิ่มเอกสาร
+          </button>
+          <!-- &nbsp;
+          <button class="btn btn-primary" data-toggle="collapse" data-target="#criteria">
+              <i class="fa fa-search"></i>&nbsp;ค้นหาข้อมูล
+          </button> -->
+        </div>
+      </div>
+  
+    <!-- End Of Panel Button -->
+    <div class="row">
+      <div class="col-12">
+        <div class="row border-bottom border-left border-right border-top m-0 pt-3 shadow">
+          <div class="col-6 topic" >
+            <mat-form-field appearance="fill" style="width: 100% !important">
+              <mat-label>ค้นหา</mat-label>
+              <input matInput type="text" [(ngModel)]="filterValue"
+              (keyup.enter) = "GetReceiveOilList()"
+               placeholder="คำค้นหา">
+            </mat-form-field>
+          </div>
+          <div class="col-4 topic" >
+            <mat-form-field appearance="fill" style="width: 100% !important">
+              <mat-label>วันที่</mat-label>
+              <mat-date-range-input [rangePicker]="picker" [formGroup]="dateRange">
+                <input matStartDate formControlName="start"placeholder="จากวันที่">
+                <input matEndDate formControlName="end" placeholder="ถึงวันที่">
+              </mat-date-range-input>
+              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-date-range-picker #picker></mat-date-range-picker>
+            </mat-form-field>
+          </div>
+          <div class="col-2" >
+            <button class="btn btn-primary h-75 w-100" (click)="GetReceiveOilList()" >
+              <i class="fa fa-search"></i>&nbsp;ค้นหา
+            </button>
+          </div>
+        </div>
+      </div>
+    </div><!-- End Of Search Panel -->      
+    <table mat-table [dataSource]="dataSource" matSort class="table table-border table-hover mb-0 shadow mt-3">
+      <ng-container matColumnDef="no">
+        <th class="text-center align-middle" mat-header-cell *matHeaderCellDef>No</th>
+        <td class="text-center p-2" mat-cell *matCellDef="let element; let i = index">{{no + (i + 1)}}</td>
+      </ng-container>
+    
+      <ng-container matColumnDef="docno">
+        <th class="text-center align-middle" mat-header-cell *matHeaderCellDef >เลขที่เอกสาร</th>
+        <td class="text-center p-2 align-middle"  mat-cell *matCellDef="let element"> {{element.DocNo}} </td>
+      </ng-container>
+    
+      <ng-container matColumnDef="docdate">
+        <th class="text-center align-middle" mat-header-cell *matHeaderCellDef >วันที่รับสินค้า</th>
+        <td class="text-center p-2 align-middle" mat-cell *matCellDef="let element"> {{element.DocDate | date:'dd/MM/yyyy'}} </td>
+      </ng-container>
+    
+      <ng-container matColumnDef="invno">
+        <th class="text-center align-middle" mat-header-cell *matHeaderCellDef >เลขที่ใบกำกับภาษี/ใบส่งของ</th>
+        <td class="text-left p-2 align-middle" mat-cell *matCellDef="let element"> {{element.InvNo}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="pono">
+        <th class="text-center align-middle" mat-header-cell *matHeaderCellDef >เลขที่ใบสั่งซื้อ (PO)</th>
+        <td class="text-center p-2 align-middle" mat-cell *matCellDef="let element"> {{element.PoNo}} </td>
+      </ng-container>
+      <ng-container matColumnDef="potype">
+        <th class="text-center align-middle" mat-header-cell *matHeaderCellDef >ประเภท</th>
+        <td class="text-center p-2 align-middle" mat-cell *matCellDef="let element"> {{element.PoTypeId}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="vendername">
+        <th class="text-center align-middle" mat-header-cell *matHeaderCellDef >ชื่อผู้จำหน่าย</th>
+        <td class="text-left p-2 align-middle" mat-cell *matCellDef="let element"> {{element.SupCode}} : {{element.SupName}}</td>
+      </ng-container>
+    
+      <ng-container matColumnDef="docstatus">
+        <th class="text-center align-middle" mat-header-cell *matHeaderCellDef >สถานะเอกสาร</th>
+        <td class="text-center p-2 align-middle" mat-cell *matCellDef="let element"> 
+          <!-- {{ SvDefault.GetThaiDocStatus(element.DocStatus)}}  -->
+          <span [ngClass]="element.DocStatus === 'Cancel'? 'text-danger':''">{{ SvDefault.GetThaiDocStatus(element.DocStatus)}}</span>
+        </td>
+      </ng-container>
+    
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns" role="button" [routerLink]='["..", "ReceiveOil",row.Guid]' ></tr>
+    </table>
+    <mat-paginator 
+      [length]="length" 
+      [pageSize]="pageSize" 
+      [pageSizeOptions]="pageSizeOptions" 
+      (page)="pageEvent = $event; OnPaginateChange($event)"
+      showFirstLastButtons>
+    </mat-paginator>
+    </div>
+  </div>

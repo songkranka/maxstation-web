@@ -1,0 +1,86 @@
+<div class="modal-header bg-header">
+  <span class="modal-title h6">
+      <i class="fa fa-search mr-3"></i>ค้นหาใบร้องขอ
+  </span>
+  <button type="button" class="close" (click)=ActiveModal.dismiss()>
+      &times;
+  </button>
+</div>
+<!-- end of modal header -->
+<div class="modal-body pb-0">
+  <div class="row">
+    <div class="col-5">
+      <div class="form-group">
+        <label for="txtSearchProduct">กลุ่มสินค้า</label>
+        <!-- (change)="changeDocType()" -->
+        <ng-select 
+        [(ngModel)]=StrDocTypeId 
+        [items]="docTypeSelect2" 
+        bindLabel="KEY" 
+        bindValue="VALUE" 
+        placeholder="เลือกกลุ่มสินค้า" 
+        style="margin-top: -6px;"
+        ></ng-select>
+      </div>
+    </div>
+    <!-- End of Col 5 -->
+    <div class="col-5">
+      <div class="form-group">
+        <label>คำค้นหา</label>
+        <input class="form-control form-control-sm" [(ngModel)]=StrKeyWord/>
+      </div>
+    </div>
+    <!-- end of col-5 -->
+    <div class="col-2">
+      <button class="btn btn-sm btn-primary h-75 w-100" (click)=SearchRequest()>ค้นหา</button>
+    </div>
+    <!-- end of col-2 -->
+  </div>
+  <!-- end of row -->
+  <table class="table table-sm table-hover mb-0">
+    <thead>
+      <tr>
+        <th>ประเภท</th>
+        <th>เลขที่เอกสาร</th>
+        <th>สาขาที่ร้องขอ</th>
+        <th>วันที่เอกสาร</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let rhItem of ArrRequestHeader" 
+      style="cursor: pointer;"
+      class="{{SelectRequestHeader === rhItem ? 'bg-inverse-success' : ''}}" 
+      (click)="SelectRequestHeader = rhItem" >
+        <td>{{GetDocTypeName(rhItem.docTypeId)}}</td>
+        <td>{{rhItem.docNo}}</td>
+        <td>{{rhItem.brnCodeTo}} : {{rhItem.brnNameTo}}</td>
+        <td>{{rhItem.docDate | date : "dd/MM/yyyy"}}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<!-- end of Modal Body -->
+<div class="modal-footer border-0">
+  <div class="row w-100">
+    <div class="col-6">
+      <button 
+      style="width: 100px;"
+      type="button" 
+      class="btn btn-primary btn-sm float-right" 
+      data-dismiss="modal" 
+      (click)=ActiveModal.close(SelectRequestHeader)>
+        ตกลง
+      </button>
+    </div>
+    <div class="col-6">
+      <button
+      style="width: 100px;" 
+      type="button" 
+      class="btn btn-danger btn-sm" 
+      data-dismiss="modal" 
+      (click)=ActiveModal.dismiss()>
+        ยกเลิก
+      </button>
+    </div>
+  </div>
+</div>

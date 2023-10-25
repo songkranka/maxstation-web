@@ -1,0 +1,873 @@
+
+<div class="card pr-7 rounded-0 shadow-none">
+  <div class="card-header bg-header-page rounded-0">บันทึกใบควบคุมการลงน้ำมัน
+    <div class="ml-auto">
+      <!-- [ngClass]=this.getBackgroundRibbon() {{status}}-->
+      <div [ngClass]="SvDefault.GetBackgroundRibbon(Header?.DocStatus)"><label
+          class="ribbon-1-text">{{HiddenButton?.status}}</label></div>
+    </div>
+  </div>
+  <!-- End Of Header -->
+  <div class="card-body">
+    <div class="row pt-3">
+      <div class="col-2 text-right">เลขที่เอกสาร :</div>
+      <div class="col-4">{{Header.DocNo}}</div>
+      <div class="col-2 text-right">วันที่เอกสาร :</div>
+      <div class="col-4">{{Header.DocDate | date : 'dd/MM/yyyy'}}</div>
+    </div>
+    <div class="row pt-3">
+      <div class="col-2 text-right">อ้างอิงใบรับน้ำมันใส :</div>
+      <div class="col-4">
+        <div class="input-group input-group-sm">
+          <input
+            [disabled]="Header.DocStatus !== 'New'"
+            class="form-control form-control-sm rounded-0"
+            [(ngModel)]="Header.ReceiveNo"
+          />
+          <div class="input-group-append">
+            <button
+              [disabled]="Header.DocStatus !== 'New'"
+              class="btn btn-primary rounded-0 shadow-none "
+              (click)="ShowModalSearchReceive()"
+            >
+              <i class="fa fa-search"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="col-2 text-right">วันที่ลงน้ำมันจริง :</div>
+      <div class="col-4">
+        <app-DateTimePicker [(DateValue)]="Header.RealDate" CurrentId="datReal">
+        </app-DateTimePicker>
+        <!-- <div class="input-group input-group-sm  ">
+          <input
+            [matDatepicker]="picker"
+            class="form-control form-control-sm rounded-0"
+            [(ngModel)]="Header.RealDate"
+          />
+          <div class="input-group-append" style="position: relative;top:-10px ">
+            <mat-datepicker-toggle [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </div>
+        </div> -->
+      </div>
+    </div>
+    <div class="row pt-3">
+      <div class="col-2 text-right">รับน้ำมันจากคลัง :</div>
+      <div class="col-4">
+        <select role="button" class="form-control form-control-sm rounded-0" [(ngModel)]="Header.WhId">
+          <option *ngFor="let item of ArrWareHouse;let i = index" [value]="ArrWareHouse[i].MapId" >
+            {{ArrWareHouse[i].MapId}} : {{ArrWareHouse[i].MapDesc}}
+          </option>
+        </select>
+      </div>
+
+      <div class="col-2 text-right">เบอร์รถ :</div>
+      <div class="col-4">
+        <input
+          class="form-control form-control-sm rounded-0 "
+          [(ngModel)]="Header.CarNo"
+        />
+      </div>
+    </div>
+    <div class="row pt-3">
+      <div class="col-2 text-right">ชื่อพนักงานขับรถ :</div>
+      <div class="col-4">
+        <!-- [(ngModel)]="Header.EmpCode"
+          (change)="GetEmployee()" -->
+        <input
+          class="form-control form-control-sm rounded-0 "
+          [(ngModel)]="Header.EmpName"
+        />
+        <!-- <div class="pt-2">{{Header.EmpName}}</div> -->
+      </div>
+      <div class="col-2 text-right">ทะเบียนรถ :</div>
+      <div class="col-4">
+        <input
+          class="form-control form-control-sm rounded-0"
+          [(ngModel)]="Header.LicensePlate"
+        />
+      </div>
+    </div>
+    <div class="row pt-3">
+      <div class="col-2 text-right">หมายเหตุ :</div>
+      <div class="col-10">
+        <input
+          class="form-control form-control-sm rounded-0"
+          [(ngModel)]="Header.Remark"
+        />
+      </div>
+    </div>
+  </div>
+
+  <div class="card-header bg-success rounded-0"><i class="fa fa-edit"></i> ผลการควบคุมการลงน้ำมัน </div>
+  <div class="card-body">
+
+      <div class="row">
+            <div class="col-12 dotted">
+              <div class="pt-3"><label for="CtrlCorrect">1. ลงน้ำมันถูกต้องตามผลิดภัณฑ์ทุกชนิดหรือไม่ :</label> </div>
+              <div class="pt-3">
+                <label role="button" class="px-3">
+                  <input
+                    role="button"
+                    type="radio"
+                    class="px-3"
+                    name="CtrlCorrect"
+                    value="Y"
+                    [(ngModel)]="Header.CtrlCorrect"
+                    (change)="ClearCtrlCorrect()"
+                  >
+                  ลงถูกต้อง
+                </label>
+                <label role="button" class="px-3">
+                  <input role="button" type="radio" class="px-3" name="CtrlCorrect" value="N" [(ngModel)]="Header.CtrlCorrect">
+                  ลงไม่ถูกต้อง
+                </label>
+              </div>
+              <div class="pt-3 row">
+                <div class="col-2 text-right">สาเหตุที่ลงน้ำมันผิด :</div>
+                <div class="col-4">
+                  <select [disabled]="Header.CtrlCorrect !== 'N'" role="button" class="form-control form-control-sm rounded-0" [(ngModel)]="Header.CtrlCorrectReasonId"   >
+                    <option value="">---กรุณาเลือกเหตุผล---</option>
+                    <option *ngFor="let item of ArrReason;let i = index" [value]="ArrReason[i].MapId">
+                      {{ArrReason[i].MapDesc}}
+                    </option>
+                  </select>
+                </div>
+                <div class="col-2 text-right">อื่นๆ :</div>
+                <div class="col-4">
+                  <input [disabled]="Header.CtrlCorrect !== 'N'" class="form-control form-control-sm rounded-0  " [(ngModel)]="Header.CtrlCorrectOther" />
+                </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+          <div class="col-12 dotted">
+
+              <div class="pt-3">
+                  <label for="CtrlOntime">2. ส่งน้ำมันตรงเวลาหรือไม่ (Delivered on commitment) :</label>
+              </div>
+              <div class="row pt-3">
+                <div class="offset-2 col-10">
+                  <label role="button">
+                    <input
+                      role="button"
+                      type="radio"
+                      class="px-3"
+                      name="CtrlOntime"
+                      value="O"
+                      (change)="Header.CtrlOntimeLate = 0"
+                      [(ngModel)]="Header.CtrlOntime"
+                    />
+                    ตรงเวลา (ให้รวมถึงกณีมาส่งเร็วกว่าเวลานัดแต่สามารถลงน้ำมันได้)
+                  </label>
+                </div>
+                <div class="offset-2 col-10">
+                  <label role="button">
+                    <input
+                      role="button"
+                      type="radio"
+                      class="px-3"
+                      name="CtrlOntime"
+                      value="B"
+                      [(ngModel)]="Header.CtrlOntime"
+                    />
+                    น้ำมันติด (กรณีมาถึงเร็ว แต่ไม่สามารถลงน้ำมันได้)
+                  </label>
+                </div>
+                <div class="offset-2 col-10">
+                  <label role="button">
+                    <input
+                      role="button"
+                      type="radio"
+                      class="px-3"
+                      name="CtrlOntime"
+                      value="L"
+                      [(ngModel)]="Header.CtrlOntime"
+                    />
+                    ช้า (เกินกว่าเวลานัดหมาย 1 นาทีขึ้นไป เช่น นัด 3:00 ส่ง 3:01 ถือว่าส่งช้า)
+                  </label>
+                </div>
+              </div>
+              <div class="pt-3 row">
+                <div class="col-6 text-right">กรณีน้ำมันติดหรือช้าให้ระบุเป็นจำนวนนาที :</div>
+                <div class="col-6">
+                  <div class="input-group input-group-sm rounded-0">
+                    <input
+                      [disabled]="Header.CtrlOntime === '' || Header.CtrlOntime === 'O' "
+                      type="number"
+                      class="form-control form-control-sm rounded-0 text-right"
+                      [(ngModel)]="Header.CtrlOntimeLate"
+                    />
+                    <div class="input-group-append">
+                      <span class="input-group-text rounded-0">นาที</span>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+          </div>
+      </div>
+
+      <div class="row">
+        <div class="col-12 dotted">
+            <div class="pt-3">
+              <label for="CtrlDoc">3. ตั๋วรับน้ำมัน (Documentation accuracy)</label>
+            </div>
+            <div class="pt-3">
+              <label role="button" class="px-3">
+                <input
+                  role="button"
+                  type="radio"
+                  class="px-3"
+                  name="CtrlDoc"
+                  value="Y"
+                  (change)="Header.CtrlDocDesc = '' "
+                  [(ngModel)]="Header.CtrlDoc"
+                />
+                ถูกต้อง
+              </label>
+              <label role="button" class="px-3">
+                <input
+                  role="button"
+                  type="radio"
+                  class="px-3"
+                  name="CtrlDoc"
+                  value="N"
+                  [(ngModel)]="Header.CtrlDoc"
+                />
+                ไม่ถูกต้อง
+              </label>
+            </div>
+            <div class="pt-3  row">
+              <div class="col-6 text-right">กรณีเอกสารไม่ถูกต้องให้ระบุรายละเอียดเพิ่มเติม เพื่อวิเคราะห์หาสาเหตุต่อไป :</div>
+              <div class="col-6">
+                <input
+                  [disabled]="Header.CtrlDoc === '' || Header.CtrlDoc === 'Y' "
+                  type="text"
+                  class="form-control form-control-sm rounded-0  "
+                  [(ngModel)]="Header.CtrlDocDesc"
+                />
+              </div>
+            </div>
+        </div>
+      </div>
+
+      <div class="row">
+          <div class="col-12 dotted">
+
+                <div class="pt-3">
+                  <label for="CtrlSeal">4. ซีล (Perfect condition)</label>
+                </div>
+
+                <div class="row pt-3">
+                  <div class="col-2 text-right">หมายเลขซีลตั้งแต่ :</div>
+                  <div class="col-2">
+                    <input
+                      type="number"
+                      class="form-control rounded-0 text-right "
+                      [(ngModel)]="Header.CtrlSealStart"
+                    >
+                  </div>
+                  <div class="col-2 text-right">ถึง :</div>
+                  <div class="col-2">
+                    <input
+                      type="number"
+                      class="form-control rounded-0 text-right "
+                      [(ngModel)]="Header.CtrlSealFinish"
+                    >
+
+                  </div>
+                </div>
+
+
+                <div class="pt-3">
+                  <label role="button" class="px-3">
+                    <input
+                      role="button"
+                      type="radio"
+                      class="px-3"
+                      name="CtrlSeal"
+                      value="Y"
+                      [(ngModel)]="Header.CtrlSeal"
+                    />
+                    ผ่าน
+                  </label>
+                  <label role="button" class="px-3">
+                    <input
+                      role="button"
+                      type="radio"
+                      class="px-3"
+                      name="CtrlSeal"
+                      value="N"
+                      [(ngModel)]="Header.CtrlSeal"
+                    />
+                    ไม่ผ่าน
+                  </label>
+                </div>
+
+          </div>
+      </div>
+
+  </div>
+
+  <div class="card-header bg-gray rounded-0"><i class="fa fa-edit"></i> รายละเอียดแต่ละช่องน้ำมัน </div>
+  <div class="card-body">
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+      <li
+        role="button"
+        class="nav-item"
+        *ngFor="let item of ArrDetail;let i = index"
+        (click)="NumShowTabIndex = ArrDetail[i].SeqNo"
+      >
+        <!-- href="#tab{{ArrDetail[i].SeqNo}}" -->
+        <!-- data-toggle="tab" -->
+        <a
+          class="nav-link rounded-0  "
+          [ngClass]="{'active' : NumShowTabIndex === ArrDetail[i].SeqNo}"
+          style="vertical-align: middle;"
+        >
+            <span>ช่องที่ {{ArrDetail[i].SeqNo}}</span>
+        </a>
+      </li>
+    </ul>
+    <div class="tab-content" id="TabContent">
+      <!--  id="tab{{ArrDetail[i].SeqNo}}" -->
+      <!-- class="tab-pane" -->
+      <div
+        *ngFor="let item of ArrDetail;let i = index"
+      >
+        <ng-container *ngIf="ArrDetail[i].SeqNo === NumShowTabIndex">
+          <div class="row pt-3">
+            <div class="col-2 text-right">ผลิตภัณฑ์ :</div>
+            <div class="col-4">
+              <select
+                class="form-control form-control-sm"
+                [(ngModel)]="ArrDetail[i].PdId"
+                role="button"
+              >
+                <option value="" >---- กรุณาเลือกผลิตภัณฑ์ ----</option>
+                <option
+                  *ngFor="let item2 of ArrProduct;let j = index"
+                  [value]="ArrProduct[j].PdId"
+                >
+                  {{ArrProduct[j].PdId}} : {{ArrProduct[j].PdName}}
+                </option>
+              </select>
+            </div>
+          </div>
+          <ng-container *ngIf="ArrDetail[i].PdId !== ''">
+            <div class="pt-3 "><label for="CtrlFull">5.ส่งน้ำมันครบจำนวนหรือไม่ (Delivered in full)</label> </div>
+            <div class="pt-3">
+              <label role="button" class="px-3">
+                <input
+                  role="button"
+                  type="radio"
+                  class="px-3"
+                  name="CtrlFull"
+                  value="F"
+                  [(ngModel)]="ArrDetail[i].CtrlFull"
+                  (change)="ClearCtrlFull(ArrDetail[i])"
+                >
+                พอดีแป้น
+              </label>
+              <label role="button" class="px-3">
+                <input
+                  role="button"
+                  type="radio"
+                  class="px-3"
+                  name="CtrlFull"
+                  value="L"
+                  [(ngModel)]="ArrDetail[i].CtrlFull"
+                >
+                ขาดจากแป้น
+              </label>
+              <label role="button" class="px-3">
+                <input
+                  role="button"
+                  type="radio"
+                  class="px-3"
+                  name="CtrlFull"
+                  value="O"
+                  [(ngModel)]="ArrDetail[i].CtrlFull"
+                >
+                เกินจากแป้น
+              </label>
+            </div>
+            <div class="row pt-3">
+              <div class="col-2 text-right">จำนวนขาดหรือเกิน :</div>
+              <div class="col-5">
+                <div class="input-group input-group-sm rounded-0">
+                  <input
+                    [disabled]="ArrDetail[i].CtrlFull === 'F' || ArrDetail[i].CtrlFull === ''"
+                    type="number"
+                    [(ngModel)]="ArrDetail[i].CtrlFullMm"
+                    class="form-control rounded-0 text-right "
+                  >
+                  <div class="input-group-append">
+                    <span class="input-group-text rounded-0">มิลลิเมตร</span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-5">
+                <div class="input-group input-group-sm rounded-0">
+                  <input
+                    [disabled]="ArrDetail[i].CtrlFull === 'F' || ArrDetail[i].CtrlFull === ''"
+                    type="number"
+                    [(ngModel)]="ArrDetail[i].CtrlFullLt"
+                    class="form-control rounded-0  text-right"
+                  >
+                  <div class="input-group-append">
+                    <span class="input-group-text rounded-0">ลิตร</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row pt-3">
+              <div class="col-10 offset-2">
+                <i class="text-gray">หมายเหตุ : กรณีขาดหรือเกินจากแป้น ให้ระบุเป็นจำนวนลิตร</i>
+              </div>
+              <div class="col-10 offset-2">
+                <i class="text-gray">กรณีเกินให้ระบุเป็นตัวเลข + เท่านั้น เช่น เกิน10 ลิตร ให้ระบุ +10</i>
+              </div>
+              <div class="col-10 offset-2">
+                <i class="text-gray">กรณีขาดให้ระบุเป็นตัวเลข - เท่านั้น เช่นขาด 29 ลิตร ให้ระบุ -29</i>
+              </div>
+            </div>
+            <div class="row pt-3">
+              <div class="col-6 text-right">กรณีขาดหรือเกิน 50 ลิตรขึ้นไป ให้ติดต่อคลังต้นทาง (ระบุชื่อเจ้าหน้าที่คลังที่ติดต่อได้):</div>
+              <div class="col-6">
+                <input
+                  [disabled]="ArrDetail[i].CtrlFull === 'F' || ArrDetail[i].CtrlFull === ''"
+                  class="form-control form-control-sm rounded-0  "
+                  [(ngModel)]="ArrDetail[i].CtrlFullContact"
+                >
+              </div>
+            </div>
+            <div class="pt-3">
+              <label for="CtrlApi">6. ค่า API (Perfect condition)</label>
+            </div>
+            <div class="row pt-3">
+              <div class="col-2 text-right">API ต้นทาง :</div>
+              <div class="col-2">
+                <input
+                  type="number"
+                  class="form-control rounded-0 text-right "
+                  [(ngModel)]="ArrDetail[i].CtrlApiStart"
+                >
+              </div>
+              <div class="col-2 text-right">API ปลายทาง :</div>
+              <div class="col-2">
+                <input
+                  type="number"
+                  class="form-control rounded-0 text-right "
+                  [(ngModel)]="ArrDetail[i].CtrlApiFinish"
+                >
+              </div>
+            </div>
+            <div class="row pt-3">
+              <div class="col-10 offset-2">
+                <i class="text-gray">หมายเหตุ : ค่า API +/- ไม่เกิน 1 คือ ผ่าน`</i>
+              </div>
+            </div>
+            <div class="pt-3">
+              <label role="button" class="px-3">
+                <input
+                  role="button"
+                  type="radio"
+                  class="px-3"
+                  name="CtrlApi"
+                  value="Y"
+                  [(ngModel)]="ArrDetail[i].CtrlApi"
+                  (change)=" ArrDetail[i].CtrlApiDesc = ''  "
+                />
+                ผ่าน
+              </label>
+              <label role="button" class="px-3">
+                <input
+                  role="button"
+                  type="radio"
+                  class="px-3"
+                  name="CtrlApi"
+                  value="N"
+                  [(ngModel)]="ArrDetail[i].CtrlApi"
+                />
+                ไม่ผ่าน
+              </label>
+            </div>
+            <div class="pt-3 row">
+              <div class="col-6 text-right">กรณีค่า API ไม่ผ่าน ได้ดำเนินการอย่างไรต่อ :</div>
+              <div class="col-6">
+                <input
+                  class="form-control form-control-sm rounded-0"
+                  [disabled]=" ArrDetail[i].CtrlApi === 'Y' || ArrDetail[i].CtrlApi === '' "
+                  [(ngModel)]="ArrDetail[i].CtrlApiDesc"
+                />
+              </div>
+            </div>
+            <div class="pt-3">
+              <label for="CtrlEthanol">7. เอทานอล เฉพาะกลุ่มน้ำมันเบนซิน (Perfect condition)</label>
+            </div>
+            <div class="row pt-3">
+              <div class="col-2 text-right">ปริมาณเอทานอล :</div>
+              <div class="col-2">
+                <div class="input-group input-group-sm rounded-0">
+                  <input
+                    type="number"
+                    class="form-control rounded-0 text-right "
+                    [(ngModel)]="ArrDetail[i].CtrlEthanolQty"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="pt-3">
+              <label role="button" class="px-3">
+                <input
+                  role="button"
+                  type="radio"
+                  class="px-3"
+                  name="CtrlEthanol"
+                  value="Y"
+                  [(ngModel)]="ArrDetail[i].CtrlEthanol"
+                />
+                ผ่าน
+              </label>
+              <label role="button" class="px-3">
+                <input
+                  role="button"
+                  type="radio"
+                  class="px-3"
+                  name="CtrlEthanol"
+                  value="N"
+                  [(ngModel)]="ArrDetail[i].CtrlEthanol"
+                />
+                ไม่ผ่าน
+              </label>
+            </div>
+          </ng-container>
+          <ng-container *ngIf="ArrDetail[i].PdId === ''">
+            <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+          </ng-container>
+        </ng-container>
+      </div>
+    </div>
+
+<!-- ------------------------------- -->
+
+      <!-- <div class="row">
+        <div class="col-12">
+
+                <div class="row">
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        <li  class="nav-item">
+                            <a class="nav-link active" data-toggle="tab" href="#tab1"  style="vertical-align: middle;">
+                                <span>ช่องที่ 1</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" data-toggle="tab" href="#tab2" style="vertical-align: middle;">
+                              <span>ช่องที่ 2</span>
+                          </a>
+                        </li>
+
+                        <li class="nav-item">
+                          <a class="nav-link" data-toggle="tab" href="#tab2" style="vertical-align: middle;">
+                              <span>ช่องที่ 3</span>
+                          </a>
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" data-toggle="tab" href="#tab2" style="vertical-align: middle;">
+                              <span>ช่องที่ 4</span>
+                          </a>
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" data-toggle="tab" href="#tab2" style="vertical-align: middle;">
+                              <span>ช่องที่ 5</span>
+                          </a>
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" data-toggle="tab" href="#tab2" style="vertical-align: middle;">
+                              <span>ช่องที่ 6</span>
+                          </a>
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" data-toggle="tab" href="#tab2" style="vertical-align: middle;">
+                              <span>ช่องที่ 7</span>
+                          </a>
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" data-toggle="tab" href="#tab2" style="vertical-align: middle;">
+                              <span>ช่องที่ 8</span>
+                          </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="tab-content" id="TabContent">
+                    <div  class="tab-pane active" id="tab1">
+
+
+                      <div class="row pt-3">
+                        <div class="col-2 text-right">ผลิตภัณฑ์ :</div>
+                        <div class="col-4">
+                          <div class="input-group input-group-sm">
+                            <input   class="form-control form-control-sm rounded-0" />
+                            <div class="input-group-append">
+                              <button  class="btn btn-primary rounded-0 shadow-none " >
+                                <i class="fa fa-search"></i>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                        <div class="row">
+                          <div class="col-12 dotted">
+                              <div class="pt-3"><label for="CtrlFull">5.ส่งน้ำมันครบจำนวนหรือไม่ (Delivered in full)</label> </div>
+                              <div class="pt-3">
+                                <label role="button" class="px-3">
+                                  <input
+                                    role="button"
+                                    type="radio"
+                                    class="px-3"
+                                    name="CtrlFull"
+                                    value="F"
+                                    [(ngModel)]="Header.CtrlFull"
+                                    (change)="ClearCtrlFull()"
+                                  >
+                                  พอดีแป้น
+                                </label>
+                                <label role="button" class="px-3">
+                                  <input
+                                    role="button"
+                                    type="radio"
+                                    class="px-3"
+                                    name="CtrlFull"
+                                    value="L"
+                                    [(ngModel)]="Header.CtrlFull"
+                                  >
+                                  ขาดจากแป้น
+                                </label>
+                                <label role="button" class="px-3">
+                                  <input
+                                    role="button"
+                                    type="radio"
+                                    class="px-3"
+                                    name="CtrlFull"
+                                    value="O"
+                                    [(ngModel)]="Header.CtrlFull"
+                                  >
+                                  เกินจากแป้น
+                                </label>
+                              </div>
+
+                              <div class="row pt-3">
+                                <div class="col-2 text-right">จำนวนขาดหรือเกิน :</div>
+                                <div class="col-5">
+                                  <div class="input-group input-group-sm rounded-0">
+                                    <input
+                                      [disabled]="Header.CtrlFull === 'F' || Header.CtrlFull === ''"
+                                      type="number"
+                                      [(ngModel)]="Header.CtrlFullMm"
+                                      class="form-control rounded-0 text-right "
+                                    >
+                                    <div class="input-group-append">
+                                      <span class="input-group-text rounded-0">มิลลิเมตร</span>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="col-5">
+                                  <div class="input-group input-group-sm rounded-0">
+                                    <input
+                                      [disabled]="Header.CtrlFull === 'F' || Header.CtrlFull === ''"
+                                      type="number"
+                                      [(ngModel)]="Header.CtrlFullLt"
+                                      class="form-control rounded-0  text-right"
+                                    >
+                                    <div class="input-group-append">
+                                      <span class="input-group-text rounded-0">ลิตร</span>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="row pt-3">
+                                <div class="col-10 offset-2">
+                                  <i class="text-gray">หมายเหตุ : กรณีขาดหรือเกินจากแป้น ให้ระบุเป็นจำนวนลิตร</i>
+                                </div>
+                                <div class="col-10 offset-2">
+                                  <i class="text-gray">กรณีเกินให้ระบุเป็นตัวเลข + เท่านั้น เช่น เกิน10 ลิตร ให้ระบุ +10</i>
+                                </div>
+
+                                <div class="col-10 offset-2">
+                                  <i class="text-gray">กรณีขาดให้ระบุเป็นตัวเลข - เท่านั้น เช่นขาด 29 ลิตร ให้ระบุ -29</i>
+                                </div>
+                              </div>
+                              <div class="row pt-3">
+                                <div class="col-6 text-right">กรณีขาดหรือเกิน 50 ลิตรขึ้นไป ให้ติดต่อคลังต้นทาง (ระบุชื่อเจ้าหน้าที่คลังที่ติดต่อได้):</div>
+                                <div class="col-6">
+                                  <input
+                                    [disabled]="Header.CtrlFull === 'F' || Header.CtrlFull === ''"
+                                    class="form-control form-control-sm rounded-0  "
+                                    [(ngModel)]="Header.CtrlFullContact"
+                                  >
+                                </div>
+                              </div>
+
+                          </div>
+                      </div>
+
+                        <div class="row">
+                          <div class="col-12 dotted ">
+                              <div class="pt-3">
+                                <label for="CtrlApi">6. ค่า API (Perfect condition)</label>
+                              </div>
+
+                              <div class="row pt-3">
+                                <div class="col-2 text-right">API ต้นทาง :</div>
+                                <div class="col-2">
+                                  <div class="input-group input-group-sm rounded-0">
+                                    <input type="number" class="form-control rounded-0 text-right ">
+
+                                  </div>
+                                </div>
+                                <div class="col-2 text-right">API ปลายทาง :</div>
+                                <div class="col-2">
+                                  <div class="input-group input-group-sm rounded-0">
+                                    <input type="number" class="form-control rounded-0  text-right">
+
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="row pt-3">
+                                <div class="col-10 offset-2">
+                                  <i class="text-gray">หมายเหตุ : ค่า API +/- ไม่เกิน 1 คือ ผ่าน`</i>
+                                </div>
+                              </div>
+
+                              <div class="pt-3">
+                                <label role="button" class="px-3">
+                                  <input
+                                    role="button"
+                                    type="radio"
+                                    class="px-3"
+                                    name="CtrlApi"
+                                    value="Y"
+                                    [(ngModel)]="Header.CtrlApi"
+                                    (change)=" Header.CtrlApiDesc = ''  "
+                                  />
+                                  ผ่าน
+                                </label>
+                                <label role="button" class="px-3">
+                                  <input
+                                    role="button"
+                                    type="radio"
+                                    class="px-3"
+                                    name="CtrlApi"
+                                    value="N"
+                                    [(ngModel)]="Header.CtrlApi"
+                                  />
+                                  ไม่ผ่าน
+                                </label>
+                              </div>
+                              <div class="pt-3 row">
+                                <div class="col-6 text-right">กรณีค่า API ไม่ผ่าน ได้ดำเนินการอย่างไรต่อ :</div>
+                                <div class="col-6">
+                                  <input
+                                    class="form-control form-control-sm rounded-0"
+                                    [disabled]=" Header.CtrlApi === 'Y' || Header.CtrlApi === '' "
+                                    [(ngModel)]="Header.CtrlApiDesc"
+                                  />
+                                </div>
+                              </div>
+
+                          </div>
+                      </div>
+
+                      <div class="row">
+                          <div class="col-12 dotted">
+
+                                <div class="pt-3">
+                                  <label for="CtrlEthanol">7. เอทานอล เฉพาะกลุ่มน้ำมันเบนซิน (Perfect condition)</label>
+                                </div>
+                                <div class="row pt-3">
+                                  <div class="col-2 text-right">ปริมาณเอทานอล :</div>
+                                  <div class="col-2">
+                                    <div class="input-group input-group-sm rounded-0">
+                                      <input type="number" class="form-control rounded-0 text-right ">
+
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div class="pt-3">
+                                  <label role="button" class="px-3">
+                                    <input
+                                      role="button"
+                                      type="radio"
+                                      class="px-3"
+                                      name="CtrlEthanol"
+                                      value="Y"
+                                      [(ngModel)]="Header.CtrlEthanol"
+                                    />
+                                    ผ่าน
+                                  </label>
+                                  <label role="button" class="px-3">
+                                    <input
+                                      role="button"
+                                      type="radio"
+                                      class="px-3"
+                                      name="CtrlEthanol"
+                                      value="N"
+                                      [(ngModel)]="Header.CtrlEthanol"
+                                    />
+                                    ไม่ผ่าน
+                                  </label>
+                                </div>
+
+                          </div>
+                      </div>
+
+
+                    </div>
+                    <div  class="tab-pane" id="tab2">
+                      <div>
+                        tab 2
+                      </div>
+                  </div>
+                </div>
+
+
+        </div>
+      </div> -->
+
+
+
+  </div>
+
+</div>
+
+
+
+
+<div class="right-bar mt-2">
+  <button class="btn circle-button circle-buttonSave" (click)="SaveData()" [hidden]="HiddenButton.btnSave"
+    data-tooltip="Save" data-tooltip-location="left">
+    <i class="far fa-save"></i>
+  </button>
+  <!-- <button class="btn circle-button circle-buttonPrint" [hidden]="HiddenButton.btnPrint" data-tooltip="Print"
+    data-tooltip-location="left">
+    <i class="fas fa-print"></i>
+  </button> -->
+  <button class="btn circle-button circle-buttonCancel" (click)="SetDocStatus('Cancel')"
+    [hidden]="HiddenButton.btnCancel" data-tooltip="Cancel" data-tooltip-location="left">
+    <i class="fas fa-times"></i>
+  </button>
+  <button class="btn circle-button circle-buttonClear" (click)="NewData()" [hidden]="HiddenButton.btnClear"
+    data-tooltip="Clear" data-tooltip-location="left">
+    <i class="fas fa-eraser"></i>
+  </button>
+  <button class="btn circle-button circle-buttonBack" routerLink="/DeliveryControlList" [hidden]="HiddenButton.btnBack"
+    data-tooltip="Back" data-tooltip-location="left">
+    <i class="fas fa-undo"></i>
+  </button>
+</div>

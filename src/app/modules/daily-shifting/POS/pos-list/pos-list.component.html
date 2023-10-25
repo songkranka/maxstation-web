@@ -1,0 +1,487 @@
+<div *ngIf="isUserAuthenticated()" class="card">
+    <div class="card-header bg-header-page">ดึงข้อมูลจากระบบ POS</div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-4 topic" >
+              <!-- [attr.disabled] = "disableDocDate" -->
+                <mat-form-field appearance="fill"  >
+                    <mat-label>วันที่</mat-label>
+                    <input matInput [matDatepicker]="picker" [formControl]="date" [disabled]="disableDocDate">
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+            </div>
+            <div class="col-6 topic">
+                <mat-label>ประเภทข้อมูล</mat-label>
+                <section class="checkbox-section">
+                    <mat-checkbox class="checkbox-margin" [(ngModel)]="cash">ขายสด</mat-checkbox>
+                    <mat-checkbox class="checkbox-margin" [(ngModel)]="credit">ขายเชื่อ</mat-checkbox>
+                    <mat-checkbox class="checkbox-margin" [(ngModel)]="receive">รับชำระเงิน</mat-checkbox>
+                    <mat-checkbox class="checkbox-margin" [(ngModel)]="withdraw">เบิกใช้</mat-checkbox>
+                </section>
+            </div>
+            <div class="col-2">
+                <button class="btn btn-primary h-75 w-100" (click)="findByValue()">
+                    ประมวลผล
+                </button>
+            </div>
+        </div>
+
+
+        <mat-tab-group>
+            <mat-tab label="ขายสด">
+                <div class="table-container mat-elevation-z8">
+                    <table mat-table [dataSource]="cashDataSource" matSort
+                        class="table table-border table-hover mb-0 mt-3 shadow">
+                        <ng-container matColumnDef="no">
+                            <th class="text-center" mat-header-cell *matHeaderCellDef>No</th>
+                            <td class="text-center p-2" mat-cell *matCellDef="let element; let i = index">{{no + (i
+                                + 1)}}
+                            </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="billNo">
+                            <th class="text-center" mat-header-cell *matHeaderCellDef>เลขที่ใบเสร็จ</th>
+                            <td class="text-left p-2" mat-cell *matCellDef="let element"> {{element.billNo}} </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="selQty">
+                            <th class="text-center" mat-header-cell *matHeaderCellDef>ปริมาณ</th>
+                            <td class="text-right p-2" mat-cell *matCellDef="let element"> {{element.selQty|
+                                number:
+                                '1.2-2'}} </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="sumitemAmount">
+                            <th class="text-center" mat-header-cell *matHeaderCellDef>มูลค่าสินค้า</th>
+                            <td class="text-right p-2" mat-cell *matCellDef="let element"> {{element.sumitemAmount |
+                                number:
+                                '1.2-2'}} </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="totalDiscAmt">
+                            <th class="text-center" mat-header-cell *matHeaderCellDef>ส่วนลด</th>
+                            <td class="text-right p-2" mat-cell *matCellDef="let element"> {{element.totalDiscAmt |
+                                number:
+                                '1.2-2'}} </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="totalTaxAmt">
+                            <th class="text-center" mat-header-cell *matHeaderCellDef>ภาษี</th>
+                            <td class="text-right p-2" mat-cell *matCellDef="let element"> {{element.totalTaxAmt |
+                                number:
+                                '1.2-2'}} </td>
+                        </ng-container> -->
+
+                        <ng-container matColumnDef="totalPaidAmt">
+                            <th class="text-center" mat-header-cell *matHeaderCellDef>จำนวนเงิน</th>
+                            <td class="text-right p-2" mat-cell *matCellDef="let element"> {{element.totalPaidAmt |
+                                number:
+                                '1.2-2'}} </td>
+                        </ng-container>
+                        <tr mat-header-row *matHeaderRowDef="displayedCashColumns; sticky: true"></tr>
+                        <tr mat-row *matRowDef="let row; columns: displayedCashColumns" role="button"></tr>
+                    </table>
+
+                    <div *ngIf="isCashLoading" class="spinner-container">
+                        <mat-progress-spinner color="primary" mode="indeterminate">
+                        </mat-progress-spinner>
+                    </div>
+                </div>
+                <section>
+                    <div class="example-button-row">
+                        <button mat-raised-button color="primary" (click)="saveCash()"
+                            [disabled]="isCashAdded === true">บันทึก</button>
+                        <!-- <button mat-raised-button color="accent" (click)="clearCashTableData()">ล้างข้อมูล</button> -->
+                    </div>
+                </section>
+
+            </mat-tab>
+
+
+            <mat-tab label="ขายเชื่อ">
+                <form #creditForm="ngForm" (ngSubmit)="creditForm.form.valid" novalidate>
+                    <div class="table-container mat-elevation-z8">
+                        <table mat-table [dataSource]="creditDataSource" matSort
+                            class="table table-border table-hover mb-0 mt-3 shadow">
+                            <ng-container matColumnDef="no">
+                                <th class="text-center" mat-header-cell *matHeaderCellDef>No</th>
+                                <td class="text-center p-2" mat-cell *matCellDef="let element; let i = index">{{no + (i
+                                    + 1)}}
+                                </td>
+                            </ng-container>
+
+                            <!-- customer -->
+                            <ng-container matColumnDef="customer">
+                                <th class="text-center" mat-header-cell *matHeaderCellDef> ลูกค้า </th>
+                                <td class="text-center p-2" mat-cell *matCellDef="let element; let rowIdx = index;"
+                                    (click)="openCustomerDialog(element)">
+                                    <!-- <mat-form-field [style.width.px]=130>
+                                    <input type="text" matInput [(ngModel)]="element.customer" />
+                                </mat-form-field> -->
+                                    <mat-form-field>
+                                        <input type="text" matInput #cusCode="ngModel" name="txtCustCode{{rowIdx}}"
+                                            [readonly]=true [(ngModel)]="element.custCode"
+                                            required />
+                                        <mat-error *ngIf="cusCode?.invalid">
+                                            <div *ngIf="cusCode.errors.required">กรุณากรอกลูกค้า</div>
+                                        </mat-error>
+                                    </mat-form-field>
+                                </td>
+                            </ng-container>
+
+                            <!-- licensePlate -->
+                            <ng-container matColumnDef="licensePlate">
+                                <th class="text-center" mat-header-cell *matHeaderCellDef> ทะเบียนรถ </th>
+                                <td class="text-center p-2" mat-cell *matCellDef="let element; let rowIdx = index;"
+                                    (click)="openCustomerCarDialog(element)">
+                                    <mat-form-field>
+                                        <input type="text" matInput #licenseplate="ngModel"
+                                            name="txtLicensePlate{{rowIdx}}"
+                                            [(ngModel)]="element.licensePlate" required [readonly]="element.isDisableLicensePlate"/>
+                                        <mat-error *ngIf="licenseplate?.invalid">
+                                            <div *ngIf="licenseplate.errors.required">กรุณากรอกทะเบียนรถ</div>
+                                        </mat-error>
+                                    </mat-form-field>
+                                </td>
+                            </ng-container>
+
+                            <!-- mile -->
+                            <ng-container matColumnDef="mile">
+                                <th class="text-center" mat-header-cell *matHeaderCellDef> เลขไมล์ </th>
+                                <td class="text-center p-2" mat-cell *matCellDef="let element; let rowIdx = index;">
+                                    <mat-form-field>
+                                        <input type="number" matInput #mile="ngModel" name="txtMile{{rowIdx}}"
+                                            [(ngModel)]="element.mile" required />
+                                        <mat-error *ngIf="mile?.invalid">
+                                            <div *ngIf="mile.errors.required">กรุณากรอกเลขไมล์</div>
+                                        </mat-error>
+                                    </mat-form-field>
+                                </td>
+                            </ng-container>
+
+                            <!-- PO -->
+                            <ng-container matColumnDef="po">
+                                <th class="text-center" mat-header-cell *matHeaderCellDef> เลขที่ PO </th>
+                                <td class="text-center p-2" mat-cell *matCellDef="let element; let rowIdx = index;">
+                                    <mat-form-field>
+                                        <input matInput #po="ngModel" name="txtPo{{rowIdx}}"
+                                            [(ngModel)]="element.po" required>
+                                        <mat-error *ngIf="po?.invalid">
+                                            <div *ngIf="po.errors.required">กรุณากรอกเลขที่ PO</div>
+                                        </mat-error>
+                                    </mat-form-field>
+                                </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="billNo">
+                                <th class="text-center text-nowrap" mat-header-cell *matHeaderCellDef>เลขที่บิลที่ขาย
+                                </th>
+                                <td class="text-left p-2" mat-cell *matCellDef="let element"> {{element.billNo}} </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="itemCode">
+                                <th class="text-center text-nowrap" mat-header-cell *matHeaderCellDef>รหัสสินค้า</th>
+                                <td class="text-center p-2" mat-cell *matCellDef="let element"> {{element.itemCode}}
+                                </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="itemName">
+                                <th class="text-center text-nowrap" mat-header-cell *matHeaderCellDef>ชื่อสินค้า</th>
+                                <td class="text-left p-2" mat-cell *matCellDef="let element"> {{element.itemName}}
+                                </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="selQty">
+                                <th class="text-center" mat-header-cell *matHeaderCellDef>ปริมาณ</th>
+                                <td class="text-right p-2" mat-cell *matCellDef="let element"> {{element.selQty|
+                                    number:
+                                    '1.2-2'}} </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="sumitemAmount">
+                                <th class="text-center text-nowrap" mat-header-cell *matHeaderCellDef>มูลค่าสินค้า</th>
+                                <td class="text-right p-2" mat-cell *matCellDef="let element"> {{element.sumitemAmount |
+                                    number:
+                                    '1.2-2'}} </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="totalDiscAmt">
+                                <th class="text-center" mat-header-cell *matHeaderCellDef>ส่วนลด</th>
+                                <td class="text-right p-2" mat-cell *matCellDef="let element"> {{element.totalDiscAmt |
+                                    number:
+                                    '1.2-2'}} </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="totalTaxAmt">
+                                <th class="text-center" mat-header-cell *matHeaderCellDef>ภาษี</th>
+                                <td class="text-right p-2" mat-cell *matCellDef="let element"> {{element.totalTaxAmt |
+                                    number:
+                                    '1.2-2'}} </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="totalPaidAmt">
+                                <th class="text-center text-nowrap" mat-header-cell *matHeaderCellDef>จำนวนเงิน</th>
+                                <td class="text-right p-2" mat-cell *matCellDef="let element"> {{element.totalPaidAmt |
+                                    number:
+                                    '1.2-2'}} </td>
+                            </ng-container>
+                            <tr mat-header-row *matHeaderRowDef="displayedCreditColumns; sticky: true"></tr>
+                            <tr mat-row *matRowDef="let row; columns: displayedCreditColumns;"></tr>
+                        </table>
+
+                        <div *ngIf="isCreditLoading" class="spinner-container">
+                            <mat-progress-spinner color="primary" mode="indeterminate">
+                            </mat-progress-spinner>
+                        </div>
+                    </div>
+                    <section>
+                        <div class="example-button-row">
+                            <button mat-raised-button color="primary" [disabled]="creditForm.invalid"
+                                (click)="saveCredit()" [disabled]="isCreditAdded === true">บันทึก</button>
+                            <button mat-raised-button color="accent" (click)="clearCreditTableData()"
+                                [disabled]="isCreditClear === true">ล้างข้อมูล</button>
+                        </div>
+                    </section>
+                </form>
+            </mat-tab>
+
+            <mat-tab label="รับชำระเงิน">
+                <form #receiveForm="ngForm" (ngSubmit)="receiveForm.form.valid" novalidate>
+                    <div class="table-container mat-elevation-z8">
+                        <table mat-table [dataSource]="receiveDataSource" matSort
+                            class="table table-border table-hover mb-0 mt-3 shadow">
+                            <ng-container matColumnDef="no">
+                                <th class="text-center" mat-header-cell *matHeaderCellDef>No</th>
+                                <td class="text-center p-2" mat-cell *matCellDef="let element; let i = index">{{no + (i
+                                    + 1)}}
+                                </td>
+                            </ng-container>
+                            
+                            <!-- customer -->
+                            <ng-container matColumnDef="customer">
+                                <th class="text-center" mat-header-cell *matHeaderCellDef> ลูกค้า </th>
+                                <!-- <td class="text-center p-2" mat-cell *matCellDef="let element; let rowIdx = index;">
+                                    <mat-form-field>
+                                        <input type="text" matInput #custId="ngModel" name="txtCustId{{rowIdx}}"
+                                            [readonly]=true [(ngModel)]="element.custCode"
+                                            required  [disabled]="true"/>
+                                        <mat-error *ngIf="custId?.invalid">
+                                            <div *ngIf="custId.errors.required">กรุณากรอกลูกค้า</div>
+                                        </mat-error>
+                                    </mat-form-field>
+                                </td> -->
+                                <td class="text-left p-2" mat-cell *matCellDef="let element"> {{element.custCode}} </td>
+                            </ng-container>
+
+                            <!-- billNo -->
+                            <ng-container matColumnDef="billNo">
+                                <th class="text-center" mat-header-cell *matHeaderCellDef>เลขที่ใบเสร็จ</th>
+                                <td class="text-left p-2" mat-cell *matCellDef="let element"> {{element.journalId}} </td>
+                            </ng-container>
+
+                            <!-- itemCode -->
+                            <ng-container matColumnDef="itemCode">
+                                <th class="text-center text-nowrap" mat-header-cell *matHeaderCellDef>รหัสสินค้า</th>
+                                <td class="text-center p-2" mat-cell *matCellDef="let element"> {{element.pluNumber}}
+                                </td>
+                            </ng-container>
+
+                            <!-- itemName -->
+                            <ng-container matColumnDef="itemName">
+                                <th class="text-center text-nowrap" mat-header-cell *matHeaderCellDef>ชื่อสินค้า</th>
+                                <td class="text-left p-2" mat-cell *matCellDef="let element"> {{element.itemName}}
+                                </td>
+                            </ng-container>
+
+                            <!-- itemName -->
+                            <ng-container matColumnDef="subAmt">
+                                <th class="text-center text-nowrap" mat-header-cell *matHeaderCellDef>จำนวนเงิน</th>
+                                <td class="text-right p-2" mat-cell *matCellDef="let element"> {{element.subAmt |
+                                    number:
+                                    '1.2-2'}} 
+                                </td>
+                            </ng-container>
+                            <tr mat-header-row *matHeaderRowDef="displayedReceiveColumns; sticky: true"></tr>
+                            <tr mat-row *matRowDef="let row; columns: displayedReceiveColumns;"></tr>
+                        </table>
+                        <div *ngIf="isReceiveLoading" class="spinner-container">
+                            <mat-progress-spinner color="primary" mode="indeterminate">
+                            </mat-progress-spinner>
+                        </div>
+                    </div>
+                    <section>
+                        <div class="example-button-row">
+                            <button mat-raised-button color="primary" [disabled]="receiveForm.invalid"
+                                (click)="saveReceive()" [disabled]="isReceiveAdded === true">บันทึก</button>
+                                <!-- <label class="text-danger pl-3">** กรณีรวมจำนวนติดลบ กรุณาแก้ไขรวมจำนวน ให้ มากกว่า 0</label> -->
+                        </div>
+                    </section>
+                </form>
+            </mat-tab>
+
+            <mat-tab label="เบิกใช้">
+                <form #withdrawForm="ngForm" (ngSubmit)="withdrawForm.form.valid" novalidate>
+                    <div class="table-container mat-elevation-z8">
+                        <table mat-table [dataSource]="withdrawDataSource" matSort
+                            class="table table-border table-hover mb-0 mt-3 shadow">
+                            <ng-container matColumnDef="no">
+                                <th class="text-center" mat-header-cell *matHeaderCellDef>No</th>
+                                <td class="text-center p-2" mat-cell *matCellDef="let element; let i = index">{{no + (i
+                                    + 1)}}
+                                </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="empcode">
+                                <th class="text-center" mat-header-cell *matHeaderCellDef> ผู้เบิก </th>
+                                <td class="text-center"  mat-cell *matCellDef="let element; let rowIdx = index;"
+                                    (click)="openEmployeeDialog(element)">
+                                    <mat-form-field>
+                                        <input type="text" matInput #empcode name="txtEmpCode{{rowIdx}}" [readonly]=true
+                                            [(ngModel)]="element.empCode" required>
+                                        <mat-error *ngIf="empcode?.invalid">
+                                            <div *ngIf="empcode.errors.required">กรุณากรอกผู้เบิก</div>
+                                        </mat-error>
+                                    </mat-form-field>
+                                </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="branch">
+                                <th class="text-center" mat-header-cell *matHeaderCellDef> ส่วนงาน </th>
+                                <td class="text-center p-2" mat-cell *matCellDef="let element let rowIdx = index;"
+                                    (click)="openBranchDialog(element)">
+                                    <mat-form-field>
+                                        <input type="text" matInput #brncode name="txtBrncode{{rowIdx}}" [readonly]=true
+                                            [(ngModel)]="element.userBrnCode" required />
+                                        <mat-error *ngIf="brncode?.invalid">
+                                            <div *ngIf="brncode.errors.required">กรุณากรอกส่วนงาน</div>
+                                        </mat-error>
+                                    </mat-form-field>
+                                </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="licensePlate">
+                                <th class="text-center" mat-header-cell *matHeaderCellDef> ทะเบียนรถ </th>
+                                <!-- <td class="text-center p-2" mat-cell *matCellDef="let element; let rowIdx = index;">
+                                    (click)="openLicensePlateDialog(element)">
+                                    <mat-form-field>
+                                        <input type="text" matInput #licenseplate name="txtLicenseplate{{rowIdx}}" [readonly]=true
+                                            placeholder="ทะเบียนรถ" [(ngModel)]="element.licensePlate" required />
+                                        <mat-error *ngIf="licenseplate?.invalid">
+                                            <div *ngIf="licenseplate.errors.required">กรุณากรอกทะเบียนรถ</div>
+                                        </mat-error>
+                                    </mat-form-field>
+                                </td> -->
+
+                                <td class="text-center p-2" mat-cell *matCellDef="let element; let rowIdx = index;"
+                                    (click)="openOilroductDialog(element)">
+                                    <mat-form-field>
+                                        <input type="text" matInput #licenseplate="ngModel"
+                                            name="txtLicensePlate{{rowIdx}}" [(ngModel)]="element.licensePlate" />
+                                        <!-- <mat-error *ngIf="licenseplate?.invalid">
+                                            <div *ngIf="licenseplate.errors.required">กรุณากรอกทะเบียนรถ</div>
+                                        </mat-error> -->
+                                    </mat-form-field>
+                                </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="reason">
+                                <th class="text-center" mat-header-cell *matHeaderCellDef> เหตุผลที่เบิก </th>
+                                <td class="text-center p-2" mat-cell *matCellDef="let element; let rowIdx = index;"
+                                    (click)="openReasonDialog(element)">
+                                    <mat-form-field>
+                                        <input type="text" matInput #reason name="txtReason{{rowIdx}}" [readonly]=true
+                                            [(ngModel)]="element.reasonId" required />
+                                        <mat-error *ngIf="reason?.invalid">
+                                            <div *ngIf="reason.errors.required">กรุณากรอกเหตุผลที่เบิก</div>
+                                        </mat-error>
+                                    </mat-form-field>
+                                </td>
+                            </ng-container>
+
+                            <!-- <ng-container matColumnDef="businessDate">
+                                <th class="text-center" mat-header-cell *matHeaderCellDef> วันที่เบิก </th>
+                                <td class="text-center p-2" mat-cell *matCellDef="let element; let rowIdx = index;">
+                                    -- <mat-form-field [style.width.px]=120>
+                                        <input type="text" matInput #businessdate name="txtBusinessDate{{rowIdx}}"
+                                            placeholder="วันที่เบิก" [(ngModel)]="element.businessDate" />
+                                    </mat-form-field>
+                                    {{element.businessDate | date: 'dd/MM/yyyy'}}
+                                </td>
+                            </ng-container> -->
+
+                            <ng-container matColumnDef="itemCode">
+                                <th class="text-center" mat-header-cell *matHeaderCellDef>&emsp;รหัสสินค้า&emsp;</th>
+                                <td class="text-center p-2 align-middle" mat-cell *matCellDef="let element">
+                                    {{element.itemCode}}
+                                </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="itemName">
+                                <th class="text-center" mat-header-cell *matHeaderCellDef>&emsp;ชื่อสินค้า&emsp;</th>
+                                <td class="text-left p-2 align-middle" mat-cell *matCellDef="let element">
+                                    <div class="hidden-box" title="{{element.itemName}}">
+                                        <div class="hidden-text ">{{element.itemName}}</div>
+                                    </div>
+                                </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="selQty">
+                                <th class="text-center" mat-header-cell *matHeaderCellDef>&emsp;จำนวน&emsp;</th>
+                                <td class="text-right p-2 align-middle" mat-cell *matCellDef="let element">
+                                    {{element.selQty |
+                                    number:
+                                    '1.2-2'}} </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="sumWater">
+                                <th class="text-center" mat-header-cell *matHeaderCellDef>&emsp;แลกแต้ม&emsp;</th>
+                                <td class="text-right p-2 align-middle" mat-cell *matCellDef="let element">
+                                    {{element.sumWater |
+                                    number:
+                                    '1.2-2'}} </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="totalAmount">
+                                <th class="text-center" mat-header-cell *matHeaderCellDef>รวมจำนวน</th>
+                                <td class="text-center p-2" mat-cell *matCellDef="let element; let rowIdx = index;">
+                                    <mat-form-field>
+                                        <input class="text-right p-2 align-middle" type="text" matInput
+                                            #totalAmount="ngModel" name="txtTotalAmount{{rowIdx}}"
+                                            [(ngModel)]="element.totalAmount" appPermit="decimals"
+                                            [disabled]="element.isDisable" pattern="^[0-9]+(\.[0-9]{1,2})?$"
+                                            required />
+                                        <mat-error>
+                                            <div *ngIf="totalAmount.errors && (totalAmount.dirty || totalAmount.touched)">
+                                                <div [hidden]="!totalAmount.errors.pattern">
+                                                    รวมจำนวนต้องมากกว่า 0
+                                                </div>
+                                                <div *ngIf="totalAmount.errors.required">กรุณากรอกรวมจำนวน</div>
+                                            </div>
+                                        </mat-error>
+                                    </mat-form-field>
+                                    <!-- pattern="^$|^([0-9]|[1-9][0-9]|[1][0][0])?" -->
+                                </td>
+                            </ng-container>
+                            <tr mat-header-row *matHeaderRowDef="displayedWithdrawColumns; sticky: true"></tr>
+                            <tr mat-row *matRowDef="let row; columns: displayedWithdrawColumns;"></tr>
+                        </table>
+                        <div *ngIf="isWithdrawLoading" class="spinner-container">
+                            <mat-progress-spinner color="primary" mode="indeterminate">
+                            </mat-progress-spinner>
+                        </div>
+                    </div>
+                    <section>
+                        <div class="example-button-row">
+                            <button mat-raised-button color="primary" [disabled]="withdrawForm.invalid"
+                                (click)="saveWithdraw()" [disabled]="isWithdrawAdded === true">บันทึก</button>
+                            <!-- <button mat-raised-button color="accent" (click)="clearWithdrawTableData()"
+                                [disabled]="isWithdrawClear === true">ล้างข้อมูล</button> -->
+                                <label class="text-danger pl-3">** กรณีรวมจำนวนติดลบ กรุณาแก้ไขรวมจำนวน ให้ มากกว่า 0</label>
+                        </div>
+                    </section>
+                </form>
+            </mat-tab>
+        </mat-tab-group>
+    </div>
+</div>

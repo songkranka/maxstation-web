@@ -1,0 +1,329 @@
+<div *ngIf="isUserAuthenticated()">
+  <div class="card " style="margin-right: 6%;">
+    <div class="card-header bg-header-page "
+      style="font-size: 16px !important; height: 40px;  padding-top: 10px; font-weight: 600;">{{HeaderCard}}
+      <div class="ml-auto">
+        <div [ngClass]=this.GetBackgroundRibbon()>
+          <label class="ribbon-1-text">{{SvDefault.GetThaiDocStatus(CreditSalesHeader?.docStatus)}}</label>
+        </div>
+      </div>
+    </div>
+    <!-- [formGroup]="myGroup" -->
+    <!-- style="font-size: 1rem;" -->
+    <div class="card-body">
+
+      <div class="form-horizontal">
+        <div class="row">
+          <div class="col-12 col-sm-12 col-md-6">
+            <div class="row form-group">
+              <div class="col-4 topic text-right">เลขที่เอกสาร :</div>
+              <div class="col-6">{{CreditSalesHeader?.docNo || "" }}</div>
+            </div>
+
+            <div class="row form-group">
+              <div class="col-4 topic text-right">รหัสลูกค้า :</div>
+              <div class="col-6">
+                <app-CustomerModal #modalCustomer (OnSelectCustomer)=ReceiveCustomer($event) ParentName="Invoice">
+                </app-CustomerModal>
+                <div class="input-group input-group-sm">
+                  <input type="text" class="form-control form-control-sm" value="{{CreditSalesHeader.custCode}}"
+                    disabled>
+                  <div class="input-group-append">
+                    <button id="btnSearchCustomer"
+                      [disabled]="CreditSalesHeader.docStatus === 'Active' || CreditSalesHeader.docStatus === 'Cancel' || CreditSalesHeader.docStatus === 'Reference'"
+                      class="btn btn-sm btn-primary px-3 float-right" (click)=ShowCustomerModal() data-toggle="tooltip"
+                      data-placement="top" title="Search Customer">
+                      <i class="fa fa-search float-right"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row form-group">
+              <div class="col-4 topic text-right">ชื่อลูกค้า :</div>
+              <div class="col-6">{{CreditSalesHeader.custName}} </div>
+            </div>
+            <div class="row form-group">
+              <div class="col-4 topic text-right">ที่อยู่ลูกค้า :</div>
+              <div class="col-6">{{CreditSalesHeader.custAddr1}} {{CreditSalesHeader.custAddr2}}</div>
+            </div>
+            <div class="row form-group">
+              <div class="col-4 topic text-right">เลขประจำตัวผู้เสียภาษี :</div>
+              <div class="col-6">{{CreditSalesHeader.citizenId}} </div>
+            </div>
+            <div class="row form-group">
+              <div class="col-4 topic text-right">ประจำเดือน :</div>
+              <div class="col-6">
+                {{CreditSalesHeader.period}}
+                <!-- <input id="txtPeriod" type="month" class="form-control form-control-sm" [(ngModel)]=CreditSalesHeader.period disabled> -->
+              </div>
+            </div>
+
+          </div>
+          <div class="col-12 col-sm-12 col-md-6">
+
+
+            <div class="row form-group">
+              <div class="col-4 topic text-right">วันที่เอกสาร :</div>
+              <div class="col-6">{{DocDate | date:"dd/MM/yyyy"}}</div>
+            </div>
+            <div class="row form-group">
+              <div class="col-4 topic text-right">สกุลเงิน :</div>
+              <div class="col-6">
+                <div class="row">
+                  <div [formGroup]="myGroup" class="col-8">
+                    <ng-select formControlName="currency" [items]="currencySelect2" bindLabel="KEY" bindValue="VALUE"
+                      placeholder="เลือกสกุลเงิน" (change)="changeCurrency()" class="data" disabled></ng-select>
+                  </div>
+                  <div class="col-4">
+                    <input type="text" class="form-control data" [(ngModel)]="CreditSalesHeader.curRate"
+                      style="text-align: right; height: 36px;" disabled />
+                  </div>
+                </div>
+
+              </div>
+            </div>
+            <div class="row form-group">
+              <div class="col-4 topic text-right">เอกสารอ้างอิง :</div>
+              <div class="col-6"><input class="form-control form-control-sm" [(ngModel)]="CreditSalesHeader.refNo" [disabled]="CreditSalesHeader.posNo === 'SITE'" />
+              </div>
+            </div>
+          </div>
+        </div>
+        <!--/row-->
+        <div class="row">
+          <div class="col-12 col-sm-12 col-md-12">
+            <div class="row form-group">
+              <div class="col-2 topic text-right">หมายเหตุ :</div>
+              <div class="col-7">
+                <textarea id="txtRemark" rows="5" class="form-control w-100 form-control-sm"
+                  [(ngModel)]=CreditSalesHeader.remark
+                  [disabled]="CreditSalesHeader.docStatus === 'Cancel' || CreditSalesHeader.docStatus === 'Reference'"></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12 col-sm-12 col-md-12">
+            <div class="form-group text-right mr-10">
+              <app-ProductModal #modalProduct (OnSelectProduct)=SelectProduct($event)></app-ProductModal>
+              <!-- (click)=modalProduct.ShowModal() -->
+              <button id="btnSearchProduct" class="btn btn-primary btn-sm float-right" (click)=ShowProductModal()
+                [disabled]="CreditSalesHeader.docStatus === 'Cancel' || CreditSalesHeader.docStatus === 'Reference' || CreditSalesHeader.posNo === 'SITE'">
+                เพิ่มรายการ
+              </button>
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+      <!--/form-horizontal-->
+
+      <div class="row">
+        <div class="col-12 col-sm-12 col-md-12">
+
+          <div class="table-responsive pt-3">
+            <!-- table-custom-scrollbarx p-0 m-0-->
+            <!-- style="font-size: 1rem;" -->
+            <table class="table table-hover table-bordered m-0">
+              <thead>
+                <tr>
+                  <th class="text-center text-nowrap">รหัส</th>
+                  <th class="text-center text-nowrap">ชื่อรายการ</th>
+                  <!-- style="width: 70px;" -->
+                  <th class="text-center text-nowrap">มิเตอร์เริ่ม</th>
+                  <!-- style="width: 80px;" -->
+                  <th class="text-center text-nowrap">มิเตอร์สิ้นสุด</th>
+                  <!-- style="width: 70px;" -->
+                  <th class="text-center text-nowrap">หน่วยที่ใช้</th>
+                  <!--  style="width: 100px;" -->
+                  <th class="text-center text-nowrap">ราคา/หน่วย</th>
+                  <!--  style="width: 80px;" -->
+                  <th class="text-center text-nowrap">มูลค่าสินค้า</th>
+                  <!--  style="width: 100px;" -->
+                  <th class="text-center text-nowrap">ส่วนลด</th>
+                  <!--  style="width: 30px;" -->
+                  <th class="text-center text-nowrap">ภาษี</th>
+                  <th class="text-center text-nowrap">จำนวนเงิน</th>
+                  <!-- <th class="text-center align-middle">มูลค่าสุทธิ</th> -->
+                  <!-- width: 40px; -->
+                  <th *ngIf="!(CreditSalesHeader.posNo === 'SITE' || CreditSalesHeader.docStatus !== 'Active')"
+                    style="cursor: pointer;" class="text-center align-middle" (click)=RemoveCreditSalesDetailAll()>
+                    ลบ
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let prod of ArrCreditSalesDetail;let i = index;">
+                  <!-- รหัส -->
+                  <td class="align-middle">{{prod.pdId}}</td>
+                  <!-- ชื่อรายการ -->
+                  <td class="align-middle">{{prod.pdName}}</td>
+                  <!-- มิเตอร์เริ่ม -->
+                  <td class="align-middle">
+                    <app-InputNumberFormat [ToFix]="2" [(InputNumber)]="prod.meterStart"
+                      (OnChange)="CalculateUnitPrice(prod)" *ngIf="prod.pdId==='90575' || prod.pdId==='90581'"
+                      [Disabled]="CreditSalesHeader.docStatus === 'Cancel' || CreditSalesHeader.docStatus === 'Reference' || prod.isSite">
+                    </app-InputNumberFormat>
+                    <!-- <input
+                          class="form-control form-control-sm w-100 text-right"
+                          type="number"
+                          (change)=CalculateUnitPrice(prod)
+                          [(ngModel)]=prod.meterStart
+                          *ngIf="prod.pdName==='ค่าไฟฟ้า' || prod.pdName==='ค่าน้ำประปา'"
+                          [disabled]="CreditSalesHeader.docStatus === 'Cancel' || CreditSalesHeader.docStatus === 'Reference'"> -->
+                  </td>
+                  <!-- มิเตอร์สิ้นสุด -->
+                  <td class="align-middle">
+                    <app-InputNumberFormat [ToFix]="2" [(InputNumber)]="prod.meterFinish"
+                      (OnChange)="CalculateUnitPrice(prod)" *ngIf="prod.pdId==='90575' || prod.pdId==='90581'"
+                      [Disabled]="CreditSalesHeader.docStatus === 'Cancel' || CreditSalesHeader.docStatus === 'Reference' || prod.isSite">
+                    </app-InputNumberFormat>
+                    <!-- <input
+                          class="form-control form-control-sm w-100 text-right"
+                          type="number"
+                          (change)=CalculateUnitPrice(prod)
+                          [(ngModel)]=prod.meterFinish *ngIf="prod.pdName==='ค่าไฟฟ้า' || prod.pdName==='ค่าน้ำประปา'"
+                          [disabled]="CreditSalesHeader.docStatus === 'Cancel' || CreditSalesHeader.docStatus === 'Reference'"> -->
+                  </td>
+                  <!-- หน่วยที่ใช้ -->
+                  <td class="text-right align-middle">{{prod.itemQty | number:'1.2-2'}}</td>
+                  <!-- ราคา/หน่วย -->
+                  <td class="align-middle">
+                    <app-InputNumberFormat [(InputNumber)]="prod.unitPrice " (OnChange)="CalculateUnitPrice(prod)"
+                      [Disabled]="CreditSalesHeader.docStatus === 'Cancel' || CreditSalesHeader.docStatus === 'Reference' || CreditSalesHeader.posNo == 'SITE'">
+                    </app-InputNumberFormat>
+                    <!-- <input
+                          class="form-control form-control-sm w-100 text-right"
+                          type="number"
+                          (change)=CalculateUnitPrice(prod)
+                          [(ngModel)]=prod.unitPrice
+                          [disabled]="CreditSalesHeader.docStatus === 'Cancel' || CreditSalesHeader.docStatus === 'Reference'"> -->
+                  </td>
+                  <!-- มูลค่าสินค้า -->
+                  <td class="text-right align-middle">{{prod.sumItemAmt | number:'1.2-2'}}</td>
+                  <!-- ส่วนลด -->
+                  <td class="align-middle">
+                    <app-InputNumberFormat [(InputNumber)]="prod.discAmt" (OnChange)="CalculateUnitPrice(prod)"
+                      [Disabled]="CreditSalesHeader.docStatus === 'Cancel' || CreditSalesHeader.docStatus === 'Reference' || CreditSalesHeader.posNo == 'SITE'">
+                    </app-InputNumberFormat>
+                    <!-- <input
+                          class="form-control form-control-sm w-100 text-right"
+                          type="number"
+                          (change)=CalculateUnitPrice(prod)
+                          [(ngModel)]=prod.discAmt
+                          [disabled]="CreditSalesHeader.docStatus === 'Cancel' || CreditSalesHeader.docStatus === 'Reference'"
+                          /> -->
+                  </td>
+                  <!-- ภาษี -->
+                  <td class="align-middle text-center text-nowrap">
+                    {{prod.vatType}}
+                    <span class="mx-1" *ngIf="prod.vatType ==='VE' || prod.vatType ==='VI'">{{prod.vatRate}} %</span>
+                  </td>
+                  <!-- จำนวนเงิน -->
+                  <td class="text-right align-middle">{{prod.subAmt | number:'1.2-2'}}</td>
+                  <!-- <td class="text-right align-middle">{{prod.taxBaseAmt | number:'1.2-2'}}</td> -->
+                  <!-- ลบ -->
+                  <td *ngIf="!(CreditSalesHeader.posNo === 'SITE' || CreditSalesHeader.docStatus !== 'Active')"
+                    class="btn-outline-danger text-center align-middle" (click)=RemoveCreditSalesDetail(i)
+                    style="cursor: pointer;">
+                    <i class="fa fa-trash-alt"></i>
+                  </td>
+                  <!-- <td>
+                          <button class="btn btn-danger w-100" (click)=RemoveCreditSalesDetail(i)><i class="fa fa-trash-alt"></i></button>
+                        </td> -->
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <!--/table-responsive-->
+
+
+
+        </div>
+        <!--/col-->
+      </div>
+      <!--/row-->
+
+
+    </div>
+    <!--/card-body-->
+
+    <div class="card-footer border-top-0">
+      <div class="row form-group">
+        <div class="col-9 text-right">รวมจำนวนเงิน : </div>
+        <div class="col-3 text-right">{{CreditSalesHeader.subAmt | number:'1.2-2'}}</div>
+      </div>
+      <div class="row form-group">
+        <div class="col-9 text-right">ส่วนลดท้ายบิล : </div>
+        <div class="col-3  text-right">
+          <app-InputNumberFormat [(InputNumber)]="CreditSalesHeader.discAmt"
+            [Disabled]="CreditSalesHeader.docStatus === 'Cancel' || CreditSalesHeader.docStatus === 'Reference' || CreditSalesHeader.posNo == 'SITE'">
+          </app-InputNumberFormat>
+          <!-- <input type="number" class="form-control form-control-sm w-100 text-right"
+        (change)=CalculateHeaderDiscount() [(ngModel)]=CreditSalesHeader.discAmt
+        [disabled]="CreditSalesHeader.docStatus === 'Cancel' || CreditSalesHeader.docStatus === 'Reference'" /> -->
+        </div>
+      </div>
+      <div class="row form-group">
+        <div class="col-9 text-right">รวมจำนวนเงินหลังหักส่วนลด : </div>
+        <div class="col-3  text-right">{{ CreditSalesHeader.totalAmt | number : "1.2-2"}}</div>
+      </div>
+      <div class="row form-group">
+        <div class="col-9 text-right">มูลค่าก่อนภาษี : </div>
+        <div class="col-3  text-right">{{CreditSalesHeader.taxBaseAmt | number:'1.2-2'}}</div>
+      </div>
+      <div class="row form-group">
+        <div class="col-9 text-right">ภาษีมูลค่าเพิ่ม 7% : </div>
+        <div class="col-3  text-right">{{ CreditSalesHeader.vatAmt | number:'1.2-2'}}</div>
+      </div>
+      <div class="row form-group">
+        <div class="col-9 text-right">รวมมูลค่าสุทธิ : </div>
+        <div class="col-3  text-right">{{CreditSalesHeader.netAmt | number:'1.2-2'}}</div>
+      </div>
+    </div>
+    <!--/card-footer-->
+
+  </div>
+  <!--/card-->
+
+
+
+  <div class="right-bar" style="padding-top: 4%;">
+    <!-- *ngIf="CreditSalesHeader.docStatus !== 'Cancel' && CreditSalesHeader.docStatus !== 'Reference'" -->
+    <button class="btn circle-button circle-buttonSave" (click)="CheckSubAmtBeforeSave()" data-tooltip="Save"
+      data-tooltip-location="left" [hidden]="HiddenButton.btnSave">
+      <i class="far fa-save"></i>
+    </button>
+    <button class="btn circle-button circle-buttonApprove" (click)="ApproveDocument()"
+      [hidden]="HiddenButton.btnApprove" data-tooltip="Approve" data-tooltip-location="left">
+      <i class="fas fa-thumbs-up"></i>
+    </button>
+    <!-- [hidden]="btnReject" -->
+    <button class="btn circle-button circle-buttonReject" [hidden]="HiddenButton.btnReject" (click)="RejectDocument()"
+      data-tooltip="Reject" data-tooltip-location="left">
+      <i class="fas fa-thumbs-down"></i>
+    </button>
+    <!-- <button class="btn circle-button circle-buttonComplete" (click)="CompleteDocument()"  data-tooltip="Complete" data-tooltip-location="left" [hidden]="HiddenButton.btnComplete">
+    <i class="fas fa-check"></i>
+  </button> -->
+    <!-- (click)="printDocument()" -->
+    <!-- <button class="btn circle-button circle-buttonPrint" [hidden]="HiddenButton.btnPrint" data-tooltip="Print" data-tooltip-location="left">
+    <i class="fas fa-print"></i>
+  </button> -->
+    <!-- *ngIf="CreditSalesHeader.docStatus === 'Active' " -->
+    <button class="btn circle-button circle-buttonCancel" [hidden]="HiddenButton.btnCancel"
+      (click)="CancelCreditSales()" data-tooltip="Cancel" data-tooltip-location="left">
+      <i class="fas fa-times"></i>
+    </button>
+    <button class="btn circle-button circle-buttonClear" (click)="ClearDocument()" [hidden]="HiddenButton.btnClear"
+      data-tooltip="Clear" data-tooltip-location="left">
+      <i class="fas fa-eraser"></i>
+    </button>
+    <button class="btn circle-button circle-buttonBack" routerLink="/InvoiceList" data-tooltip="Back"
+      data-tooltip-location="left">
+      <i class="fas fa-undo"></i>
+    </button>
+  </div>
+</div>

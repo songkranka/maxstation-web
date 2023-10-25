@@ -1,0 +1,170 @@
+<div *ngIf="isUserAuthenticated()" class="card rounded-0 shadow-none" style="margin-right: 6.5%;">
+  <div class="card-header bg-header-page rounded-0 shadow-none"
+    style="font-size: 16px !important; height: 40px;  padding-top: 10px; font-weight: 600;">
+    สิทธิการเข้าใช้ระบบ
+    <div class="ml-auto">
+      <div class="{{SvDefault.GetBackgroundRibbon(Position.PositionStatus)}}">
+        <label class="ribbon-1-text">{{HiddenButton?.status}}</label>
+      </div>
+    </div>
+  </div>
+  <!-- end of card header -->
+  <div class="card-body">
+    <div class="row pt-4">
+      <div class="col-2">
+        <label>รหัสสิทธิ : </label>
+      </div>
+      <div class="col-6">
+        <input disabled="" class="form-control form-control-sm rounded-0" [(ngModel)]="Position.PositionCode" />
+      </div>
+      <div class="col-2">
+        <label>วันที่บันทึกล่าสุด : </label>
+      </div>
+      <div class="col-2">
+        <label>{{Position.UpdatedDate | date : 'dd/MM/yyyy hh:mm'}}</label>
+      </div>
+    </div>
+    <div class="row pt-2">
+      <div class="col-2">
+        <label>ชื่อสิทธิ : </label>
+      </div>
+      <div class="col-6">
+        <input class="form-control form-control-sm rounded-0" [(ngModel)]="Position.PositionName" />
+      </div>
+      <div class="col-2">
+        <label>บันทึกโดย : </label>
+      </div>
+      <div class="col-2">
+        <!-- {{Position.UpdatedBy}} -->
+        <!-- {{GetEmpName() | async}} -->
+        <label>{{EmpName}}</label>
+      </div>
+    </div>
+    <div class="row pt-2">
+      <div class="col-2">
+        <label>รายละเอียด : </label>
+      </div>
+      <div class="col-10">
+        <input class="form-control form-control-sm rounded-0" [(ngModel)]="Position.PositionDesc" />
+      </div>
+    </div>
+
+    <mat-tab-group class="rci">
+      <mat-tab label="สิทธิการใช้งานเมนู">
+        <div class="table-responsive table-custom-scrollbar" style=" max-height: 70vh !important">
+          <table class="table table-hover table-sm">
+            <thead>
+              <tr>
+                <th class="align-middle text-center">เมนู</th>
+                <th class="align-middle text-center">ชื่อเมนู</th>
+                <th class="align-middle text-center btn-primary" role="button" (click)="SelectAll('IsView')">เรียกดู
+                </th>
+                <th class="align-middle text-center btn-primary" role="button" (click)="SelectAll('IsCreate')">เพิ่ม
+                </th>
+                <th class="align-middle text-center btn-primary" role="button" (click)="SelectAll('IsEdit')">แก้ไข</th>
+                <th class="align-middle text-center btn-primary" role="button" (click)="SelectAll('IsCancel')">ยกเลิก
+                </th>
+                <th class="align-middle text-center btn-primary" role="button" (click)="SelectAll('IsPrint')">พิมพ์</th>
+                <th class="align-middle text-center">อื่นๆ</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of ArrRole;let i=index">
+                <td class="align-middle text-center">{{ArrRole[i].MenuId}}</td>
+                <td class="align-middle">{{DisplayMenuName(ArrRole[i].MenuId)}}</td>
+                <td role="button" class="align-middle text-center {{ArrRole[i].IsView === 'Y'?'table-info':''}}"
+                  (click)="CheckBoxChange(ArrRole[i].IsView === 'N', ArrRole[i] , 'IsView')">
+                  <!-- (change)="CheckBoxChange($event.target.checked, ArrRole[i] , 'IsView')" -->
+                  <input role="button" type="checkbox" [checked]="ArrRole[i].IsView === 'Y'" />
+                </td>
+                <td role="button" class="align-middle text-center {{ArrRole[i].IsCreate === 'Y'?'table-info':''}}"
+                  (click)="CheckBoxChange(ArrRole[i].IsCreate === 'N', ArrRole[i] , 'IsCreate')">
+                  <!-- [(ngModel)]="ArrRole[i].IsCreate" -->
+                  <input role="button" type="checkbox" [checked]="ArrRole[i].IsCreate === 'Y'" />
+                </td>
+                <td role="button" class="align-middle text-center {{ArrRole[i].IsEdit === 'Y'?'table-info':''}}"
+                  (click)="CheckBoxChange(ArrRole[i].IsEdit === 'N', ArrRole[i] , 'IsEdit')">
+                  <!-- [(ngModel)]="ArrRole[i].IsEdit" -->
+                  <input role="button" type="checkbox" [checked]="ArrRole[i].IsEdit === 'Y'" />
+                </td>
+                <td role="button" class="align-middle text-center {{ArrRole[i].IsCancel === 'Y'?'table-info':''}}"
+                  (click)="CheckBoxChange(ArrRole[i].IsCancel === 'N', ArrRole[i] , 'IsCancel')">
+                  <!-- [(ngModel)]="ArrRole[i].IsCancel" -->
+                  <input role="button" type="checkbox" [checked]="ArrRole[i].IsCancel === 'Y'" />
+                </td>
+                <td role="button" class="align-middle text-center {{ArrRole[i].IsPrint === 'Y'?'table-info':''}}"
+                  (click)="CheckBoxChange(ArrRole[i].IsPrint === 'N', ArrRole[i] , 'IsPrint')">
+                  <!-- [(ngModel)]="ArrRole[i].IsPrint" -->
+                  <input role="button" type="checkbox" [checked]="ArrRole[i].IsPrint === 'Y'" />
+                </td>
+                <td *ngIf="ArrRole[i].JsonData" style="width: 50px;"
+                  class="align-middle btn-default2 text-center align-middle" role="button"
+                  (click)="ShowCheckboxModal(ArrRole[i])">
+                  <i class="fa fa-pen"></i>
+                </td>
+                <td *ngIf="!ArrRole[i].JsonData" style="width: 50px;"
+                  class="align-middle btn-primary  text-center align-middle" role="button"
+                  (click)="ShowCheckboxModal(ArrRole[i])">
+                  <i class="fa fa-plus"></i>
+                </td>
+                <!-- <td class="align-middle">
+              <input class="form-control form-control-sm rounded-0" [(ngModel)]="ArrRole[i].JsonData" (click)="ShowCheckboxModal(ArrRole[i])" />
+            </td> -->
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </mat-tab>
+      <mat-tab label="สิทธิการปลดล็อค">
+        <div class="table-responsive table-custom-scrollbar" style=" max-height: 70vh !important">
+          <table class="table table-hover table-sm">
+            <thead>
+              <tr>
+                <th class="align-middle text-center">เมนู</th>
+                <th class="align-middle text-center">ชื่อเมนู</th>
+                <th class="align-middle text-center">มีสิทธิ</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of ArrBranchConfig;let i=index">
+                <td class="align-middle text-center">{{ArrBranchConfig[i].ItemNo}}</td>
+                <td class="align-middle">{{DisplayConfigName(ArrBranchConfig[i].ConfigId)}}</td>
+                <td role="button" class="align-middle text-center {{ArrBranchConfig[i].IsView === 'Y'?'table-info':''}}"
+                  (click)="ChangeStatus(ArrBranchConfig[i].IsView === 'N', ArrBranchConfig[i] , 'IsView')">
+                  <input role="button" type="checkbox" [checked]="ArrBranchConfig[i].IsView === 'Y'" />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+
+
+  </div>
+  <!-- end of Card Body -->
+
+</div>
+<div class="right-bar mt-2">
+  <!-- [disabled]="PositionRole" -->
+  <button class="btn circle-button circle-buttonSave" (click)="SaveData()" [hidden]="HiddenButton.btnSave"
+    data-tooltip="Save" data-tooltip-location="left">
+    <i class="far fa-save"></i>
+  </button>
+  <button class="btn circle-button circle-buttonPrint" (click)="ShowModalReport()" [hidden]="HiddenButton.btnPrint"
+    data-tooltip="Print" data-tooltip-location="left">
+    <i class="fas fa-print"></i>
+  </button>
+  <button class="btn circle-button circle-buttonCancel" (click)="UpdateStatus('Cancel')"
+    [hidden]="HiddenButton.btnCancel" data-tooltip="Cancel" data-tooltip-location="left">
+    <i class="fas fa-times"></i>
+  </button>
+  <button class="btn circle-button circle-buttonClear" (click)="NewData()" [hidden]="HiddenButton.btnClear"
+    data-tooltip="Clear" data-tooltip-location="left">
+    <i class="fas fa-eraser"></i>
+  </button>
+  <button class="btn circle-button circle-buttonBack" routerLink="/PositionList" [hidden]="HiddenButton.btnBack"
+    data-tooltip="Back" data-tooltip-location="left">
+    <i class="fas fa-undo"></i>
+  </button>
+</div>

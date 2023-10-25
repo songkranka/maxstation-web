@@ -1,0 +1,30 @@
+<div class="modal-header bg-header" style="height: 40px; padding-top: 10px;">
+    <span class="modal-title h6">รายการใบสั่งซื้อ</span>
+    <button type="button" class="close" (click)=ActiveModal.dismiss() >&times;
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="table-responsive">
+      <table class="table table-sm table-hover m-0">
+        <thead>
+          <tr>
+            <th class="text-center align-middle">#</th>
+            <th class="text-center align-middle">เลขที่</th>
+            <th class="text-center align-middle">วันที่สั่ง</th>
+            <th class="text-center align-middle">ผู้จำหน่าย</th>
+            <!-- <th *ngFor="let x of ArrKey" >{{x}}</th>         -->
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let po of ArrPoHeader;let i = index" role="button" (click)="ActiveModal.close(po)">
+            <td class="align-middle pl-2">{{i+1}}</td>
+            <td class="align-middle pl-2">{{ArrPoHeader[i].PoNo}}</td>
+            <!-- <td class="align-middle pl-2">{{ArrPoHeader[i].DocDate  | date :'dd/MM/yyyy'}}</td> -->
+            <td class="align-middle pl-2">{{ArrPoHeader[i].SupName }}</td>
+            <!-- <td *ngFor="let k of ArrKey" class="text-center align-middle" >{{po[k]}}</td> -->
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  

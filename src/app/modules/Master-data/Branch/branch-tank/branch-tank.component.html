@@ -1,0 +1,287 @@
+<div *ngIf="isUserAuthenticated()">
+    <div class="card" style="margin-right: 6.5%;">
+        <div class="card-header bg-header-page "
+            style="font-size: 16px !important; height: 40px;  padding-top: 10px; font-weight: 600;">
+            ข้อมูลถัง-หัวจ่าย
+            <div class="ml-auto">
+                <!-- <div [ngClass]="SvDefault.GetBackgroundRibbon(Header?.DocStatus)">
+            <label class="ribbon-1-text">{{HiddenButton?.status}}</label>
+          </div> -->
+            </div>
+        </div>
+        <!-- end of CardHeader -->
+
+        <div class="card-body">
+            <div class="row">
+                <div class="col-6">
+                    <div class="row my-2">
+                        <div class="col-4 topic text-right">รหัสบริษัท :</div>
+                        <div class="col-6">
+                            {{Header.CompCode}}
+                        </div>
+                    </div>
+
+                    <div class="row my-2">
+                        <div class="col-4 topic text-right">รหัสสาขา :</div>
+                        <div class="col-6">
+                            {{Header.BrnCode}}
+                        </div>
+                    </div>
+                </div><!-- end of Left Column -->
+                <div class="col-6 pl-0 ml-0">
+                    <!-- start Of Right Column -->
+                    <div class="row my-2">
+                        <div class="col-4 topic text-right">ชื่อบริษัท :</div>
+                        <div class="col-6">
+                            {{Header.CompanyName}}
+                        </div>
+                    </div>
+                    <div class="row my-2">
+                        <div class="col-4 topic text-right">ชื่อชื่อสาขา :</div>
+                        <div class="col-6">
+                            {{Header.BrnName}}
+                        </div>
+                    </div>
+                </div> <!-- end Of Right Column -->
+
+            </div>
+            <div class="row my-3 text-right">
+                <div class="col-6 topic text-left">รายละเอียดถังน้ำมัน</div>
+                <div class="col-6 text-right">
+                    <button class="btn btn-sm btn-primary" (click)="addrowTank()">
+                        <i class="fa fa-plus"></i> เพิ่มรายการ
+                    </button>
+                </div>
+            </div>
+            <table class="table table-bordered table-hover mx-0">
+                <thead>
+                    <tr>
+                        <th class="align-middle text-center">รหัสถัง</th>
+                        <th class="align-middle text-center">ชื่อสินค้า</th>
+                        <th class="align-middle text-center">ความจุ</th>
+                        <th class="align-middle text-center">ปริมาณน้ำมันดูดไม่ขึ้น</th>
+                        <th class="align-middle text-center">สถานะใช้งาน</th>
+                        <th class="align-middle text-center">ลบ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let itemTank of linesTank; let i=index">
+                        <td class="text-left align-middle">{{ itemTank.TankId }}</td>
+                        <td class="text-center text-nowrap pr-0 align-middle">
+                            <div class="input-group input-group-sm w-100 mr-0">
+                                <!-- style="height: 36px; width: 100px; text-align: center; " -->
+                                <input disabled class="form-control" value="{{itemTank.PdName}}">
+                                <div class="input-group-append">
+                                    <!-- style="border-bottom-left-radius: 0px; border-top-left-radius: 0px; text-align: center; width: 40px; height: 36px; margin-top: -7px;" -->
+                                    <button class="btn btn-primary " data-toggle="modal" data-target="#modal-getProduct"
+                                        (click)="setRowFocus(i)">
+                                        <i class="fa fa-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="modal fade" role="dialog" id="modal-getProduct" aria-labelledby="modal-test"
+                                aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content"
+                                        style="width: 200% !important; margin-left: -45%; margin-top: 20%;">
+                                        <div class="modal-header bg-header" style="height: 40px; padding-top: 10px;">
+                                            <span class="modal-title h6">ข้อมูลรายการ</span>
+                                            <button type="button" class="close" data-dismiss="modal">&times;
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <!-- Row -->
+                                            <!-- <div class="row">
+                                                <div class="col-10 topic">
+                                                    <label>ค้นหาข้อมูลรายการ : </label>
+                                                </div>
+                                            </div> -->
+
+                                            <!-- Row -->
+                                            <div class="row">
+                                                <div class="col-10" [formGroup]="myGroup">
+                                                    <input type="text" class="form-control"
+                                                        formControlName="searchProduct"
+                                                        placeholder="กรุณาใส่คำที่ต้องการค้นหา" />
+                                                </div>
+                                                <div class="col-2" style="padding-right: 3%; width: 100%;">
+                                                    <button class="btn btn-primary" (click)="getProductList()">
+                                                        <i class="fa fa-search" style="font-size: 15px;"></i>&nbsp;ค้นหา
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <br>
+
+                                            <!-- Row -->
+                                            <div class="row">
+                                                <div class="col-12" style="padding-left: 3%; padding-right: 3%;">
+                                                    <form [formGroup]="myGroup">
+                                                        <div class="row">
+                                                            <div class="table-responsive"
+                                                                style=" max-height: 30vh !important">
+                                                                <table
+                                                                    class="table table-sm table-bordered table-hover">
+                                                                    <thead>
+                                                                        <tr style="height: 36px;">
+                                                                            <th style="text-align: center; width: 20%;">
+                                                                                รหัสรายการ</th>
+                                                                            <th style="text-align: left; width: 50%;">
+                                                                                ชื่อรายการ</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        <tr *ngFor="let item of productList; let i = index"
+                                                                            class="trPdStyle">
+                                                                            <td (click)="selectedProduct(i)"
+                                                                                style="text-align: center;">{{ item.PdId
+                                                                                }}</td>
+                                                                            <td (click)="selectedProduct(i)"
+                                                                                style="text-align: left;">
+                                                                                <label class="hidden-box"
+                                                                                    title="{{ item.PdName }}">
+                                                                                    <label class="hidden-text"
+                                                                                        style="font-weight: 400 !important;">{{
+                                                                                        item.PdName
+                                                                                        }}</label>
+                                                                                </label>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button class="btn btn-primary" (click)="addProduct()" data-dismiss="modal"
+                                                style="width: 8%;">
+                                                ตกลง
+                                            </button>
+                                            <button type="button" class="btn btn-primary" data-dismiss="modal"
+                                                style="width: 8%;">
+                                                ยกเลิก
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="text-left align-middle">
+                            <app-InputNumberFormat [(InputNumber)]=itemTank.Capacity></app-InputNumberFormat>
+                        </td>
+                        <td class="text-right align-middle">
+                            <app-InputNumberFormat [(InputNumber)]=itemTank.CapacityMin></app-InputNumberFormat>
+                        </td>
+                        <td class="text-left align-middle">
+                            <!-- <input type="text" class="form-control form-control-sm w-100"
+                                [(ngModel)]="itemTank.TankStatus" /> -->
+                            <!-- <mat-radio-group [(ngModel)]="itemTank.TankStatus">
+                                <mat-radio-button style="margin-right:5px;" [value]="'Active'">เปิดใช้
+                                </mat-radio-button>
+                                <mat-radio-button [value]="'InActive'">ยกเลิก</mat-radio-button>
+                            </mat-radio-group> -->
+                            <ng-select [(ngModel)]="itemTank.TankStatus" [clearable]="false">
+                                <ng-option *ngFor="let item of statusDataList;let i = index"
+                                    [value]="statusDataList[i].code">
+                                    {{statusDataList[i].name}}
+                                </ng-option>
+                            </ng-select>
+                        </td>
+                        <td class="text-center btn-outline-danger align-middle" role="button" (click)="deleteRow(i)"><i
+                                class="fas fa-trash-alt"></i></td>
+                    </tr>
+                    <tr>
+                        <td [hidden]=" (linesTank?.length || 0) > 0" colspan="6"
+                            style="text-align: center; border: 0px;">
+                            ------------------------------ กรุณาเพิ่มรายการสินค้า ------------------------------
+                        </td>
+                    </tr>
+                </tbody>
+            </table><!-- detail Disp tank -->
+
+            <div class="row my-3 text-right">
+                <div class="col-6 topic text-left">ตารางรายละเอียดหัวจ่าย</div>
+                <div class="col-6 text-right">
+                    <button class="btn btn-sm btn-primary" (click)="addrowDisp()">
+                        <i class="fa fa-plus"></i> เพิ่มรายการ
+                    </button>
+                </div>
+            </div>
+            <table class="table table-bordered table-hover mx-0">
+                <thead>
+                    <tr>
+                        <th class="align-middle text-center">รหัสหัวจ่าย</th>
+                        <th class="align-middle text-center">Serial Number</th>
+                        <th class="align-middle text-center">Hose ID</th>
+                        <th class="align-middle text-center">รหัสถัง</th>
+                        <th class="align-middle text-center">สถานะใช้งาน</th>
+                        <th class="align-middle text-center">ลบ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let itemDisp of linesDisp; let i=index">
+                        <td class="text-left align-middle">
+                            <input type="text" class="form-control form-control-sm w-100"
+                                [(ngModel)]="itemDisp.DispId" />
+                        </td>
+                        <td class="text-left align-middle">
+                            <input type="text" class="form-control form-control-sm w-100"
+                                [(ngModel)]="itemDisp.SerialNo" />
+                        </td>
+                        <td class="text-left align-middle">
+                            <!-- <input type="text" class="form-control form-control-sm w-100"
+                                [(ngModel)]="itemDisp.HoseId" /> -->
+                            <app-InputNumberFormat [ToFix]="0" [(InputNumber)]="itemDisp.HoseId">
+                            </app-InputNumberFormat>
+                        </td>
+                        <td class="text-left align-middle">
+                            <ng-select [(ngModel)]="itemDisp.TankId" [clearable]="false"
+                                (change)="onTankChange(i, itemDisp.TankId)">
+                                <ng-option *ngFor="let item of linesTank;let i = index" [value]="linesTank[i].TankId">
+                                    {{linesTank[i].TankId}}
+                                </ng-option>
+                            </ng-select>
+                        </td>
+                        <td class="text-left align-middle">
+                            <!-- <mat-radio-group [(ngModel)]="itemDisp.DispStatus">
+                                <mat-radio-button style="margin-right:5px;" [value]="'Active'">เปิดใช้
+                                </mat-radio-button>
+                                <mat-radio-button [value]="'InActive'">ยกเลิก</mat-radio-button>
+                            </mat-radio-group> -->
+                            <ng-select [(ngModel)]="itemDisp.DispStatus" [clearable]="false">
+                                <ng-option *ngFor="let item of statusDataList;let i = index"
+                                    [value]="statusDataList[i].code">
+                                    {{statusDataList[i].name}}
+                                </ng-option>
+                            </ng-select>
+                        </td>
+                        <td class="text-center btn-outline-danger align-middle" role="button"
+                            (click)="deleteRowDisp(i)"><i class="fas fa-trash-alt"></i></td>
+                    </tr>
+                    <tr>
+                        <td [hidden]=" (linesDisp?.length || 0) > 0" colspan="6"
+                            style="text-align: center; border: 0px;">
+                            ------------------------------ กรุณาเพิ่มรายการหัวจ่าย ------------------------------
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="right-bar mt-2">
+            <button class="btn circle-button circle-buttonSave" (click)="SaveData()" [hidden]="HiddenButton.btnSave"
+                data-tooltip="Save" data-tooltip-location="left">
+                <i class="far fa-save"></i>
+            </button>
+            <button class="btn circle-button circle-buttonClear" (click)="NewData()" [hidden]="HiddenButton.btnClear"
+                data-tooltip="Clear" data-tooltip-location="left">
+                <i class="fas fa-eraser"></i>
+            </button>
+            <button class="btn circle-button circle-buttonBack" routerLink="/BranchTankList"
+                [hidden]="HiddenButton.btnBack" data-tooltip="Back" data-tooltip-location="left">
+                <i class="fas fa-undo"></i>
+            </button>
+        </div>
+    </div>
+</div>

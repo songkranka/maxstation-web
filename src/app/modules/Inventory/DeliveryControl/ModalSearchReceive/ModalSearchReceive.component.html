@@ -1,0 +1,64 @@
+
+<div  id="modalSearch"   >
+    <div class=" modal-header bg-header"   style="height: 40px; padding-top: 10px;">
+    <span class="modal-title h6">รายการใบรับน้ำมันใส</span>
+    <button
+        type="button"
+        class="close"
+        (click)=ActiveModal.dismiss()
+    >
+        &times;
+    </button>
+  </div>
+  <div class="modal-body">
+  <!--  -->
+  <div class="row border-bottom border-left border-right border-top m-0 pt-3 rounded-0 shadow-none">
+    <div class="col-6 topic">
+        <mat-form-field appearance="fill" style="width: 100% !important">
+            <mat-label>ค้นหา</mat-label>
+            <input matInput type="text" [(ngModel)]="filterValue" (keyup.enter)="SearchData()"
+                placeholder="คำค้นหา">
+        </mat-form-field>
+    </div>
+    <div class="col-4 topic" >
+      <mat-form-field appearance="fill" style="width: 100% !important">
+        <mat-label>วันที่</mat-label>
+        <mat-date-range-input [rangePicker]="picker" [formGroup]="dateRange">
+          <input matStartDate formControlName="start"placeholder="จากวันที่">
+          <input matEndDate formControlName="end" placeholder="ถึงวันที่">
+        </mat-date-range-input>
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-date-range-picker #picker></mat-date-range-picker>
+      </mat-form-field>
+    </div>
+    <div class="col-2">
+        <button class="btn btn-primary h-75 w-100 rounded-0 shadow-none" (click)="SearchData()">
+            <i class="fa fa-search"></i>&nbsp;ค้นหา
+        </button>
+    </div>
+  </div>
+  <table class="table table-sm table-hover mt-3">
+    <thead>
+      <tr>
+        <th class="text-center">เลขที่ใบรับน้ำมันใส</th>
+        <th class="text-center">วันที่</th>
+        <th class="text-center">ใบสั๋งซื้อ</th>
+        <th class="text-center">รหัสผู้จำหน่าย</th>
+        <th class="text-center">ชื่อผู้จำหน่าย</th>
+        <!-- <th class="text-center">NetAmt</th> -->
+      </tr>
+    </thead>
+    <tbody>
+      <tr role="button" *ngFor="let mapping of ArrReceive;let i = index" (click)="ActiveModal.close(ArrReceive[i])">
+        <td class="align-middle text-center">{{ArrReceive[i].DocNo}}</td>
+        <td class="align-middle text-center">{{ArrReceive[i].DocDate | date:'dd/MM/yyyy'}}</td>
+        <td class="align-middle text-center">{{ArrReceive[i].PoNo}}</td>
+        <td class="align-middle text-center">{{ArrReceive[i].SupCode}}</td>
+        <td class="align-middle text-lefe">{{ArrReceive[i].SupName}}</td>
+        <!-- <td class="align-middle text-right">{{ArrReceive[i].NetAmt | number:'1.2-2'}}</td> -->
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+</div>

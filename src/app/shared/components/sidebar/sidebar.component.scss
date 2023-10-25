@@ -1,0 +1,18 @@
+.sidebar-custom  {
+  margin-top: 45px !important;
+}
+
+[class*=sidebar-dark-] .nav-treeview>.nav-item>.nav-link:focus, [class*=sidebar-dark-] .nav-treeview>.nav-item>.nav-link:hover {
+  background-color: rgb(162 223 81);
+  color: #fff;
+}
+
+[class*=sidebar-dark-] .nav-treeview>.nav-item>.nav-link {
+  color: #c2c7d0;
+  background-color: #016c25;
+}
+
+.activeMenu{
+  background-color: #a2df51 !important;
+    color: #fff !important;
+}

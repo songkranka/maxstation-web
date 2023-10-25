@@ -1,0 +1,148 @@
+<!-- Main Sidebar Container -->
+<aside
+    class="main-sidebar sidebar-dark-primary elevation-4"
+    style="background-color: #01872e;"
+>
+    <!-- Brand Logo -->
+    <a
+        href="/dashboard"
+        class="brand-link"
+        style="background-color: #016c25; border-bottom: 1px; height: 49px;"
+    >
+        <img
+            src="/assets/images/ptg_logo01.png"
+            alt="PT Max Station"
+            class="brand-image img-circle"
+            style="margin-left: 0.5rem; max-height: 45px; margin-top: -10px;"
+        >
+        <span
+            class="brand-text font-weight-light"
+            style="color: white; font-weight: 400!important; font-size: 20px;"
+        >
+            PT Max
+      Station
+        </span>
+    </a>
+    <!-- Sidebar -->
+    <div class="sidebar sidebar-custom">
+        <!-- Sidebar Menu -->
+        <nav class="mt-2">
+            <ul
+                class="nav nav-pills nav-sidebar flex-column"
+                data-widget="treeview"
+                role="menu"
+                data-accordion="false"
+            >
+                <!-- <li
+                    class="nav-item has-treeview"
+                    *ngFor="let item of Group; let i = index;"
+                >
+                    <ng-container *ngIf="checkChild(item.group) == 0">
+                        <li
+                            class="nav-item"
+                            style="background-color: #02571e; border-radius: 4px; color: white;"
+                        >
+                            <a
+                                (click)="gotoPage(item.route)"
+                                class="nav-link"
+                            >
+                                <i class="nav-icon fas fa-th"></i>
+                                <p>
+                                    {{item.menu_name}}
+                                    <span class="right badge badge-danger">New</span>
+                                </p>
+                            </a>
+                        </li>
+                    </ng-container>
+                    <ng-container *ngIf="checkChild(item.group) > 0">
+                        <li class="nav-item has-treeview menu-open">
+                            <a
+                                href="#"
+                                class="nav-link"
+                                style="background-color: #02571e; border-radius: 4px; color: white;"
+                            >
+                                <i class="nav-icon fas fa-copy"></i>
+                                <p>
+                                    {{item.menu_name}}
+                                    <i class="fas fa-angle-left right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li
+                                    class="nav-item"
+                                    *ngFor="let menu of getMenu(item.group)"
+                                >
+                                    <a
+                                        routerLink={{menu.route}}
+                                        class="nav-link"
+                                        (click)="menuActive(menu.menu_name)"
+                                        id={{menu.menu_name}}
+                                    >
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>{{menu.menu_name}}</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ng-container>
+                </li>
+                <ng-container *ngIf="checkChild(item.MenuId) == 0">
+                    <li
+                        class="nav-item"
+                        style="background-color: #02571e; border-radius: 4px; color: white;"
+                    >
+                        <a
+                            (click)="gotoPage(item.Route)"
+                            class="nav-link"
+                        >
+                            <i class="nav-icon fas fa-th"></i>
+                            <p>
+                                {{item.MenuName}}
+                                <span class="right badge badge-danger">New</span>
+                            </p>
+                        </a>
+                    </li>
+                </ng-container> -->
+
+                <li
+                    class="nav-item has-treeview"
+                    *ngFor="let item of Menus;"
+                >
+                    <ng-container *ngIf="checkChild(item.MenuId) > 0">
+                        <li class="nav-item has-treeview" id="{{item.MenuName}}">
+                            <a
+                                href="#"
+                                class="nav-link"
+                                style="background-color: #02571e; border-radius: 4px; color: white;"
+                            >
+                                <i class="nav-icon fas fa-copy"></i>
+                                <p>
+                                    {{item.MenuName}}
+                                    <i class="fas fa-angle-left right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview" id="Child-{{item.MenuName}}">
+                                <li
+                                    class="nav-item"
+                                    *ngFor="let menu of getMenu(item.MenuId)"
+                                >
+                                    <a
+                                        routerLink={{menu.Route}}
+                                        class="nav-link"
+                                        (click)="menuActive(menu.MenuName)"
+                                        id={{menu.MenuName}}
+                                    >
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>{{menu.MenuName}}</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ng-container>
+                </li>
+            </ul>
+        </nav>
+        <!-- /.sidebar-menu -->
+    </div>
+    <!-- /.sidebar -->
+</aside>

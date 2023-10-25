@@ -1,0 +1,156 @@
+<!-- <div class="alert alert-danger rounded-0 shadow-none" role="alert" *ngIf="PositionRole.IsView !=='Y'">
+  <i class="fa fa-ban mr-3"></i> คุณไม่มีสิทธ์ใช้งานหน้านี้
+</div> -->
+<!-- *ngIf="PositionRole.IsView ==='Y'" -->
+<div *ngIf="isUserAuthenticated()" class="card rounded-0 shadow-none" style="margin-right: 6.5%;" >
+  <div class="card-header bg-header-page rounded-0 shadow-none" style="font-size: 16px !important; height: 40px;  padding-top: 10px; font-weight: 600;">
+    บันทึกใบตรวจนับสินค้า
+    <div class="ml-auto">
+      <div [ngClass]="SvDefault.GetBackgroundRibbon(Header?.DocStatus)">
+        <label class="ribbon-1-text"  >{{HiddenButton?.status}}</label>
+      </div>
+    </div>
+  </div>
+  <!-- End Of Card Header -->
+  <div class="card-body">
+    <div class="row">
+      <div class="col-6">
+        <div class="row">
+          <div class="col-6 text-right">เลขที่เอกสาร :</div>
+          <div class="col-6">{{Header.DocNo}}</div>
+        </div>
+        <!-- End Of Doc No -->
+        <div class="row pt-3">
+          <div class="col-6 text-right">รหัสพนักงานตรวจนับ :</div>
+          <div class="col-6">
+            <!-- (change) (keyUp.enter)="GetEmployee() -->
+            <input type="text" class="form-control form-control-sm w-100 rounded-0" [(ngModel)]="Header.EmpCode" (change)="GetEmployee()">
+            <!-- <div class="pt-2">{{Header.EmpName === "" ? "ไม่พบข้อมูลพนักงาน" : Header.EmpName}}</div> -->
+            <div class="pt-2 text-danger" *ngIf="Header.EmpCode !== '' &&  Header.EmpName === ''">ไม่พบข้อมูลพนักงาน</div>
+            <div class="pt-2 text-success" *ngIf="Header.EmpName !== ''">{{Header.EmpName}}</div>
+          </div>
+        </div>
+        <!-- End Of Audit Seq -->
+      </div>
+      <!-- End Of Left Column -->
+      <div class="col-6">
+        <div class="row">
+          <div class="col-6 text-right">วันที่เอกสาร :</div>
+          <div class="col-6">{{Header.DocDate | date : 'dd/MM/yyyy'}}</div>
+        </div>
+        <!-- End Of DocDate -->
+        <div class="row pt-3">
+          <div class="col-6 text-right">ตรวจนับครั้งที่ : </div>
+          <div class="col-6">
+            {{Header.AuditSeq}} / {{Header.AuditYear}}
+          </div>
+        </div>
+        <!-- End Of Employee -->
+        <div class="row  float-right pr-3 pt-3">
+          <button class="btn btn-sm btn-primary rounded-0 shadow-none" (click)="ShowModalProduct()">
+            <i class="fa fa-plus"></i> เพิมสินค้า
+          </button>
+        </div>
+        <!-- End Of Button AddProduct -->
+      </div>
+      <!-- End Of Right Column -->
+    </div>
+    <!-- End Of Top Row -->
+    <div class="table-responsive table-custom-scrollbar mt-3">
+      <table class="table table-sm table-hover m-0">
+        <thead>
+          <tr>
+            <th class="text-center align-middle">ลำดับ</th>
+            <th class="text-center align-middle">รหัสสินค้า</th>
+            <th class="text-center align-middle">ชื่อสินค้า</th>
+            <th class="text-center align-middle">หน่วย</th>
+            <th class="text-center align-middle">คงเหลือยกมา</th>
+            <th class="text-center align-middle">ผลการตรวจนับ</th>
+            <th class="text-center align-middle">ผลต่าง</th>
+            <th class="text-center align-middle">ปรับปรุง</th>
+            <th class="text-center align-middle">ไม่ปรับปรุง</th>
+            <th class="text-center align-middle">ลบ</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of ArrDetail;let i = index">
+            <!-- ลำดับ -->
+            <td class="align-middle text-center">{{i+1}}</td>
+            <!-- รหัส -->
+            <td class="align-middle">{{ArrDetail[i].PdId}}</td>
+            <!-- ชื่อรายการ -->
+            <td class="align-middle">{{ArrDetail[i].PdName}}</td>
+            <!-- หน่วย -->
+            <td class="align-middle">{{ArrDetail[i].UnitName}}</td>
+            <!-- สินค้าคงเหลือ -->
+            <td class="align-middle text-right">{{ArrDetail[i].BalanceQty | number : '1.2-2'}}</td>
+            <!-- ผลการตรวจนับ -->
+            <td class="align-middle">
+              <app-InputNumberFormat [ToFix]="0" InputClass="rounded-0" [(InputNumber)]="ArrDetail[i].ItemQty" (InputNumberChange)="OnItemQtyChange(ArrDetail[i])"></app-InputNumberFormat>
+            </td>
+            <!-- ผลต่าง -->
+            <td class="align-middle text-right">{{ArrDetail[i].DiffQty | number : '1.2-2'}}</td>
+            <!-- ปรับปรุง -->
+            <td class="align-middle">
+              <app-InputNumberFormat [ToFix]="0" InputClass="rounded-0" [(InputNumber)]="ArrDetail[i].AdjustQty" (InputNumberChange)="OnAdjustQtyChange(ArrDetail[i])"></app-InputNumberFormat>
+            </td>
+            <!-- ไม่ปรับปรุง -->
+            <td class="align-middle text-right">{{ArrDetail[i].NoadjQty | number : '1.2-2'}}</td>
+            <!-- ลบ -->
+            <td class="text-center text-nowrap btn-outline-danger" role="button" (click)="deleteRow(i)"><i
+              class="fas fa-trash-alt fa-sm"></i></td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td class="text-right align-middle" colspan="4">ยอดรวมทั้งสิ้น</td>
+            <td class="text-right align-middle">{{SvDefault.GetSummaryArray(ArrDetail , "BalanceQty") | number : '1.2-2'}}</td>
+            <td class="text-right align-middle">{{SvDefault.GetSummaryArray(ArrDetail , "ItemQty") | number : '1.2-2'}}</td>
+            <td class="text-right align-middle">{{SvDefault.GetSummaryArray(ArrDetail , "DiffQty") | number : '1.2-2'}}</td>
+            <td class="text-right align-middle">{{SvDefault.GetSummaryArray(ArrDetail , "AdjustQty") | number : '1.2-2'}}</td>
+            <td class="text-right align-middle">{{SvDefault.GetSummaryArray(ArrDetail , "NoadjQty") | number : '1.2-2'}}</td>
+            <td class="border-right-0 border-bottom-0"></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+    <!-- End Of Table Responsive -->
+    <div class="row pt-3">
+      <div class="col-3 text-right">หมายเหตุ :</div>
+      <div class="col-8"><textarea class="form-control form-control-sm rounded-0 shadow-none" [(ngModel)]="Header.Remark" rows="5" ></textarea></div>
+    </div>
+    <!-- end of Remark -->
+  </div>
+  <!-- End Of Card Body -->
+  <div class="right-bar mt-2" >
+    <!-- [disabled]="PositionRole" -->
+    <button class="btn circle-button circle-buttonSave"
+      (click)="SaveData()"
+      [hidden]="HiddenButton.btnSave"
+
+      data-tooltip="Save" data-tooltip-location="left">
+      <i class="far fa-save"></i>
+    </button>
+    <!-- <button class="btn circle-button circle-buttonApprove" (click)="UpdateStatus('Ready')" [hidden]="HiddenButton.btnApprove" data-tooltip="Approve" data-tooltip-location="left">
+      <i class="fas fa-thumbs-up"></i>
+    </button>
+    <button class="btn circle-button circle-buttonReject" (click)="UpdateStatus('Active')" [hidden]="HiddenButton.btnReject" data-tooltip="Reject" data-tooltip-location="left">
+      <i class="fas fa-thumbs-down"></i>
+    </button>
+    <button class="btn circle-button circle-buttonComplete" (click)="UpdateStatus('Ready')" [hidden]="HiddenButton.btnComplete" data-tooltip="Complete" data-tooltip-location="left">
+      <i class="fas fa-check"></i>
+    </button> -->
+    <button class="btn circle-button circle-buttonPrint" (click)="ShowModalReport()" [hidden]="HiddenButton.btnPrint" data-tooltip="Print" data-tooltip-location="left">
+      <i class="fas fa-print"></i>
+    </button>
+    <button class="btn circle-button circle-buttonCancel" (click)="UpdateStatus('Cancel')" [hidden]="HiddenButton.btnCancel" data-tooltip="Cancel" data-tooltip-location="left">
+      <i class="fas fa-times"></i>
+    </button>
+    <button class="btn circle-button circle-buttonClear" (click)="NewData()" [hidden]="HiddenButton.btnClear" data-tooltip="Clear" data-tooltip-location="left">
+      <i class="fas fa-eraser"></i>
+    </button>
+    <button class="btn circle-button circle-buttonBack" routerLink="/AuditList" [hidden]="HiddenButton.btnBack" data-tooltip="Back" data-tooltip-location="left">
+      <i class="fas fa-undo"></i>
+    </button>
+  </div>
+</div>

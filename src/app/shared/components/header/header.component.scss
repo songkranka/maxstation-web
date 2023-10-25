@@ -1,0 +1,57 @@
+//###### add by rachain
+.round-left{
+    border-bottom-left-radius: 30px !important;
+    border-top-left-radius: 30px !important;
+}
+
+.round-right{
+    border-bottom-right-radius: 30px !important;
+    border-top-right-radius: 30px !important;
+}
+
+
+.vertical-center {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+  }
+
+  //add by rachain
+  div.dropdown{
+    width: 100%;
+    &div.dropdown-menu button{
+      width: 100%;
+    }
+  }
+
+  .pt-nav-action-cover li div.input-group , li div.input-group-sm{
+    //vertical-align: middle;
+    padding-top: 10px;
+    padding-right: 10px;
+  }
+
+  .pt-nav-brand-cover ul li .input-group{
+      padding-top: 5px;
+  }
+
+  .description-alert{
+    font-size: small;
+    color: lightslategrey;
+    padding-left: 20px;
+    word-wrap: break-word;
+    display: block;
+    width: 50%;
+  }
+
+  .bullet-alert{
+    display: list-item;
+    list-style-type: disc;
+    list-style-position: inside;
+  }
+
+  .pt-nav-brand-cover ng-select {
+    width: 300px;
+    padding-top: 5px;
+  }

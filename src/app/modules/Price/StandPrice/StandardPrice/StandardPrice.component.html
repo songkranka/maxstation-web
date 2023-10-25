@@ -1,0 +1,319 @@
+<div *ngIf="isUserAuthenticated()">
+  <div class="card rounded-0" style="margin-right: 6.5%;">
+    <div class="card-header bg-header-page rounded-0"
+      style="font-size: 16px !important; height: 40px;  padding-top: 10px; font-weight: 600;">
+      บันทึกปรับราคาน้ำมันใส/แก๊ส
+      <div class="ml-auto">
+        <div [ngClass]="SvDefault.GetBackgroundRibbon(Header?.DocStatus)">
+          <label class="ribbon-1-text">{{HiddenButton?.status}}</label>
+        </div>
+      </div>
+    </div>
+    <!-- End Of Card Header -->
+    <div class="card-body rounded-0">
+      <div class="row">
+        <div class="col-6">
+          <div class="row">
+            <div class="col-5 text-right">เลขที่เอกสาร :</div>
+            <div class="col-7">{{Header.DocNo}}</div>
+          </div>
+          <!-- End Of DocNo -->
+          <div class="row pt-3">
+            <div class="col-5 text-right">ประเภทการปรับราคา :</div>
+            <div class="col-7">
+              <select class="form-control form-control-sm rounded-0" [(ngModel)]="Header.DocType">
+                <option value="Oil">สนพ</option>
+                <option value="Gas">กบง</option>
+                <option value="Other">อื่นๆ</option>
+              </select>
+            </div>
+          </div>
+          <!-- End Of DocType -->
+          <div class="row pt-3">
+            <div class="col-5 text-right">วันเวลาที่มีผล : </div>
+            <div class="col-7">
+              <!-- [(DateValue)]="Header.EffectiveDate"  -->
+              <app-DateTimePicker [(DateValue)]="Header.EffectiveDate" CurrentId="dtpEffectiveDate">
+              </app-DateTimePicker>
+            </div>
+          </div>
+          <!-- End Of Effective Date -->
+        </div>
+        <!-- End Of Left Panel -->
+        <div class="col-6">
+          <div class="row">
+            <div class="col-5 text-right">วันที่เอกสาร :</div>
+            <div class="col-7">{{Header.DocDate | date:"dd/MM/yyyy"}}</div>
+          </div>
+          <!-- End Of DocDate -->
+          <div class="row pt-3">
+            <div class="col-12">&nbsp;</div>
+          </div>
+          <div class="row pt-4 mt-1" [hidden]="Header.DocType !=='Other'">
+            <div class="col-12 text-right">
+              <button class="btn btn-sm btn-primary rounded-0" (click)="OnAddBranchClick()">
+                <i class="fa fa-plus mx-3"></i>เพิ่มสาขา
+              </button>
+            </div>
+          </div>
+          <!-- End Of Select Product Button -->
+        </div>
+        <!-- End Of Right Panel -->
+      </div>
+      <div class="table-responsive mt-3" [hidden]="Header.DocType !=='Other'">
+        <table class="table table-sm table-hover mb-0">
+          <thead>
+            <tr>
+              <th rowspan="3" colspan="2" class="text-center align-middle">สาขา</th>
+              <th [attr.colspan]="ArrDiesel.length" class="text-center align-middle">กลุ่มน้ำมันดีเซล</th>
+              <th [attr.colspan]="ArrBenzine.length" class="text-center align-middle">กลุ่มน้ำมันเบนซิน</th>
+              <th [attr.colspan]="ArrGas.length" class="text-center align-middle">กลุ่มแก๊ส</th>
+              <th rowspan="3" class="text-center align-middle">ลบ</th>
+            </tr>
+            <tr>
+              <th *ngFor="let item of ArrDiesel;let i = index">
+                <img src="data:image/png;base64,{{ArrDiesel[i].Product.PdImage}}" style="width: 100px;height: 100px;" />
+              </th>
+              <th *ngFor="let item of ArrBenzine;let i = index">
+                <img src="data:image/png;base64,{{ArrBenzine[i].Product.PdImage}}"
+                  style="width: 100px;height: 100px;" />
+              </th>
+              <th *ngFor="let item of ArrGas;let i = index">
+                <img src="data:image/png;base64,{{ArrGas[i].Product.PdImage}}" style="width: 100px;height: 100px;" />
+              </th>
+            </tr>
+            <tr>
+              <th *ngFor="let item of ArrDiesel;let i = index" class="text-center align-middle">
+                {{ArrDiesel[i].Product.PdName}}
+              </th>
+              <th *ngFor="let item of ArrBenzine;let i = index" class="text-center align-middle">
+                {{ArrBenzine[i].Product.PdName}}
+              </th>
+              <th *ngFor="let item of ArrGas;let i = index" class="text-center align-middle">
+                {{ArrGas[i].Product.PdName}}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of ArrOther;let i=index">
+              <!-- class="align-middle" -->
+              <td style="min-width: 175px;" class="align-middle">
+                <select class="form-control form-control-sm rounded-0" (change)="OnBranchChange(ArrOther[i])"
+                  [(ngModel)]="ArrOther[i].BrnCode">
+                  <option value="">กรุณาเลือกสาขา</option>
+                  <option *ngFor="let t of ArrBranch;let j=index" [value]="ArrBranch[j].BrnCode">
+                    {{ArrBranch[j].BrnCode}} : {{ArrBranch[j].BrnName}}
+                  </option>
+                </select>
+                <!-- appendTo="body" -->
+                <!-- <ng-select [(ngModel)]="ArrOther[i].BrnCode" (change)="OnBranchChange(ArrOther[i])" style="position: absolute; width: 150px;" >
+                  <ng-option value="">กรุณาเลือกสาขา</ng-option>
+                  <ng-option *ngFor="let t of ArrBranch;let j=index" [value]="ArrBranch[j].BrnCode" >
+                    {{ArrBranch[j].BrnCode}} : {{ArrBranch[j].BrnName}}
+                  </ng-option>
+                </ng-select> -->
+              </td>
+              <td style="min-width: 100px;">
+                ราคาปัจจุบัน :<br />
+                <span class="my-1">ราคาปรับ :</span><br />
+                ราคาใหม่ :
+              </td>
+              <td class="text-right" *ngFor="let d of ArrOther[i].ArrDiesel;let j = index">
+                <span class="mr-3">{{ ArrOther[i].ArrDiesel[j].StandardPriceDt.BeforePrice | number :
+                  '1.2-2'}}</span><br />
+                <app-InputNumberFormat InputClass="rounded-0"
+                  [(InputNumber)]="ArrOther[i].ArrDiesel[j].StandardPriceDt.AdjustPrice"
+                  (InputNumberChange)="OnAdjPriceChange(ArrOther[i].ArrDiesel[j].StandardPriceDt)">
+                </app-InputNumberFormat>
+                <span class="mr-3">{{ ArrOther[i].ArrDiesel[j].StandardPriceDt.CurrentPrice | number : '1.2-2'}}</span>
+              </td>
+              <td class="text-right" *ngFor="let d of ArrOther[i].ArrBenzine;let j = index">
+                <span class="mr-3">{{ ArrOther[i].ArrBenzine[j].StandardPriceDt.BeforePrice | number :
+                  '1.2-2'}}</span><br />
+                <app-InputNumberFormat InputClass="rounded-0"
+                  [(InputNumber)]="ArrOther[i].ArrBenzine[j].StandardPriceDt.AdjustPrice"
+                  (InputNumberChange)="OnAdjPriceChange(ArrOther[i].ArrBenzine[j].StandardPriceDt)">
+                </app-InputNumberFormat>
+                <span class="mr-3">{{ ArrOther[i].ArrBenzine[j].StandardPriceDt.CurrentPrice | number : '1.2-2'}}</span>
+              </td>
+              <td class="text-right" *ngFor="let d of ArrOther[i].ArrGas;let j = index">
+                <span class="mr-3">{{ ArrOther[i].ArrGas[j].StandardPriceDt.BeforePrice | number :
+                  '1.2-2'}}</span><br />
+                <app-InputNumberFormat InputClass="rounded-0"
+                  [(InputNumber)]="ArrOther[i].ArrGas[j].StandardPriceDt.AdjustPrice"
+                  (InputNumberChange)="OnAdjPriceChange(ArrOther[i].ArrGas[j].StandardPriceDt)"></app-InputNumberFormat>
+                <span class="mr-3">{{ ArrOther[i].ArrGas[j].StandardPriceDt.CurrentPrice | number : '1.2-2'}}</span>
+              </td>
+              <td class="btn-outline-danger align-middle text-center" role="button" style="min-width: 50px;"
+                (click)="ArrOther.splice(i,1)">
+                <i class="fa fa-trash"></i>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <!-- End Of Card Body -->
+  </div>
+  <!-- End Of Card -->
+  <div class="card" style="margin-right: 6.5%;" [hidden]="Header.DocType!=='Oil'">
+    <div class="card-header bg-header-page">กลุ่มน้ำมันดีเซล</div>
+    <!-- End Of Card Header -->
+    <div class="card-body">
+      <div class="row">
+        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4" *ngFor="let item of ArrDiesel;let i = index">
+          <div class="card">
+            <div class="card-header bg-header-page text-center">
+              {{ArrDiesel[i].Product.PdId}} : {{ArrDiesel[i]?.Product?.PdName || ""}}
+            </div>
+            <div class="card-body pt-0">
+              <div class="w-100 text-center" style="height: 100px;">
+                <img class="text-center" *ngIf="ArrDiesel[i].Product.PdImage !=null" style="width: 100px;height: 100px;"
+                  src="data:image/png;base64,{{ArrDiesel[i].Product.PdImage}}" />
+              </div>
+              <!--             
+            <div class="row">
+              <div class="col-5">ก่อนปรับ : </div>
+              <div class="col-7 text-right pr-3">
+                {{ArrDiesel[i]?.StandardPriceDt?.BeforePrice || 0.00 | number : '1.2-2'}}
+              </div>
+            
+            </div> -->
+              <div class="row pt-3">
+                <div class="col-4 text-right">ปรับ : </div>
+                <div class="col-8">
+                  <app-InputNumberFormat [(InputNumber)]="ArrDiesel[i].StandardPriceDt.AdjustPrice"
+                    (InputNumberChange)="OnAdjPriceChange(ArrDiesel[i].StandardPriceDt)"></app-InputNumberFormat>
+                </div>
+              </div>
+              <!-- <div class="row">
+              <div class="col-6">หลังปรับ : </div>
+              <div class="col-6 text-right pr-3">
+                {{ArrDiesel[i]?.StandardPriceDt?.CurrentPrice || 0.00 | number : '1.2-2'}}
+              </div>
+            </div> -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- End Of Card Body -->
+  </div>
+  <!-- End Of Card Diesel -->
+  <div class="card" style="margin-right: 6.5%;" [hidden]="Header.DocType!=='Oil'">
+    <div class="card-header bg-header-page">กลุ่มน้ำมันเบนซิน</div>
+    <!-- End Of Card Header -->
+    <div class="card-body">
+      <div class="row">
+        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4" *ngFor="let item of ArrBenzine;let i = index">
+          <div class="card">
+            <div class="card-header bg-header-page text-center">
+              {{ArrBenzine[i].Product.PdId}} : {{ArrBenzine[i]?.Product?.PdName || ""}}
+            </div>
+            <div class="card-body pt-0">
+              <div class="w-100 text-center" style="height: 100px;">
+                <img class="text-center" *ngIf="ArrBenzine[i].Product.PdImage !=null"
+                  style="width: 100px;height: 100px;" src="data:image/png;base64,{{ArrBenzine[i].Product.PdImage}}" />
+              </div>
+              <!-- <div class="row">
+              <div class="col-5">ก่อนปรับ : </div>
+              <div class="col-7 text-right pr-3">
+                {{ArrBenzine[i]?.StandardPriceDt?.BeforePrice || 0.00 | number : '1.2-2'}}
+              </div>
+            </div> -->
+              <div class="row pt-3">
+                <div class="col-4 text-right">ปรับ : </div>
+                <div class="col-8">
+                  <app-InputNumberFormat [(InputNumber)]="ArrBenzine[i].StandardPriceDt.AdjustPrice"
+                    (InputNumberChange)="OnAdjPriceChange(ArrBenzine[i].StandardPriceDt)"></app-InputNumberFormat>
+                </div>
+              </div>
+              <!-- <div class="row">
+              <div class="col-6">หลังปรับ : </div>
+              <div class="col-6 text-right pr-3">
+                {{ArrBenzine[i]?.StandardPriceDt?.CurrentPrice || 0.00 | number : '1.2-2'}}
+              </div>
+            </div> -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- End Of Card Body -->
+  </div>
+  <!-- End Of Card Benzine -->
+  <div class="card" style="margin-right: 6.5%;" [hidden]="Header.DocType!=='Gas'">
+    <div class="card-header bg-header-page">กลุ่มแก๊ส</div>
+    <!-- End Of Card Header -->
+    <div class="card-body">
+      <div class="row">
+        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4" *ngFor="let item of ArrGas;let i = index">
+          <div class="card">
+            <div class="card-header bg-header-page text-center">
+              {{ArrGas[i].Product.PdId}} : {{ArrGas[i]?.Product?.PdName || ""}}
+            </div>
+            <div class="card-body pt-0">
+              <div class="w-100 text-center" style="height: 100px;">
+                <img class="text-center" *ngIf="ArrGas[i].Product.PdImage !=null" style="width: 100px;height: 100px;"
+                  src="data:image/png;base64,{{ArrGas[i].Product.PdImage}}" />
+              </div>
+              <!-- <div class="row">
+              <div class="col-5">ก่อนปรับ : </div>
+              <div class="col-7 text-right pr-3">
+                {{ArrGas[i]?.StandardPriceDt?.BeforePrice || 0.00 | number : '1.2-2'}}
+              </div>
+            </div> -->
+              <div class="row pt-3">
+                <div class="col-4 text-right">ปรับ : </div>
+                <div class="col-8">
+                  <app-InputNumberFormat [(InputNumber)]="ArrGas[i].StandardPriceDt.AdjustPrice"
+                    (InputNumberChange)="OnAdjPriceChange(ArrGas[i].StandardPriceDt)"></app-InputNumberFormat>
+                </div>
+              </div>
+              <!-- <div class="row">
+              <div class="col-6">หลังปรับ : </div>
+              <div class="col-6 text-right pr-3">
+                {{ArrGas[i]?.StandardPriceDt?.CurrentPrice || 0.00 | number : '1.2-2'}}
+              </div>
+            </div> -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- End Of Card Body -->
+  </div>
+  <!-- End Of Card Gas -->
+  <div class="right-bar mt-2">
+    <button class="btn circle-button circle-buttonSave" (click)="SaveData()" [hidden]="HiddenButton.btnSave"
+      data-tooltip="Save" data-tooltip-location="left">
+      <i class="far fa-save"></i>
+    </button>
+    <!-- <button class="btn circle-button circle-buttonApprove" (click)="UpdateStatus('Ready')" [hidden]="HiddenButton.btnApprove" data-tooltip="Approve" data-tooltip-location="left">
+    <i class="fas fa-thumbs-up"></i>
+  </button> -->
+    <button class="btn circle-button circle-buttonReject" (click)="UpdateStatus('Active')"
+      [hidden]="HiddenButton.btnReject" data-tooltip="Reject" data-tooltip-location="left">
+      <i class="fas fa-thumbs-down"></i>
+    </button>
+    <!-- <button class="btn circle-button circle-buttonComplete" (click)="UpdateStatus('Ready')" [hidden]="HiddenButton.btnComplete" data-tooltip="Complete" data-tooltip-location="left">
+    <i class="fas fa-check"></i>
+  </button> -->
+    <button class="btn circle-button circle-buttonPrint" [hidden]="HiddenButton.btnPrint" data-tooltip="Print"
+      data-tooltip-location="left">
+      <i class="fas fa-print"></i>
+    </button>
+    <button class="btn circle-button circle-buttonCancel" (click)="UpdateStatus('Cancel')"
+      [hidden]="HiddenButton.btnCancel" data-tooltip="Cancel" data-tooltip-location="left">
+      <i class="fas fa-times"></i>
+    </button>
+    <button class="btn circle-button circle-buttonClear" (click)="NewData()" [hidden]="HiddenButton.btnClear"
+      data-tooltip="Clear" data-tooltip-location="left">
+      <i class="fas fa-eraser"></i>
+    </button>
+    <button class="btn circle-button circle-buttonBack" routerLink="/StandardPriceList" [hidden]="HiddenButton.btnBack"
+      data-tooltip="Back" data-tooltip-location="left">
+      <i class="fas fa-undo"></i>
+    </button>
+  </div>
+</div>

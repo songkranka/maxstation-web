@@ -1,0 +1,97 @@
+<div class="modal-header bg-header">
+  <span class="modal-title h6">
+      <i class="fa fa-plus mr-3"></i>เพิ่มรายการสินค้า
+  </span>
+  <button type="button" class="close" (click)=ActiveModal.dismiss()>
+      &times;
+  </button>
+</div>
+<div class="modal-body">
+  <div class="form-group" style="width: 60%;min-width: 200px;">
+    <label for="txtSearchProduct">ค้นหาสินค้า</label>
+    <div class="input-group">
+      <input type="text" class="form-control form-control-sm" id="txtSearchProduct" [(ngModel)]="StrKeyWord"  (keyup.enter)=SearchProduct()>
+      <div class="input-group-append" style="width:100px;">
+        <button class="btn btn-primary w-100 btn-sm" type="button" (click)=SearchProduct()  >
+          ค้นหา
+        </button>
+      </div>
+    </div>
+  </div>  
+  <div class="row">
+    <div class="col-6">
+      <span>รายการสินค้า</span>
+      <div class="table-custom-scrollbar">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>รหัสสินค้า</th>
+              <th>ชื่อสินค้า</th>
+              <th>หน่วย</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let product of ArrShowProduct;let i=index" (click)=SelectProduct(i) style="cursor: pointer;">   
+              <td class="text-center">{{i+1}}</td>                 
+              <td>{{ArrShowProduct[i].PdId}}</td>
+              <td>{{ArrShowProduct[i].PdName}}</td>                    
+              <td>{{ArrShowProduct[i].UnitName}}</td>                    
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="col-6">
+      <span>รายการสินค้าที่เลือก</span>
+      <div class="table-custom-scrollbar">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>รหัสสินค้า</th>
+              <th>ชื่อสินค้า</th>
+              <th>หน่วย</th>
+              <th>ลบ</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let product of ArrSelectProduct;let i=index" >                    
+                <td class="text-center">{{i+1}}</td>
+                <td>{{ArrSelectProduct[i].PdId}}</td>
+                <td>{{ArrSelectProduct[i].PdName}}</td>
+                <td>{{ArrSelectProduct[i].UnitName}}</td>
+                <td class="text-center btn-outline-danger" style="cursor: pointer;" (click)=UnSelectProduct(product)>
+                  <i class="fa fa-trash-alt"></i>
+                </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-footer">
+  <div class="row w-100">
+    <div class="col-6">
+      <button 
+      style="width: 100px;"
+      type="button" 
+      class="btn btn-primary btn-sm float-right" 
+      data-dismiss="modal" 
+      (click)=ActiveModal.close(ArrSelectProduct)>
+        ตกลง
+      </button>
+    </div>
+    <div class="col-6">
+      <button
+      style="width: 100px;" 
+      type="button" 
+      class="btn btn-danger btn-sm" 
+      data-dismiss="modal" 
+      (click)=ActiveModal.dismiss()>
+        ยกเลิก
+      </button>
+    </div>
+  </div>
+</div>

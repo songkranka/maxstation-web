@@ -1,0 +1,29 @@
+.card-authentication {
+  width: 26rem;
+  border: 0;  
+
+}
+body, html {
+  height: 100%;
+}
+// html,
+// body{
+//   background-image: url('./../../../../assets/images/ptg-bg.png') !important; 
+// }
+
+.ptg-bg { 
+  /* The image used */
+  background-image: url('./../../../../assets/images/ptg-bg.png')  !important; 
+ 
+  /* Full height */
+  width: 100%;
+  height: 100%;
+  /* Center and scale the image nicely */
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

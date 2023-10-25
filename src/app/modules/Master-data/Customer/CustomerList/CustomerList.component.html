@@ -1,0 +1,64 @@
+<div *ngIf="isUserAuthenticated()" class="card rounded-0 shadow-none">
+  <div class="card-header bg-header-page rounded-0" >รายการข้อมูลลูกค้า
+  </div>
+  <div class="card-body rounded-0">
+    <div class="row border-bottom border-left border-right border-top m-0 pt-3 rounded-0 shadow-none">
+      <div class="col-8 topic" >
+        <mat-form-field appearance="fill" style="width: 100% !important">
+          <mat-label>ค้นหา</mat-label>
+          <input matInput type="text" [(ngModel)]="filterValue"
+          (keyup.enter) = "GetArrayHeader(0)"
+           placeholder="คำค้นหา">
+        </mat-form-field>
+      </div>
+      <div class="col-2" >
+        <button class="btn btn-primary h-75 w-100 rounded-0 shadow-none" (click)="GetArrayHeader(0)" >
+          <i class="fa fa-search"></i>&nbsp;ค้นหา
+        </button>
+      </div>
+      <div class="col-2" >
+        <button class="btn btn-primary h-75 w-100 rounded-0 shadow-none" routerLink="/Customer/New" >
+          <i class="fa fa-plus"></i>&nbsp;เพิ่มเอกสาร
+        </button>
+      </div>
+    </div>
+    <table mat-table [dataSource]="dataSource" matSort class="table table-border table-hover mb-0 mt-3">
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns" role="button" [routerLink]='["..", "Customer",row.Guid]' ></tr>
+      <ng-container matColumnDef="no">
+        <th class="text-center" mat-header-cell *matHeaderCellDef>No</th>
+        <td class="text-center px-2 align-middle" mat-cell *matCellDef="let element; let i = index">{{no + (i + 1)}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="custCode">
+        <th class="text-center" mat-header-cell *matHeaderCellDef >รหัสลูกค้า</th>
+        <td class="pl-2 align-middle text-center"  mat-cell *matCellDef="let element"> {{element.CustCode}} </td>
+      </ng-container>
+      <ng-container matColumnDef="custName">
+        <th class="text-center" mat-header-cell *matHeaderCellDef >ชื่อลูกค้า</th>
+        <td class="pl-2 align-middle"  mat-cell *matCellDef="let element"> {{element.CustName}} </td>
+      </ng-container>
+      <ng-container matColumnDef="tel">
+        <th class="text-center" mat-header-cell *matHeaderCellDef >เบอร์โทร</th>
+        <td class="pl-2 align-middle"  mat-cell *matCellDef="let element"> {{element.Phone}}
+
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="creditLimit">
+        <th class="text-center" mat-header-cell *matHeaderCellDef >วงเงิน</th>
+        <td class="pl-2 align-middle text-right"  mat-cell *matCellDef="let element"> {{element.CreditLimit | number:'1.2-2'}} </td>
+      </ng-container>
+      <ng-container matColumnDef="custStatus">
+        <th class="text-center" mat-header-cell *matHeaderCellDef >สถานะ</th>
+        <td class="pl-2 align-middle text-center" mat-cell *matCellDef="let element"> {{ SvDefault.GetThaiDocStatus( element.CustStatus)}} </td>
+      </ng-container>
+    </table>
+    <mat-paginator
+      [length]="length"
+      [pageSize]="pageSize"
+      [pageSizeOptions]="pageSizeOptions"
+      (page)="pageEvent = $event; OnPaginateChange($event)"
+      showFirstLastButtons>
+    </mat-paginator>
+  </div>
+</div>

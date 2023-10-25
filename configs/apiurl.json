@@ -1,0 +1,11 @@
+{
+    "ApiUrl":{            
+        "MasterData": "https://dev-maxstation.pt.co.th/masterdata",
+        "Inventory": "https://dev-maxstation.pt.co.th/inventory",
+        "Sale": "https://dev-maxstation.pt.co.th/sale",
+        "Finance": "https://dev-maxstation.pt.co.th/finance",
+        "Report": "https://dev-maxstation.pt.co.th/report",
+        "DailyOperation": "https://dev-maxstation.pt.co.th/dailyoperation",
+        "Price": "https://dev-maxstation.pt.co.th/price"
+    }
+}

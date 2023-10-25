@@ -1,0 +1,62 @@
+<div class="modal-header bg-header">
+  <span class="modal-title h6">
+      <i class="fa fa-search mr-3"></i>ค้นหาใบโอนจ่ายสินค้า
+  </span>
+  <button type="button" class="close" (click)=ActiveModal.dismiss()>
+      &times;
+  </button>
+</div>
+<!-- end of modal header -->
+<div class="modal-body pb-0">
+  <div class="form-group w-100">
+    <label>คำค้นหา</label>
+    <input class="form-control form-control-sm" [(ngModel)]=StrKeyWord (keyup.enter)="SearchData()"/>
+  </div>
+  <!-- end of Keyword Input -->
+  <table class="table table-sm table-hover mb-0">
+    <thead>
+      <tr>
+        <th>เลขที่เอกสาร</th>
+        <th>วันที่เอกสาร</th>
+        <th>โอนมาจากสาขา</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let transferOutHeader of ArrTransferOutHD" 
+      style="cursor: pointer;"
+      class="{{SelectTransferOut === transferOutHeader ? 'bg-inverse-success' : ''}}" 
+      (click)="SelectTransferOut = transferOutHeader" >
+        <td>{{transferOutHeader.docNo}}</td>
+        <td>{{transferOutHeader.docDate | date : "dd/MM/yyyy"}}</td>
+        <td>{{GetBranchName(transferOutHeader.brnCode)}}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<!-- end of Modal Body -->
+<div class="modal-footer border-0">
+  <div class="row w-100">
+    <div class="col-6">
+      <button 
+      style="width: 100px;"
+      type="button" 
+      class="btn btn-primary btn-sm float-right" 
+      data-dismiss="modal"
+      [disabled]="SelectTransferOut == null" 
+      (click)=ActiveModal.close(SelectTransferOut)>
+        ตกลง
+      </button>
+    </div>
+    <div class="col-6">
+      <button
+      style="width: 100px;" 
+      type="button" 
+      class="btn btn-danger btn-sm" 
+      data-dismiss="modal" 
+      (click)=ActiveModal.dismiss()>
+        ยกเลิก
+      </button>
+    </div>
+  </div>
+</div>
+
